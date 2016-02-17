@@ -13,6 +13,7 @@ CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
 , m_spriteAnimation(NULL)
+, Playfield(NULL)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -213,6 +214,12 @@ void CSceneManager2D::Init()
 	m_save = new Save();
 	m_player = new Player();
 	m_player->PlayerInit("Player.lua");
+
+	//initailise grid system
+	Playfield = new GridSystem();
+	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
+	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 15, 15);
+
 	
 }
 
@@ -392,6 +399,23 @@ void CSceneManager2D::RenderBackground()
 	Render2DMesh(meshList[GEO_BACKGROUND], false, 1);
 }
 
+void CSceneManager2D::RenderGridSystem()
+{
+
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		modelStack.PushMatrix();
+		//get position of a grid in the vector 
+		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
+
+		Render2DMesh(meshList[GEO_TILESTRUCTURE], false, 1, GridPos.x, GridPos.y);
+		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+		modelStack.PopMatrix();
+	}
+
+
+}
+
 /********************************************************************************
  Render this scene
  ********************************************************************************/
@@ -426,6 +450,9 @@ void CSceneManager2D::Render()
 	// Render the goodies
 	RenderGoodies();
 	*/
+
+	//render the grid system and the corresponding image for the each grid
+	RenderGridSystem();
 
 	//On screen text
 	/*
