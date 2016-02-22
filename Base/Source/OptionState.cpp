@@ -9,13 +9,13 @@ COptionState COptionState::theOptionState;
 
 void COptionState::Init()
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(800, 600,Optionscreen);
 	theScene->Init();
 }
 
 void COptionState::Init(const int width, const int height)
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(width, height, Optionscreen);
 	theScene->Init();
 	Select = 1;
 
@@ -105,5 +105,5 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 
 void COptionState::Draw(CGameStateManager* theGSM)
 {
-	theScene->RenderOption();
+	theScene->Render();
 }

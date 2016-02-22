@@ -15,6 +15,7 @@ public:
 	Save(void);
 	~Save(void);
 
+	string BoolToStringConversion(bool convert);
 	void SavePlayer(Player* playerinfo);
 	//void SaveLevel(/*Level* Levelinfo*/);
 private:

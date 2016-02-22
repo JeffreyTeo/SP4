@@ -1,6 +1,7 @@
-#ifndef SCENE_MANAGER_2D_H
-#define SCENE_MANAGER_2D_H
+#ifndef SCENE_MANAGER_2D_FS_H
+#define SCENE_MANAGER_2D_FS_H
 
+#include "GameStateManager.h"
 #include "Scene.h"
 #include "Mtx44.h"
 #include "Camera3.h"
@@ -31,7 +32,7 @@
 #include "GridSystem.h"
 
 
-class CSceneManager2D : public Scene
+class SceneManagerLevel2DforScreen : public Scene
 {
 	enum UNIFORM_TYPE
 	{
@@ -39,8 +40,6 @@ class CSceneManager2D : public Scene
 		U_MODELVIEW,
 		U_MODELVIEW_INVERSE_TRANSPOSE,
 		U_LIGHTENABLED,
-		U_COLOR_TEXTURE0,
-		U_COLOR_TEXTURE_ENABLED0,
 		U_COLOR_TEXTURE_ENABLED,
 		U_COLOR_TEXTURE,
 		U_TEXT_ENABLED,
@@ -88,9 +87,9 @@ class CSceneManager2D : public Scene
 		NUM_PARTICLE_STYLE
 	};
 public:
-	CSceneManager2D();
-	CSceneManager2D(const int m_window_width, const int m_window_height);
-	~CSceneManager2D();
+	SceneManagerLevel2DforScreen();
+	SceneManagerLevel2DforScreen(const int m_window_width, const int m_window_height, const int ScreenValue);
+	~SceneManagerLevel2DforScreen();
 
 	virtual void Init();
 	virtual void Update(double dt);
@@ -101,14 +100,13 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
-	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
-	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
-
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
+	void RenderMainMenu();
+	void RenderHighscore();
+	void RenderInstructions();
+	void RenderOption();
 	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
-
-	void RenderGridSystem();
 
 	// Menu States
 	bool PlaySelect;
@@ -139,17 +137,15 @@ public:
 	};
 
 private:
-	LuaUsage* m_SpriteAnimationLoad;
 	Player* m_player;
 	Save* m_save;
-	SpriteAnimation *m_spriteAnimation;
-	Particle *m_particle;
-	Particle *m_particle2;
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
+
+	float m_alpha;
 
 	Camera3 camera;
 
@@ -159,13 +155,11 @@ private:
 	MS viewStack;
 	MS projectionStack;
 
-	bool confettiRightside;
 	float fps;
 
-	//grid system and grids
-	GridSystem* Playfield;
 
 	//window height and width
+	short m_screenvalue;
 	int m_windowHeight;
 	int m_windowWidth;
 	/*

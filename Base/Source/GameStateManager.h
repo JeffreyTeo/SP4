@@ -3,6 +3,13 @@
 #include <vector>
 using namespace std;
 
+static const short Splashscreen = 0;
+static const short Menuscreen = 1;
+static const short Instructionscreen = 2;
+static const short Highscorescreen = 3;
+static const short Optionscreen = 4;
+static const short Shopscreen = 5;
+
 class CGameState;
 
 class CGameStateManager

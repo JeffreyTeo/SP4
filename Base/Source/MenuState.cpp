@@ -13,14 +13,14 @@ CMenuState CMenuState::theMenuState;
 
 void CMenuState::Init()
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(800, 600, Menuscreen);
 	theScene->Init();
 	Select = 1;
 }
 
 void CMenuState::Init(const int width, const int height)
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(width, height, Menuscreen);
 	theScene->Init();
 	Select = 1;
 }
@@ -55,10 +55,12 @@ void CMenuState::HandleEvents(CGameStateManager* theGSM, const double mouse_x, c
 
 void CMenuState::Update(CGameStateManager* theGSM)
 {
+	
 }
 
 void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
+	theScene->Update(m_dElapsedTime);
 	if (Application::IsKeyPressed(VK_DOWN))
 	{
 		if (Select < 5) // Max. Number of Options
@@ -70,7 +72,7 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	}
 	if (Application::IsKeyPressed(VK_UP))
 	{
-		if (Select >= 1) // Selection is not the first one.
+		if (Select > 1) // Selection is not the first one.
 		{
 			Select--;
 			Sleep(150);
@@ -146,5 +148,5 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 
 void CMenuState::Draw(CGameStateManager* theGSM)
 {
-	theScene->RenderMainMenu();
+	theScene->Render();
 }

@@ -111,7 +111,7 @@ bool Application::GetMouseUpdate()
 	// Get the mouse button status
 	Button_Left   = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
 	Button_Middle = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_MIDDLE);
-	Button_Right  = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);;
+	Button_Right  = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
 
 
 
@@ -128,7 +128,7 @@ bool Application::GetMouseUpdate()
 /********************************************************************************
  Get keyboard updates
  ********************************************************************************/
-bool Application::GetKeyboardUpdate()
+bool Application::GetKeyboardUpdate()//Controls can be changed
 {
 	if (IsKeyPressed(VK_ESCAPE))
 	{
@@ -168,9 +168,9 @@ bool Application::GetKeyboardUpdate()
 		theGSM->HandleEvents('s', false);
 	}
 	// Jump
-	if (IsKeyPressed(32))
+	if (IsKeyPressed(' '))
 	{
-		theGSM->HandleEvents(32);
+		theGSM->HandleEvents(' ');
 	}
 	// Rotate camera
 	if (IsKeyPressed(VK_LEFT))
@@ -189,6 +189,7 @@ bool Application::GetKeyboardUpdate()
 	{
 		theGSM->HandleEvents(VK_RIGHT, false);
 	}
+	
 	if (IsKeyPressed(VK_UP))
 	{
 		theGSM->HandleEvents(VK_UP);
@@ -257,10 +258,20 @@ void Application::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
+	//theAppLua = new LuaUsage();
+	//theAppLua->LuaUsageInit("Lua/Application.Lua");
+	//m_window_height = theAppLua->GetIntegerValue("SCREENHEIGHT");
+	//m_window_width = theAppLua->GetIntegerValue("SCREENWIDTH");
+	//theAppLua->LuaUsageClose();
+
 	theAppLua = new LuaUsage();
-	theAppLua->LuaUsageInit("Application.Lua");
-	m_window_height = theAppLua->GetIntegerValue("SCREENHEIGHT");
-	m_window_width = theAppLua->GetIntegerValue("SCREENWIDTH");
+	theAppLua->LuaUsageInit("Lua/Application.lua");
+	int index = theAppLua->GetIntegerValue("Index");
+	m_window_height = theAppLua->GetArrayValue("WindowSize", index);
+	index--;
+	m_window_width = theAppLua->GetArrayValue("WindowSize", index);
+	
+	
 	theAppLua->LuaUsageClose();
 
 

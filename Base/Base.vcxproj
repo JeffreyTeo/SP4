@@ -34,13 +34,17 @@
     <ClCompile Include="Source\MeshBuilder.cpp" />
     <ClCompile Include="Source\Minimap.cpp" />
     <ClCompile Include="Source\OptionState.cpp" />
+    <ClCompile Include="Source\Particle.cpp" />
+    <ClCompile Include="Source\PathFinding.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayerInfo.cpp" />
     <ClCompile Include="Source\PlayInfo3PV.cpp" />
     <ClCompile Include="Source\PlayState.cpp" />
     <ClCompile Include="Source\Save.cpp" />
     <ClCompile Include="Source\SceneManager2D.cpp" />
+    <ClCompile Include="Source\SceneManager2DforScreen.cpp" />
     <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\SoundManager.cpp" />
     <ClCompile Include="Source\SpriteAnimation.cpp" />
     <ClCompile Include="Source\Strategy.cpp" />
     <ClCompile Include="Source\Strategy_Kill.cpp" />
@@ -75,6 +79,8 @@
     <ClInclude Include="Source\MeshBuilder.h" />
     <ClInclude Include="Source\Minimap.h" />
     <ClInclude Include="Source\OptionState.h" />
+    <ClInclude Include="Source\Particle.h" />
+    <ClInclude Include="Source\PathFinding.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\PlayInfo3PV.h" />
@@ -82,7 +88,9 @@
     <ClInclude Include="Source\Save.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneManager2D.h" />
+    <ClInclude Include="Source\SceneManager2DforScreen.h" />
     <ClInclude Include="Source\shader.hpp" />
+    <ClInclude Include="Source\SoundManager.h" />
     <ClInclude Include="Source\SpriteAnimation.h" />
     <ClInclude Include="Source\Strategy.h" />
     <ClInclude Include="Source\Strategy_Kill.h" />
@@ -133,13 +141,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;_DEBUG;_CONSOLE;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/lua/include;$(SolutionDir)/irrKlang/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-msvc100;$(SolutionDir)/glew/lib;$(SolutionDir)/lua/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;lua5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-msvc100;$(SolutionDir)/glew/lib;$(SolutionDir)/lua/lib;$(SolutionDir)/irrKlang/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;lua5.1.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

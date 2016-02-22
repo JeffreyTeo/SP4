@@ -120,10 +120,22 @@
     <ClCompile Include="Source\OptionState.cpp">
       <Filter>Game State Management</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Highscore.cpp">
+    <ClCompile Include="Source\Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PathFinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\HighscoreData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneManager2DforScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Highscore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -221,12 +233,6 @@
     <ClInclude Include="Source\LuaUsage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Save.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Player.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SpriteAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,10 +251,28 @@
     <ClInclude Include="Source\OptionState.h">
       <Filter>Game State Management</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Highscore.h">
+    <ClInclude Include="Source\Particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\HighscoreData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PathFinding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneManager2DforScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Highscore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

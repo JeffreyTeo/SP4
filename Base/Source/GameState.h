@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameStateManager.h"
-
 #define GSM_DEBUG_MODE TRUE
 
 class CGameState

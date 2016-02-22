@@ -9,13 +9,13 @@ CHighscoreState CHighscoreState::theHighscoreState;
 
 void CHighscoreState::Init()
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(800, 600,Highscorescreen);
 	theScene->Init();
 }
 
 void CHighscoreState::Init(const int width, const int height)
 {
-	theScene = new CSceneManager2D(width, height);
+	theScene = new SceneManagerLevel2DforScreen(width, height, Highscorescreen);
 	theScene->Init();
 }
 
@@ -61,5 +61,5 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 
 void CHighscoreState::Draw(CGameStateManager* theGSM)
 {
-	theScene->RenderHighscore();
+	theScene->Render();
 }

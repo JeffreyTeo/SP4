@@ -9,13 +9,13 @@ CInstructionState CInstructionState::theInstructionState;
 
 void CInstructionState::Init()
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(800, 600,Instructionscreen);
 	theScene->Init();
 }
 
 void CInstructionState::Init(const int width, const int height)
 {
-	theScene = new CSceneManager2D(800, 600);
+	theScene = new SceneManagerLevel2DforScreen(width, height, Instructionscreen);
 	theScene->Init();
 }
 
@@ -60,5 +60,5 @@ void CInstructionState::Update(CGameStateManager* theGSM, const double m_dElapse
 
 void CInstructionState::Draw(CGameStateManager* theGSM)
 {
-	theScene->RenderInstructions();
+	theScene->Render();
 }

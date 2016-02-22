@@ -30,5 +30,5 @@ protected:
 
 private:
 	static CHighscoreState theHighscoreState;
-	CSceneManager2D* theScene;
+	SceneManagerLevel2DforScreen* theScene;
 };

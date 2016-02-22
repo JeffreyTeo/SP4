@@ -1,3 +1,4 @@
+<<<<<<< 8472275cde1bb8d9f51fdf7d570bfe4bbf8c39e8
 c:\users\angus_000\desktop\documents\sp4\common\debug\vc120.pdb
 c:\users\angus_000\desktop\documents\sp4\common\debug\vc120.idb
 c:\users\angus_000\desktop\documents\sp4\common\debug\mathutility.obj
@@ -13,3 +14,20 @@ c:\users\angus_000\desktop\documents\sp4\common\debug\common.tlog\cl.write.1.tlo
 c:\users\angus_000\desktop\documents\sp4\common\debug\common.tlog\lib-link.read.1.tlog
 c:\users\angus_000\desktop\documents\sp4\common\debug\common.tlog\lib-link.write.1.tlog
 c:\users\angus_000\desktop\documents\sp4\common\debug\common.tlog\lib.command.1.tlog
+=======
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\vc120.pdb
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\vc120.idb
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\mathutility.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\matrixstack.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\mtx44.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\timer.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\vector2.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\vector3.obj
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\debug\common.lib
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\cl.command.1.tlog
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\cl.read.1.tlog
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\cl.write.1.tlog
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\lib-link.read.1.tlog
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\lib-link.write.1.tlog
+c:\users\teo\desktop\new folder\new folder\sp4\sp4\sp4\common\debug\common.tlog\lib.command.1.tlog
+>>>>>>> aa10780caeb18f63f77e530ea66799623a4f622e

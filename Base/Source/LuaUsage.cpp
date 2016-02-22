@@ -27,6 +27,41 @@ void LuaUsage::LuaUsageClose()
 	lua_close(LuaState);
 }
 
+int LuaUsage::GetArrayValue(string Values, int index)
+{
+	int returnvalue = 0;
+	int ReturnIndication = 0;
+	lua_getglobal(LuaState, Values.c_str());
+	if (lua_isnil(LuaState, -1))
+	{
+	}
+	lua_pushnil(LuaState);
+	while (lua_next(LuaState, -2)){
+		returnvalue = (int)lua_tonumber(LuaState, -1);
+		ReturnIndication++;
+		lua_pop(LuaState, 1);
+		if (ReturnIndication == index)
+			break;
+	}
+	int n = lua_gettop(LuaState);
+	lua_pop(LuaState, n);
+	return returnvalue;
+}
+float LuaUsage::GetFloatValue(string Values)
+{
+	float returnvalue = 0;
+
+	lua_getglobal(LuaState, Values.c_str());
+	if (!lua_isnumber(LuaState, -1))
+	{
+		LuaErrorLog(Values);
+		exit(EXIT_FAILURE);
+	}
+	returnvalue = (float)lua_tonumber(LuaState, -1);
+	int n = lua_gettop(LuaState);
+	lua_pop(LuaState, n);
+	return returnvalue;
+}
 int LuaUsage::GetIntegerValue(string Values)
 {
 	int returnvalue = 0;
@@ -37,14 +72,9 @@ int LuaUsage::GetIntegerValue(string Values)
 		LuaErrorLog(Values);
 		exit(EXIT_FAILURE);
 	}
-	ofstream Error("ErrorLog.lua");
-	if (Error.is_open())
-	{
-		Error << "==ErrorLog==\n";
-		Error << "Error with";
-		Error.close();
-	}
 	returnvalue = (int)lua_tonumber(LuaState, -1);
+	int n = lua_gettop(LuaState);
+	lua_pop(LuaState, n);
 	return returnvalue;
 }
 
@@ -59,6 +89,8 @@ bool LuaUsage::GetBooleanValue(string Values)
 		exit(EXIT_FAILURE);
 	}
 	returnvalue = (bool)lua_toboolean(LuaState, -1);
+	int n = lua_gettop(LuaState);
+	lua_pop(LuaState, n);
 	return returnvalue;
 }
 
@@ -73,6 +105,8 @@ string LuaUsage::GetStringValue(string Values)
 		exit(EXIT_FAILURE);
 	}
 	returnvalue = (string)lua_tostring(LuaState, -1);
+	int n = lua_gettop(LuaState);
+	lua_pop(LuaState, n);
 	return returnvalue;
 }
 
@@ -86,20 +120,17 @@ char LuaUsage::GetCharacterValue(string Values)
 		exit(EXIT_FAILURE);
 	}
 	holder = (char)lua_tostring(LuaState, -1);
-
-	
-
 	return 0;
 }
 
 void LuaUsage::LuaErrorLog(string Errorstring)
 {
-	ofstream Error("ErrorLog.lua");
+	ofstream Error("Lua/ErrorLog.lua");
 	if (Error.is_open())
 	{
-		Error << "==ErrorLog==";
-		Error << "Error with";
-		Error << Errorstring;
+		Error << "--ErrorLog--" << endl;
+		Error << "Error with" << endl;
+		Error << Errorstring << endl;
 		Error.close();
 	}
 }

@@ -30,5 +30,5 @@ protected:
 
 private:
 	static CInstructionState theInstructionState;
-	CSceneManager2D* theScene;
+	SceneManagerLevel2DforScreen* theScene;
 };

@@ -17,6 +17,9 @@ public:
 	void LuaUsageInit(string LuaFileName);
 	void LuaUsageClose();
 
+
+	int GetArrayValue(string Values, int index);
+	float GetFloatValue(string Values);
 	int GetIntegerValue(string Values);
 	bool GetBooleanValue(string Values);
 	string GetStringValue(string Values);

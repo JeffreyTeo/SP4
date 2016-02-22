@@ -6,6 +6,7 @@
 #include "playstate.h"
 #include "menustate.h"
 #include "LuaUsage.h"
+#include "SceneManager2DforScreen.h"
 
 class Application
 {

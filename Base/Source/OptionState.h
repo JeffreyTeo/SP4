@@ -33,6 +33,6 @@ protected:
 
 private:
 	static COptionState theOptionState;
-	CSceneManager2D* theScene;
+	SceneManagerLevel2DforScreen* theScene;
 	int Select;
 };

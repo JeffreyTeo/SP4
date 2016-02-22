@@ -1,4 +1,4 @@
-#include "SceneManager2D.h"
+#include "SceneManager2DforScreen.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -9,15 +9,10 @@
 #include <sstream>
 #include "Strategy_Kill.h"
 
-CSceneManager2D::CSceneManager2D()
+SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen()
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
-, m_particle(NULL)
-, m_particle2(NULL)
-, Playfield(NULL)
 , tempsound(0.5)
-, m_SpriteAnimationLoad(NULL)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -35,21 +30,17 @@ CSceneManager2D::CSceneManager2D()
 {
 }
 
-CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_height)
+SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen(const int m_window_width, const int m_window_height, const int m_screenvalue)
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
-, m_particle(NULL)
-, m_particle2(NULL)
-, Playfield(NULL)
 , tempsound(0.5)
-, m_SpriteAnimationLoad(NULL)
 {
+	this->m_screenvalue = m_screenvalue;
 	this->m_windowWidth = m_window_width;
 	this->m_windowHeight = m_window_height;
 }
 
-CSceneManager2D::~CSceneManager2D()
+SceneManagerLevel2DforScreen::~SceneManagerLevel2DforScreen()
 {
 	if (m_player)
 	{
@@ -63,54 +54,12 @@ CSceneManager2D::~CSceneManager2D()
 		m_save = NULL;
 	}
 
-	if (Playfield)
-	{
-		delete Playfield;
-		Playfield = NULL;
-	}
-
-	if (m_SpriteAnimationLoad)
-	{
-		delete m_SpriteAnimationLoad;
-		m_SpriteAnimationLoad = NULL;
-	}
-	/*
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation;
-		m_spriteAnimation = NULL;
-	}*/
-	/*
-	for (int i=0; i<10; i++)
-	{
-	delete theArrayOfGoodies[i];
-	}
-	delete theArrayOfGoodies;
-
-	if (theEnemy)
-	{
-	delete theEnemy;
-	theEnemy = NULL;
-	}
-
-	if (m_cMap)
-	{
-	delete m_cMap;
-	m_cMap = NULL;
-	}
-
-	if (m_cMinimap)
-	{
-	delete m_cMinimap;
-	m_cMinimap = NULL;
-	}
-	*/
 }
 
-void CSceneManager2D::Init()
+void SceneManagerLevel2DforScreen::Init()
 {
-	// Blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	// Black background
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
@@ -187,7 +136,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
-	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1,0.0f), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
 	meshList[GEO_HIGHSCORE] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_HIGHSCORE]->textureID = LoadTGA("Image//Highscore.tga");
@@ -202,70 +151,10 @@ void CSceneManager2D::Init()
 	meshList[GEO_INSTRUCTION] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONS", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_INSTRUCTION]->textureID = LoadTGA("Image//Instructions.tga");
 
-
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
-
-	m_SpriteAnimationLoad = new LuaUsage();
-	m_SpriteAnimationLoad->LuaUsageInit("Lua/Sprite.lua");
-	confettiRightside = false;
-	m_particle = new Particle();
-	m_particle2 = new Particle();
-
-	SetParticleStyle(m_particle, PARTICLE_STYLE::DROPDOWN);
-	SetParticleStyle(m_particle2, PARTICLE_STYLE::DROPDOWN);
-	//SetParticleStyle(m_particle, PARTICLE_STYLE::CONFETTI);
-	//SetParticleStyle(m_particle2, PARTICLE_STYLE::CONFETTI);
+	m_alpha = 1.0f;
 	
-	Math::InitRNG();
-	for (int i = 0; i < m_particle->GetSize(); i++)
-	{
-		SetSpriteAnimation(m_particle, i);
-	}
-	
-	for (int i = 0; i < m_particle2->GetSize(); i++)
-	{
-		SetSpriteAnimation(m_particle2,i);
-	}
-	m_SpriteAnimationLoad->LuaUsageClose();
-	/*
-	// Initialise and load the tile map
-	m_cMap = new CMap();
-	m_cMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cMap->LoadMap( "Image//MapDesign.csv" );
-
-	// Initialise and load the REAR tile map
-	m_cRearMap = new CMap();
-	m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
-
-	// Initialise the hero's position
-	theHero = new CPlayerInfo();
-	theHero->SetPos_x(50);
-	theHero->SetPos_y(100);
-
-	// Load the texture for minimap
-	m_cMinimap = new CMinimap();
-	m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-	m_cMinimap->GetBackground()->textureID = LoadTGA("Image//grass_darkgreen.tga");
-	m_cMinimap->SetBorder( MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f) );
-	m_cMinimap->SetAvatar( MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1.f) );
-
-	// Set the strategy for the enemy
-	theEnemy = new CEnemy();
-	theEnemy->ChangeStrategy( NULL, false);
-	theEnemy->SetPos_x(575);
-	theEnemy->SetPos_y(100);
-
-	theArrayOfGoodies = new CGoodies*[10];
-	for (int i=0; i<10; i++)
-	{
-		theArrayOfGoodies[i] = theGoodiesFactory.Create( TREASURECHEST );
-		theArrayOfGoodies[i]->SetPos( 150 + i*25, 150 );
-		theArrayOfGoodies[i]->SetMesh(MeshBuilder::Generate2DMesh("GEO_TILE_TREASURECHEST", Color(1, 1, 1), 0, 0, 25, 25));
-		theArrayOfGoodies[i]->SetTextureID(LoadTGA("Image//tile4_treasurechest.tga"));
-	}
-	*/
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -277,15 +166,10 @@ void CSceneManager2D::Init()
 	m_player = new Player();
 	m_player->PlayerInit("Lua/Player.lua");
 
-	//initailise grid system
-	Playfield = new GridSystem();
-	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
-	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 5, 5);
-
 	AddHighscore();
 }
 
-void CSceneManager2D::AddHighscore()
+void SceneManagerLevel2DforScreen::AddHighscore()
 {
 	const int MAX_SCORES = 5;
 	string values[MAX_SCORES];
@@ -294,71 +178,7 @@ void CSceneManager2D::AddHighscore()
 		theScore[i].ReadTextFile("highscore.txt");
 	}
 }
-void CSceneManager2D::SetParticleStyle(Particle *ParticleVector, int ParticleStyle)
-{
-
-	if (ParticleStyle == PARTICLE_STYLE::DROPDOWN)
-		ParticleVector->ParticleInit(20, 0, m_windowHeight, PARTICLE_STYLE::DROPDOWN);
-	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside == false)
-	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.125, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
-		confettiRightside = true;
-	}
-	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside)
-	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.875, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
-		ParticleVector->SetConfettiRightSide(confettiRightside);
-	}
-		
-}
-
-void CSceneManager2D::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
-{
-	/*meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", 6, 3);
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	m_spriteAnimation->m_anim = new Animation();
-	if (m_spriteAnimation)
-	{
-		Math::InitRNG();
-		m_spriteAnimation->m_anim->Set(0, 16, 0, 0.5f);
-		//m_spriteAnimation->x = Math::RandIntMinMax(100,700);//64;
-		//	m_spriteAnimation->y = 600 + Math::RandIntMinMax(100, 200);
-
-		m_spriteAnimation->x = m_particle->GetX();
-		m_spriteAnimation->y = m_particle->GetY();
-
-		m_spriteAnimation->speed = Math::RandIntMinMax(100, 800);
-		m_spriteAnimation->index = i;
-		m_particle->SpritePushBack(m_spriteAnimation, /*0*///m_spriteAnimation->y + Math::RandIntMinMax(-600, 300), 400/*0*/);
-		/*m_particle->SpritePushBack(m_spriteAnimation, 0, 0, i);*/
-	//}
-	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star",Color(), m_SpriteAnimationLoad->GetIntegerValue("StarRow"), m_SpriteAnimationLoad->GetIntegerValue("StarCol"));
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	m_spriteAnimation->m_anim = new Animation();
-	if (m_spriteAnimation)
-	{
-		m_spriteAnimation->m_anim->Set(0, 18, 0, Math::RandFloatMinMax( (m_SpriteAnimationLoad->GetFloatValue("StarMinTime")) , (m_SpriteAnimationLoad->GetFloatValue("StarMaxTime")) ));
-		if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::DROPDOWN)
-		{
-			m_spriteAnimation->x = m_spriteAnimation->x + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth - m_windowWidth*0.125);//64;
-			m_spriteAnimation->y = ParticleVector->GetY() + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth*0.25);
-			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
-			m_spriteAnimation->index = SAIndex;
-			ParticleVector->SpritePushBack(m_spriteAnimation, 0,0);
-		}
-		else if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::CONFETTI)
-		{
-			m_spriteAnimation->x = ParticleVector->GetX();
-			m_spriteAnimation->y = ParticleVector->GetY();
-			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
-			m_spriteAnimation->index = SAIndex;
-			ParticleVector->SpritePushBack(m_spriteAnimation, m_spriteAnimation->y + Math::RandIntMinMax(0, m_windowWidth*0.125+ m_windowWidth*0.25), m_windowWidth*0.5);
-		}
-	}
-}
-void CSceneManager2D::Update(double dt)
+void SceneManagerLevel2DforScreen::Update(double dt)
 {
 	//cout << m_player->GetAmtOfClearedLevelEasy() << " " << m_player->GetAmtOfClearedLevelNormal() << " " << m_player->GetAmtOfClearedLevelHard();
 	if(Application::IsKeyPressed('1'))
@@ -370,14 +190,16 @@ void CSceneManager2D::Update(double dt)
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
+	if (Application::IsKeyPressed('5'))
+		m_alpha += 0.05f;
+	if (Application::IsKeyPressed('6'))
+		m_alpha -= 0.05f;
+
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
-	cout << Sound.volume << endl;
+	//cout << Sound.volume << endl;
 
 	camera.Update(dt);
-	//m_spriteAnimation->Update(dt);
-	m_particle->Update(dt);
-	m_particle2->Update(dt);
 	/*
 
 	// Update the hero
@@ -392,33 +214,8 @@ void CSceneManager2D::Update(double dt)
 	if(Application::IsKeyPressed(' '))
 	this->theHero->SetToJumpUpwards(true);
 	theHero->HeroUpdate(m_cMap);
-
-	// ReCalculate the tile offsets
-	tileOffset_x = (int) (theHero->GetMapOffset_x() / m_cMap->GetTileSize());
-	if (tileOffset_x + m_cMap->GetNumOfTiles_Width() > m_cMap->getNumOfTiles_MapWidth())
-	tileOffset_x = m_cMap->getNumOfTiles_MapWidth() - m_cMap->GetNumOfTiles_Width();
-
-	// if the hero enters the kill zone, then enemy goes into kill strategy mode
-	int checkPosition_X = (int) ((theHero->GetMapOffset_x() + theHero->GetPos_x()) / m_cMap->GetTileSize());
-	int checkPosition_Y = m_cMap->GetNumOfTiles_Height() - (int) ( (theHero->GetPos_y() + m_cMap->GetTileSize()) / m_cMap->GetTileSize());
-	if (m_cMap->theScreenMap[checkPosition_Y][checkPosition_X] == 10)
-	{
-	theEnemy->ChangeStrategy( new CStrategy_Kill());
-	}
-	else if (m_cMap->theScreenMap[checkPosition_Y][checkPosition_X] == 11)
-	{
-	theEnemy->ChangeStrategy(NULL);
-	//		theEnemy->ChangeStrategy( new CStrategy_Kill());
-	}
-	else
-	{
-	//theEnemy->ChangeStrategy(NULL);
-	}
-
-	// Update the enemies
-	theEnemy->SetDestination( theHero->GetPos_x(), theHero->GetPos_y() );
-	theEnemy->Update( m_cMap );
 	*/
+
 
 	fps = (float)(1.f / dt);
 }
@@ -426,7 +223,7 @@ void CSceneManager2D::Update(double dt)
 /********************************************************************************
  Update Camera position
  ********************************************************************************/
-void CSceneManager2D::UpdateCameraStatus(const unsigned char key, const bool status)
+void SceneManagerLevel2DforScreen::UpdateCameraStatus(const unsigned char key, const bool status)
 {
 	//camera.UpdateStatus(key, status);
 
@@ -436,22 +233,14 @@ void CSceneManager2D::UpdateCameraStatus(const unsigned char key, const bool sta
 /********************************************************************************
  Update Weapon status
  ********************************************************************************/
-void CSceneManager2D::UpdateMouseStatus(const unsigned char key)
+void SceneManagerLevel2DforScreen::UpdateMouseStatus(const unsigned char key)
 {
-	if (key == WA_LEFT_CLICKED)
-	{
-		//get cursor position
-		double x, y;
-		Application::GetMousePos(x, y);
-		Playfield->UpdateGrid(Vector3(x, y, 0));
-		cout << x << ", " << y << endl;
-	}
 }
 
 /********************************************************************************
  Render text onto the screen
  ********************************************************************************/
-void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha)
+void SceneManagerLevel2DforScreen::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha)
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
@@ -476,6 +265,7 @@ void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color col
 					glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
 					glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
 				}
+
 				//glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
 				//glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
 				//	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
@@ -502,7 +292,7 @@ void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color col
 /********************************************************************************
  Render 2D Mesh
  ********************************************************************************/
-void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealpha, int size, int x, int y, bool rotate, bool flip)
+void SceneManagerLevel2DforScreen::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealpha, int size, int x, int y, bool rotate, bool flip)
 {
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
@@ -554,38 +344,16 @@ void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealph
 /********************************************************************************
  Render the background
  ********************************************************************************/
-void CSceneManager2D::RenderBackground()
+void SceneManagerLevel2DforScreen::RenderBackground()
 {
 	// Render the crosshair
 	Render2DMesh(meshList[GEO_BACKGROUND], false, false, 1);
 }
 
-void CSceneManager2D::RenderGridSystem()
-{
-
-	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
-	{
-		modelStack.PushMatrix();
-		//get position of a grid in the vector 
-		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
-		if (Playfield->GetGridsVec()[a] ->GetType() == Grid::GridType::EMPTY)
-			Render2DMesh(meshList[GEO_TILESTRUCTURE], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::CROSS)
-			Render2DMesh(meshList[GEO_TILEGROUND], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FILLED)
-			Render2DMesh(meshList[GEO_TILEHERO], false, false, 1, GridPos.x, GridPos.y);
-		
-		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
-		modelStack.PopMatrix();
-	}
-
-
-}
-
 /********************************************************************************
  Render this scene
  ********************************************************************************/
-void CSceneManager2D::Render()
+void SceneManagerLevel2DforScreen::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	Mtx44 perspective;
@@ -603,73 +371,118 @@ void CSceneManager2D::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	for (int i = 0; i < m_particle->GetSize(); i++)
+	switch (m_screenvalue)
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(m_particle->theSpriteHolder[i], false, false, 50, m_particle->theSpriteHolder[i]->x, m_particle->theSpriteHolder[i]->y);
-		Render2DMesh(m_particle2->theSpriteHolder[i], false, false, 50, m_particle2->theSpriteHolder[i]->x, m_particle2->theSpriteHolder[i]->y);
-		modelStack.PopMatrix();
+	case Menuscreen:
+	{
+					   RenderMainMenu();
+					   break;
 	}
-	/*
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
-	modelStack.PopMatrix();*/
-	/*
-	// Render the background image
-	RenderBackground();
-	// Render the rear tile map
-	RenderRearTileMap();
-	// Render the tile map
-	RenderTileMap();
-	// Render the goodies
-	RenderGoodies();
-	*/
-
-	//render the grid system and the corresponding image for the each grid
-	RenderGridSystem();
-
-	//On screen text
-	/*
-	std::ostringstream ss;
-	ss.precision(5);
-	ss << "theEnemy: " << theEnemy->GetPos_x() << ", " << theEnemy->GetPos_y();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6);
-	std::ostringstream sss;
-	sss.precision(5);
-	sss << "mapOffset_x: "<<theHero->GetMapOffset_x();
-	RenderTextOnScreen(meshList[GEO_TEXT], sss.str(), Color(0, 1, 0), 30, 0, 30);
-	*/
+	case Instructionscreen:
+	{
+							  RenderInstructions();
+							  break;
+	}
+	case Highscorescreen:
+	{
+							RenderHighscore();
+							break;
+	}
+	case Optionscreen:
+	{
+						 RenderOption();
+						 break;
+	}
+	}
 	
-	std::ostringstream ss;
+
+	/*std::ostringstream ss;
 	ss.precision(5);
 	ss << "test text: " << " 9999999 ";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0, 0.5f), 30, 0, 6, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6 ,false);*/
+}
+
+
+void SceneManagerLevel2DforScreen::RenderMainMenu()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_MENU], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+
+	if (PlaySelect)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+		modelStack.PopMatrix();
+	}
+	else if (InstructionSelect)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+		modelStack.PopMatrix();
+	}
+	else if (HighscoreSelect)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
+		modelStack.PopMatrix();
+	}
+	else if (OptionSelect)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 210, 110);
+		modelStack.PopMatrix();
+	}
+	else if (ExitSelect)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 260, 50);
+		modelStack.PopMatrix();
+	}
+}
+
+void SceneManagerLevel2DforScreen::RenderHighscore()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_HIGHSCORE], false, false);
+
+	std::ostringstream ss;
+	const int size = 5;
+	for (int i = 0; i < size; i++)
+	{
+		ss.str(std::string());
+		ss << i + 1 << ". " << theScore[i].GetAllHighscores(i);
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1), 60, 300, 300 - (i * 40), false);
+	}
+	modelStack.PopMatrix();
+}
+
+void SceneManagerLevel2DforScreen::RenderOption()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_SOUND], false, false);
+
+	std::ostringstream ssVol;
+	ssVol << tempsound;
+	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(0, 1, 0), 30, 300, 300, false);
+
+	modelStack.PopMatrix();
+}
+
+void SceneManagerLevel2DforScreen::RenderInstructions()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_INSTRUCTION], false, false);
+	modelStack.PopMatrix();
 }
 
 /********************************************************************************
  Exit this scene
  ********************************************************************************/
-void CSceneManager2D::Exit()
+void SceneManagerLevel2DforScreen::Exit()
 {
 	m_save->SavePlayer(m_player);
-	if (m_particle)
-	{
-		delete m_particle;
-		m_particle = NULL;
-	}
-	if (m_particle2)
-	{
-		delete m_particle2;
-		m_particle2 = NULL;
-	}
-
-
-	/*
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation->m_anim;
-		m_spriteAnimation->m_anim = NULL;
-	}*/
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
@@ -685,7 +498,7 @@ void CSceneManager2D::Exit()
 
 /*
 
-void CSceneManager2D::RenderTileMap()
+void SceneManagerLevel2DforScreen::RenderTileMap()
 {
 	int m = 0;
 	for (int i = 0; i < m_cMap->GetNumOfTiles_Height(); i++)
@@ -753,7 +566,7 @@ void CSceneManager2D::RenderTileMap()
 }
 
 
-void CSceneManager2D::RenderRearTileMap()
+void SceneManagerLevel2DforScreen::RenderRearTileMap()
 {
 	rearWallOffset_x = (int)(theHero->GetMapOffset_x() / 2);
 	rearWallOffset_y = 0;
@@ -781,7 +594,7 @@ void CSceneManager2D::RenderRearTileMap()
 }
 
 
-void CSceneManager2D::RenderGoodies()
+void SceneManagerLevel2DforScreen::RenderGoodies()
 {
 	// Render the goodies
 	for (int i = 0; i<10; i++)
