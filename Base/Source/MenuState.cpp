@@ -4,7 +4,8 @@ using namespace std;
 #include "GameStateManager.h"
 #include "highscorestate.h"
 #include "optionstate.h"
-#include "playstate.h"
+//#include "playstate.h"
+#include "LevelShopSelectionState.h"
 #include "gamestate.h"
 #include "menustate.h"
 #include "instructionstate.h"
@@ -36,7 +37,7 @@ void CMenuState::Pause()
 {
 }
 
-void CMenuState::Resume()
+void CMenuState::Resume(bool m_resume)
 {
 }
 
@@ -61,87 +62,116 @@ void CMenuState::Update(CGameStateManager* theGSM)
 void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (Application::IsKeyPressed(VK_DOWN))
+	if (theScene->ReturnScreenTransition() == false)
 	{
-		if (Select < 5) // Max. Number of Options
+		if (Application::IsKeyPressed(VK_DOWN))
 		{
-			Select++;	// Move the cursor down
-			Sleep(150);
-			cout << Select << endl;
+			if (Select < 5) // Max. Number of Options
+			{
+				Select++;	// Move the cursor down
+				Sleep(150);
+				cout << Select << endl;
+			}
+		}
+		else if (Application::IsKeyPressed(VK_UP))
+		{
+			if (Select > 1) // Selection is not the first one.
+			{
+				Select--;
+				Sleep(150);
+				cout << Select << endl;
+			}
 		}
 	}
-	if (Application::IsKeyPressed(VK_UP))
+	switch (Select)
 	{
-		if (Select > 1) // Selection is not the first one.
-		{
-			Select--;
-			Sleep(150);
-			cout << Select << endl;
-		}
+	case 1:
+	{
+			  theScene->PlaySelect = true;
+			  theScene->InstructionSelect = false;
+			  theScene->HighscoreSelect = false;
+			  theScene->OptionSelect = false;
+			  theScene->ExitSelect = false;
+			  break;
+	}
+	case 2:
+	{
+			  theScene->PlaySelect = false;
+			  theScene->InstructionSelect = true;
+			  theScene->HighscoreSelect = false;
+			  theScene->OptionSelect = false;
+			  theScene->ExitSelect = false;
+			  break;
+	}
+	case 3:
+	{
+			  theScene->PlaySelect = false;
+			  theScene->InstructionSelect = false;
+			  theScene->HighscoreSelect = true;
+			  theScene->OptionSelect = false;
+			  theScene->ExitSelect = false;
+			  break;
+	}
+	case 4:
+	{
+			  theScene->PlaySelect = false;
+			  theScene->InstructionSelect = false;
+			  theScene->HighscoreSelect = false;
+			  theScene->OptionSelect = true;
+			  theScene->ExitSelect = false;
+			  break;
+
+	}
+	case 5:
+	{
+			  theScene->PlaySelect = false;
+			  theScene->InstructionSelect = false;
+			  theScene->HighscoreSelect = false;
+			  theScene->OptionSelect = false;
+			  theScene->ExitSelect = true;
+			  break;
+	}
 	}
 
-	if (Select == 1) // Play
-	{
-		theScene->PlaySelect = true;
-		theScene->InstructionSelect = false;
-		theScene->HighscoreSelect = false;
-		theScene->OptionSelect = false;
-		theScene->ExitSelect = false;
-	}
-	else if (Select == 2) // Instructions
-	{
-		theScene->PlaySelect = false;
-		theScene->InstructionSelect = true;
-		theScene->HighscoreSelect = false;
-		theScene->OptionSelect = false;
-		theScene->ExitSelect = false;
-	}
-	else if (Select == 3) // Highscore
-	{
-		theScene->PlaySelect = false;
-		theScene->InstructionSelect = false;
-		theScene->HighscoreSelect = true;
-		theScene->OptionSelect = false;
-		theScene->ExitSelect = false;
-	}
-	else if (Select == 4) // Options
-	{
-		theScene->PlaySelect = false;
-		theScene->InstructionSelect = false;
-		theScene->HighscoreSelect = false;
-		theScene->OptionSelect = true;
-		theScene->ExitSelect = false;
-	}
-	else if (Select == 5) // Exit
-	{
-		theScene->PlaySelect = false;
-		theScene->InstructionSelect = false;
-		theScene->HighscoreSelect = false;
-		theScene->OptionSelect = false;
-		theScene->ExitSelect = true;
-	}
 
-	if (Application::IsKeyPressed(VK_RETURN) || Application::IsKeyPressed(VK_SPACE))
+
+	if (Application::IsKeyPressed(VK_RETURN))
 	{
-		if (Select == 1)
+		if (Select != 5)
 		{
-			theGSM->ChangeState(CPlayState::Instance());
-		}
-		if (Select == 2)
-		{
-			theGSM->ChangeState(CInstructionState::Instance());
-		}
-		if (Select == 3)
-		{
-			theGSM->ChangeState(CHighscoreState::Instance());
-		}
-		if (Select == 4)
-		{
-			theGSM->ChangeState(COptionState::Instance());
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
 		}
 		if (Select == 5)
 		{
 			theGSM->Quit();
+		}
+	}
+
+	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+	{
+		switch (Select)
+		{
+		case 1:
+		{
+				  theGSM->ChangeState(CLevelShopSelectionState::Instance());
+				  break;
+		}
+		case 2:
+		{
+				  theGSM->ChangeState(CInstructionState::Instance());
+				  break;
+		}
+		case 3:
+		{
+				  theGSM->ChangeState(CHighscoreState::Instance());
+				  break;
+		}
+		case 4:
+		{
+				  theGSM->ChangeState(COptionState::Instance());
+				  break;
+		}
 		}
 	}
 }

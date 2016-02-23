@@ -8,7 +8,10 @@ static const short Menuscreen = 1;
 static const short Instructionscreen = 2;
 static const short Highscorescreen = 3;
 static const short Optionscreen = 4;
-static const short Shopscreen = 5;
+static const short LevelShopSelectionscreen = 5;
+static const short Shopscreen = 6;
+static const short LevelSelectscreen = 7;
+static const short Pausescreen = 8;
 
 class CGameState;
 
@@ -25,7 +28,7 @@ public:
 
 	void ChangeState(CGameState* state);
 	void PushState(CGameState* state);
-	void PopState();
+	void PopState(bool m_resume);
 
 	void HandleEvents();
 	void HandleEvents(const unsigned char key, const bool status = true);

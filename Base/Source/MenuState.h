@@ -13,7 +13,7 @@ public:
 	void Cleanup();
 
 	void Pause();
-	void Resume();
+	void Resume(bool m_resume);
 
 	void HandleEvents(CGameStateManager* theGSM);
 	void HandleEvents(CGameStateManager* theGSM, const unsigned char key, const bool status = true);

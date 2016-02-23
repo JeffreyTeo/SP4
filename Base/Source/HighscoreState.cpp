@@ -30,7 +30,7 @@ void CHighscoreState::Pause()
 {
 }
 
-void CHighscoreState::Resume()
+void CHighscoreState::Resume(bool m_resume)
 {
 }
 
@@ -53,7 +53,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM)
 
 void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
-	if (Application::IsKeyPressed(VK_BACK))
+	theScene->Update(m_dElapsedTime);
+	if (theScene->ReturnScreenTransition() == false)
+	{
+		if (Application::IsKeyPressed(VK_BACK))
+		{
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
+		}
+	}
+	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
 		theGSM->ChangeState(CMenuState::Instance());
 	}

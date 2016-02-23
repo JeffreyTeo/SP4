@@ -20,16 +20,22 @@ string Save::BoolToStringConversion(bool convert)
 
 void Save::SavePlayer(Player* playerinfo)
 {
-	ofstream SaveFile("Test/Player.lua");
+	ofstream SaveFile("Lua/Player.lua");
 	if (SaveFile.is_open())
 	{
 		SaveFile << "--Player Save File--" << endl;
-		SaveFile << "EASYLEVELSCLEARED = " << playerinfo->GetAmtOfClearedLevelEasy() << endl;
-		SaveFile << "NORMALLEVELSCLEARED = " << playerinfo->GetAmtOfClearedLevelNormal() << endl;
-		SaveFile << "HARDLEVELSCLEARED = " << playerinfo->GetAmtOfClearedLevelHard() << endl;
-		SaveFile << "EASYLEVELUNLOCKED = " << BoolToStringConversion(playerinfo->GetEasyLevelUnlocked()) << endl;
-		SaveFile << "NORMALLEVELUNLOCKED = " << BoolToStringConversion(playerinfo->GetNormalLevelUnlocked()) << endl;
-		SaveFile << "HARDLEVELUNLOCKED = " << BoolToStringConversion(playerinfo->GetHardLevelUnlocked()) << endl;
+		SaveFile << "AmtOfLevelDiff = " << playerinfo->GetAmtOfLevelDiff() << endl;
+		SaveFile << "Player = {" << endl;
+		SaveFile << "		EASYLEVEL = {" << endl;
+		SaveFile << "		LevelCleared = " << playerinfo->GetAmtOfClearedLevelEasy() << "," << "LevelUnlocked = " << BoolToStringConversion(playerinfo->GetEasyLevelUnlocked()) << endl;
+		SaveFile << "		}," << endl;
+		SaveFile << "		NORMALLEVEL = {" << endl;
+		SaveFile << "		LevelCleared = " << playerinfo->GetAmtOfClearedLevelNormal() << "," << "LevelUnlocked = " << BoolToStringConversion(playerinfo->GetNormalLevelUnlocked()) << endl;
+		SaveFile << "		}," << endl;
+		SaveFile << "		HARDLEVEL = {" << endl;
+		SaveFile << "		LevelCleared = " << playerinfo->GetAmtOfClearedLevelHard() << "," << "LevelUnlocked = " << BoolToStringConversion(playerinfo->GetHardLevelUnlocked()) << endl;
+		SaveFile << "		}," << endl;
+		SaveFile << "}"  << endl;
 		SaveFile.close();
 	}
 }

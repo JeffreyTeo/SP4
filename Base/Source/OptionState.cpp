@@ -34,7 +34,7 @@ void COptionState::Pause()
 
 }
 
-void COptionState::Resume()
+void COptionState::Resume(bool m_resume)
 {
 
 }
@@ -55,6 +55,21 @@ void COptionState::Update(CGameStateManager* theGSM)
 
 void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
+	theScene->Update(m_dElapsedTime);
+	if (theScene->ReturnScreenTransition() == false)
+	{
+		if (Application::IsKeyPressed(VK_BACK))
+		{
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
+		}
+	}
+
+	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+	{
+		theGSM->ChangeState(CMenuState::Instance());
+	}
+
 	if (Application::IsKeyPressed(VK_DOWN))
 	{
 		if (Select < 2) // Max. Number of Options

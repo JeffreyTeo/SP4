@@ -71,6 +71,10 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_SELECT,
 		GEO_INSTRUCTION,
 		GEO_HIGHSCORE,
+		GEO_PAUSE,
+		GEO_LEVELSHOPSELECT,
+		GEO_SHOP,
+		GEO_LEVELSELECT,
 		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
@@ -107,6 +111,13 @@ public:
 	void RenderInstructions();
 	void RenderOption();
 	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
+
+	void SetScreenTransition(bool m_ScreenTransition);
+	bool ReturnScreenTransition();
+	void SetChangeScreen(bool m_ChangeScreen);
+	bool ReturnChangeScreen();
+
+	void PreInit();
 
 	// Menu States
 	bool PlaySelect;
@@ -146,6 +157,8 @@ private:
 	unsigned m_parameters[U_TOTAL];
 
 	float m_alpha;
+	bool m_ChangeScreen;
+	bool m_ScreenTransition;
 
 	Camera3 camera;
 

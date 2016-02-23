@@ -106,15 +106,14 @@ CSceneManager2D::~CSceneManager2D()
 	}
 	*/
 }
-
-void CSceneManager2D::Init()
+void CSceneManager2D::PreInit()
 {
-	// Blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	// Black background
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
-	
+
 	// Render mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -127,8 +126,8 @@ void CSceneManager2D::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	// Load the shaders
-	m_programID = LoadShaders( "Shader//Texture.vertexshader", "Shader//Fog.fragmentshader" );
-	
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Fog.fragmentshader");
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -147,6 +146,12 @@ void CSceneManager2D::Init()
 	glUseProgram(m_programID);
 
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+}
+
+
+void CSceneManager2D::Init()
+{
+	PreInit();
 
 	// Initialise the camera
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
@@ -207,7 +212,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
 	m_SpriteAnimationLoad = new LuaUsage();
-	m_SpriteAnimationLoad->LuaUsageInit("Lua/Sprite.lua");
+	m_SpriteAnimationLoad->LuaUsageInit("Sprite");
 	confettiRightside = false;
 	m_particle = new Particle();
 	m_particle2 = new Particle();
@@ -275,14 +280,12 @@ void CSceneManager2D::Init()
 	rotateAngle = 0;
 	m_save = new Save();
 	m_player = new Player();
-	m_player->PlayerInit("Lua/Player.lua");
+	m_player->PlayerInit("Player");
 
 	//initailise grid system
 	Playfield = new GridSystem();
 	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
 	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 5, 5);
-
-	AddHighscore();
 }
 
 void CSceneManager2D::AddHighscore()
@@ -333,13 +336,13 @@ void CSceneManager2D::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
 		m_particle->SpritePushBack(m_spriteAnimation, /*0*///m_spriteAnimation->y + Math::RandIntMinMax(-600, 300), 400/*0*/);
 		/*m_particle->SpritePushBack(m_spriteAnimation, 0, 0, i);*/
 	//}
-	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star",Color(), m_SpriteAnimationLoad->GetIntegerValue("StarRow"), m_SpriteAnimationLoad->GetIntegerValue("StarCol"));
+	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", Color(), m_SpriteAnimationLoad->get<int>("StarRow"), m_SpriteAnimationLoad->get<int>("StarCol"));
 	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
 	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
 	m_spriteAnimation->m_anim = new Animation();
 	if (m_spriteAnimation)
 	{
-		m_spriteAnimation->m_anim->Set(0, 18, 0, Math::RandFloatMinMax( (m_SpriteAnimationLoad->GetFloatValue("StarMinTime")) , (m_SpriteAnimationLoad->GetFloatValue("StarMaxTime")) ));
+		m_spriteAnimation->m_anim->Set(0, 18, 0, Math::RandFloatMinMax((m_SpriteAnimationLoad->get<float>("StarMinTime")), (m_SpriteAnimationLoad->get<float>("StarMaxTime"))));
 		if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::DROPDOWN)
 		{
 			m_spriteAnimation->x = m_spriteAnimation->x + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth - m_windowWidth*0.125);//64;
@@ -360,7 +363,6 @@ void CSceneManager2D::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
 }
 void CSceneManager2D::Update(double dt)
 {
-	//cout << m_player->GetAmtOfClearedLevelEasy() << " " << m_player->GetAmtOfClearedLevelNormal() << " " << m_player->GetAmtOfClearedLevelHard();
 	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 	if(Application::IsKeyPressed('2'))

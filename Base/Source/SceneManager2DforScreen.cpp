@@ -56,14 +56,14 @@ SceneManagerLevel2DforScreen::~SceneManagerLevel2DforScreen()
 
 }
 
-void SceneManagerLevel2DforScreen::Init()
+void SceneManagerLevel2DforScreen::PreInit()
 {
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
-	
+
 	// Render mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -76,8 +76,8 @@ void SceneManagerLevel2DforScreen::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	// Load the shaders
-	m_programID = LoadShaders( "Shader//Texture.vertexshader", "Shader//Fog.fragmentshader" );
-	
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Fog.fragmentshader");
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -96,6 +96,11 @@ void SceneManagerLevel2DforScreen::Init()
 	glUseProgram(m_programID);
 
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+}
+
+void SceneManagerLevel2DforScreen::Init()
+{
+	PreInit();
 
 	// Initialise the camera
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
@@ -153,8 +158,9 @@ void SceneManagerLevel2DforScreen::Init()
 
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
-	m_alpha = 1.0f;
-	
+	m_alpha = 0.0f;
+	m_ChangeScreen = false;
+	m_ScreenTransition = true;
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -164,8 +170,8 @@ void SceneManagerLevel2DforScreen::Init()
 	rotateAngle = 0;
 	m_save = new Save();
 	m_player = new Player();
-	m_player->PlayerInit("Lua/Player.lua");
-
+	m_player->PlayerInit("Player");
+	if (m_screenvalue == Highscorescreen)
 	AddHighscore();
 }
 
@@ -177,6 +183,23 @@ void SceneManagerLevel2DforScreen::AddHighscore()
 	{
 		theScore[i].ReadTextFile("highscore.txt");
 	}
+}
+void SceneManagerLevel2DforScreen::SetChangeScreen(bool m_ChangeScreen)
+{
+	this->m_ChangeScreen = m_ChangeScreen;
+}
+
+void SceneManagerLevel2DforScreen::SetScreenTransition(bool m_ScreenTransition)
+{
+	this->m_ScreenTransition = m_ScreenTransition;
+}
+bool SceneManagerLevel2DforScreen::ReturnScreenTransition()
+{
+	return this->m_ScreenTransition;
+}
+bool SceneManagerLevel2DforScreen::ReturnChangeScreen()
+{
+	return this->m_ChangeScreen;
 }
 void SceneManagerLevel2DforScreen::Update(double dt)
 {
@@ -194,6 +217,24 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 		m_alpha += 0.05f;
 	if (Application::IsKeyPressed('6'))
 		m_alpha -= 0.05f;
+
+
+
+	if (m_ScreenTransition && m_ChangeScreen)
+	{
+		m_alpha -= 0.04f;
+		if (m_alpha < 0)
+		{
+			m_ScreenTransition = false;
+		}
+	}
+	else if (m_ScreenTransition)
+	{
+		m_alpha += 0.04f;
+		if (m_alpha >= 1.0f)
+			m_ScreenTransition = false;
+	}
+
 
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
@@ -393,6 +434,26 @@ void SceneManagerLevel2DforScreen::Render()
 						 RenderOption();
 						 break;
 	}
+	case LevelShopSelectionscreen:
+	{
+									 RenderOption();
+									 break;
+	}
+	case Shopscreen:
+	{
+					   RenderInstructions();
+						break;
+	}
+	case LevelSelectscreen:
+	{
+							   RenderOption();
+							   break;
+	}
+	case Pausescreen:
+	{
+						RenderInstructions();
+						 break;
+	}
 	}
 	
 
@@ -445,16 +506,18 @@ void SceneManagerLevel2DforScreen::RenderMainMenu()
 void SceneManagerLevel2DforScreen::RenderHighscore()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_HIGHSCORE], false, false);
 
+	Render2DMesh(meshList[GEO_HIGHSCORE], false, true);
+	
 	std::ostringstream ss;
 	const int size = 5;
 	for (int i = 0; i < size; i++)
 	{
 		ss.str(std::string());
 		ss << i + 1 << ". " << theScore[i].GetAllHighscores(i);
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1), 60, 300, 300 - (i * 40), false);
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1, m_alpha), 60, 300, 300 - (i * 40), true);
 	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
@@ -490,7 +553,8 @@ void SceneManagerLevel2DforScreen::RenderOption()
 void SceneManagerLevel2DforScreen::RenderInstructions()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_INSTRUCTION], false, false);
+	Render2DMesh(meshList[GEO_INSTRUCTION], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
@@ -503,8 +567,7 @@ void SceneManagerLevel2DforScreen::Exit()
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
-
-		if (meshList[i] && i != GEO_SPRITE_ANIMATION)
+		if (meshList[i])
 			delete meshList[i];
 	}
 	glDeleteProgram(m_programID);

@@ -1,4 +1,3 @@
-
 #include "Application.h"
 
 //Include GLEW
@@ -265,13 +264,9 @@ void Application::Init()
 	//theAppLua->LuaUsageClose();
 
 	theAppLua = new LuaUsage();
-	theAppLua->LuaUsageInit("Lua/Application.lua");
-	int index = theAppLua->GetIntegerValue("Index");
-	m_window_height = theAppLua->GetArrayValue("WindowSize", index);
-	index--;
-	m_window_width = theAppLua->GetArrayValue("WindowSize", index);
-	
-	
+	theAppLua->LuaUsageInit("Application");
+	m_window_height = theAppLua->get<float>("WindowSize.ScreenSize.ScreenHeight");
+	m_window_width = theAppLua->get<float>("WindowSize.ScreenSize.ScreenWidth");
 	theAppLua->LuaUsageClose();
 
 
