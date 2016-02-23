@@ -17,6 +17,7 @@ void CMenuState::Init()
 	theScene = new SceneManagerLevel2DforScreen(800, 600, Menuscreen);
 	theScene->Init();
 	Select = 1;
+	theScene->SetSelection(Select);
 }
 
 void CMenuState::Init(const int width, const int height)
@@ -24,6 +25,7 @@ void CMenuState::Init(const int width, const int height)
 	theScene = new SceneManagerLevel2DforScreen(width, height, Menuscreen);
 	theScene->Init();
 	Select = 1;
+	theScene->SetSelection(Select);
 }
 
 void CMenuState::Cleanup()
@@ -87,48 +89,28 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	{
 	case 1:
 	{
-			  theScene->PlaySelect = true;
-			  theScene->InstructionSelect = false;
-			  theScene->HighscoreSelect = false;
-			  theScene->OptionSelect = false;
-			  theScene->ExitSelect = false;
+			  theScene->SetSelection(Select);
 			  break;
 	}
 	case 2:
 	{
-			  theScene->PlaySelect = false;
-			  theScene->InstructionSelect = true;
-			  theScene->HighscoreSelect = false;
-			  theScene->OptionSelect = false;
-			  theScene->ExitSelect = false;
+			  theScene->SetSelection(Select);
 			  break;
 	}
 	case 3:
 	{
-			  theScene->PlaySelect = false;
-			  theScene->InstructionSelect = false;
-			  theScene->HighscoreSelect = true;
-			  theScene->OptionSelect = false;
-			  theScene->ExitSelect = false;
+			  theScene->SetSelection(Select);
 			  break;
 	}
 	case 4:
 	{
-			  theScene->PlaySelect = false;
-			  theScene->InstructionSelect = false;
-			  theScene->HighscoreSelect = false;
-			  theScene->OptionSelect = true;
-			  theScene->ExitSelect = false;
+			  theScene->SetSelection(Select);
 			  break;
 
 	}
 	case 5:
 	{
-			  theScene->PlaySelect = false;
-			  theScene->InstructionSelect = false;
-			  theScene->HighscoreSelect = false;
-			  theScene->OptionSelect = false;
-			  theScene->ExitSelect = true;
+			  theScene->SetSelection(Select);
 			  break;
 	}
 	}

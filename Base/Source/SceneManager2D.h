@@ -19,7 +19,6 @@
 
 #include "Highscore.h"
 #include "HighscoreData.h"
-#include "Particle.h"
 #include "LuaUsage.h"
 
 // Goodies and Goodies Factory
@@ -101,8 +100,8 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
-	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
-	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
+	int GetWinCondition();
+	void SetQuitfrompause(bool m_Quitfrompause);
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
@@ -139,12 +138,14 @@ public:
 	};
 
 private:
+	bool m_Quitfrompause;
+
+	int m_WinCondition;
+
 	LuaUsage* m_SpriteAnimationLoad;
 	Player* m_player;
 	Save* m_save;
 	SpriteAnimation *m_spriteAnimation;
-	Particle *m_particle;
-	Particle *m_particle2;
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];

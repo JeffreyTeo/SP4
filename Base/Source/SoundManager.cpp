@@ -6,8 +6,7 @@ CSoundManager::CSoundManager(void)
 	engine = createIrrKlangDevice();
 	engine->setDefault3DSoundMinDistance(2.0f);
 	engine->setDefault3DSoundMaxDistance(5.0f);
-
-	volume = 0.5;
+	volume = 0.0f;
 	clicked = false;
 	gameVol = 5;
 }
@@ -16,7 +15,6 @@ CSoundManager::~CSoundManager(void)
 {
 	engine->drop();
 } 
-
 // Adjust Volume
 void CSoundManager::adjustVol()
 {

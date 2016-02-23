@@ -17,6 +17,12 @@ public:
 
 	string BoolToStringConversion(bool convert);
 	void SavePlayer(Player* playerinfo);
+	void SaveMusic(float sound);
+
+	string OpenTable(string text);
+	string SaveTableIndiv(string text, int integertosave = 0, string stringtosave = "");
+	string CloseTable(bool close = false);
+	void SaveIndividual();
 	//void SaveLevel(/*Level* Levelinfo*/);
 private:
 };

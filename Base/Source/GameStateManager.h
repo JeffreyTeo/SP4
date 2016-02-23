@@ -12,6 +12,7 @@ static const short LevelShopSelectionscreen = 5;
 static const short Shopscreen = 6;
 static const short LevelSelectscreen = 7;
 static const short Pausescreen = 8;
+static const short Winscreen = 9;
 
 class CGameState;
 

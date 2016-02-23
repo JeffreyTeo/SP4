@@ -20,6 +20,7 @@ void COptionState::Init(const int width, const int height)
 	Select = 1;
 
 	Sound.mainMenuBGM();
+	Sound.volume = theScene->tempsound;
 }
 
 void COptionState::Cleanup()
@@ -63,6 +64,25 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (Select < 2) // Max. Number of Options
+			{
+				Select++;	// Move the cursor down
+				Sleep(150);
+				cout << Select << endl;
+			}
+		}
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			if (Select >= 1) // Selection is not the first one.
+			{
+				Select--;
+				Sleep(150);
+				cout << Select << endl;
+			}
+		}
 	}
 
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
@@ -70,24 +90,7 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 		theGSM->ChangeState(CMenuState::Instance());
 	}
 
-	if (Application::IsKeyPressed(VK_DOWN))
-	{
-		if (Select < 2) // Max. Number of Options
-		{
-			Select++;	// Move the cursor down
-			Sleep(150);
-			cout << Select << endl;
-		}
-	}
-	if (Application::IsKeyPressed(VK_UP))
-	{
-		if (Select >= 1) // Selection is not the first one.
-		{
-			Select--;
-			Sleep(150);
-			cout << Select << endl;
-		}
-	}
+	
 
 	if (Select == 1) // Sound
 	{
@@ -115,6 +118,7 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 	if (Application::IsKeyPressed(VK_BACK))
 	{
 		theGSM->ChangeState(CMenuState::Instance());
+		Sound.engine->stopAllSounds();
 	}
 }
 

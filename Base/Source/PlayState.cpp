@@ -5,6 +5,7 @@ using namespace std;
 #include "GameStateManager.h"
 #include "playstate.h"
 #include "pausestate.h"
+#include "WinState.h"
 
 CPlayState CPlayState::thePlayState;
 
@@ -62,7 +63,10 @@ void CPlayState::Resume(bool m_resume)
 #if GSM_DEBUG_MODE
 
 	if (m_resume)
+	{
 		this->Resumez = m_resume;
+		scene->SetQuitfrompause(m_resume);
+	}
 	else
 	scene->PreInit();
 	cout << "CPlayState::Resume\n" << endl;
@@ -176,6 +180,10 @@ void CPlayState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	// Update the scene
 	scene->Update(m_dElapsedTime);
+	if (scene->GetWinCondition() == 1)
+	{
+		theGSM->ChangeState(CWinState::Instance());
+	}
 	if (this->Resumez)
 	{
 		theGSM->ChangeState(CMenuState::Instance());

@@ -13,8 +13,6 @@ CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
 , m_spriteAnimation(NULL)
-, m_particle(NULL)
-, m_particle2(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
@@ -39,8 +37,6 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 : m_player(NULL)
 , m_save(NULL)
 , m_spriteAnimation(NULL)
-, m_particle(NULL)
-, m_particle2(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
@@ -211,28 +207,6 @@ void CSceneManager2D::Init()
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
-	m_SpriteAnimationLoad = new LuaUsage();
-	m_SpriteAnimationLoad->LuaUsageInit("Sprite");
-	confettiRightside = false;
-	m_particle = new Particle();
-	m_particle2 = new Particle();
-
-	SetParticleStyle(m_particle, PARTICLE_STYLE::DROPDOWN);
-	SetParticleStyle(m_particle2, PARTICLE_STYLE::DROPDOWN);
-	//SetParticleStyle(m_particle, PARTICLE_STYLE::CONFETTI);
-	//SetParticleStyle(m_particle2, PARTICLE_STYLE::CONFETTI);
-	
-	Math::InitRNG();
-	for (int i = 0; i < m_particle->GetSize(); i++)
-	{
-		SetSpriteAnimation(m_particle, i);
-	}
-	
-	for (int i = 0; i < m_particle2->GetSize(); i++)
-	{
-		SetSpriteAnimation(m_particle2,i);
-	}
-	m_SpriteAnimationLoad->LuaUsageClose();
 	/*
 	// Initialise and load the tile map
 	m_cMap = new CMap();
@@ -276,7 +250,9 @@ void CSceneManager2D::Init()
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
-	
+	m_Quitfrompause = false;
+	m_WinCondition = 0;
+
 	rotateAngle = 0;
 	m_save = new Save();
 	m_player = new Player();
@@ -287,7 +263,10 @@ void CSceneManager2D::Init()
 	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
 	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 5, 5);
 }
-
+void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
+{
+	this->m_Quitfrompause = m_Quitfrompause;
+}
 void CSceneManager2D::AddHighscore()
 {
 	const int MAX_SCORES = 5;
@@ -297,69 +276,9 @@ void CSceneManager2D::AddHighscore()
 		theScore[i].ReadTextFile("highscore.txt");
 	}
 }
-void CSceneManager2D::SetParticleStyle(Particle *ParticleVector, int ParticleStyle)
+int CSceneManager2D::GetWinCondition()
 {
-
-	if (ParticleStyle == PARTICLE_STYLE::DROPDOWN)
-		ParticleVector->ParticleInit(20, 0, m_windowHeight, PARTICLE_STYLE::DROPDOWN);
-	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside == false)
-	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.125, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
-		confettiRightside = true;
-	}
-	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside)
-	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.875, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
-		ParticleVector->SetConfettiRightSide(confettiRightside);
-	}
-		
-}
-
-void CSceneManager2D::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
-{
-	/*meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", 6, 3);
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	m_spriteAnimation->m_anim = new Animation();
-	if (m_spriteAnimation)
-	{
-		Math::InitRNG();
-		m_spriteAnimation->m_anim->Set(0, 16, 0, 0.5f);
-		//m_spriteAnimation->x = Math::RandIntMinMax(100,700);//64;
-		//	m_spriteAnimation->y = 600 + Math::RandIntMinMax(100, 200);
-
-		m_spriteAnimation->x = m_particle->GetX();
-		m_spriteAnimation->y = m_particle->GetY();
-
-		m_spriteAnimation->speed = Math::RandIntMinMax(100, 800);
-		m_spriteAnimation->index = i;
-		m_particle->SpritePushBack(m_spriteAnimation, /*0*///m_spriteAnimation->y + Math::RandIntMinMax(-600, 300), 400/*0*/);
-		/*m_particle->SpritePushBack(m_spriteAnimation, 0, 0, i);*/
-	//}
-	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", Color(), m_SpriteAnimationLoad->get<int>("StarRow"), m_SpriteAnimationLoad->get<int>("StarCol"));
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	m_spriteAnimation->m_anim = new Animation();
-	if (m_spriteAnimation)
-	{
-		m_spriteAnimation->m_anim->Set(0, 18, 0, Math::RandFloatMinMax((m_SpriteAnimationLoad->get<float>("StarMinTime")), (m_SpriteAnimationLoad->get<float>("StarMaxTime"))));
-		if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::DROPDOWN)
-		{
-			m_spriteAnimation->x = m_spriteAnimation->x + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth - m_windowWidth*0.125);//64;
-			m_spriteAnimation->y = ParticleVector->GetY() + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth*0.25);
-			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
-			m_spriteAnimation->index = SAIndex;
-			ParticleVector->SpritePushBack(m_spriteAnimation, 0,0);
-		}
-		else if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::CONFETTI)
-		{
-			m_spriteAnimation->x = ParticleVector->GetX();
-			m_spriteAnimation->y = ParticleVector->GetY();
-			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
-			m_spriteAnimation->index = SAIndex;
-			ParticleVector->SpritePushBack(m_spriteAnimation, m_spriteAnimation->y + Math::RandIntMinMax(0, m_windowWidth*0.125+ m_windowWidth*0.25), m_windowWidth*0.5);
-		}
-	}
+	return m_WinCondition;
 }
 void CSceneManager2D::Update(double dt)
 {
@@ -371,15 +290,15 @@ void CSceneManager2D::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
+	if (Application::IsKeyPressed('5'))
+		m_WinCondition = 1;
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
-	cout << Sound.volume << endl;
+	//cout << Sound.volume << endl;
 
 	camera.Update(dt);
 	//m_spriteAnimation->Update(dt);
-	m_particle->Update(dt);
-	m_particle2->Update(dt);
+	
 	/*
 
 	// Update the hero
@@ -605,13 +524,6 @@ void CSceneManager2D::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	for (int i = 0; i < m_particle->GetSize(); i++)
-	{
-		modelStack.PushMatrix();
-		Render2DMesh(m_particle->theSpriteHolder[i], false, false, 50, m_particle->theSpriteHolder[i]->x, m_particle->theSpriteHolder[i]->y);
-		Render2DMesh(m_particle2->theSpriteHolder[i], false, false, 50, m_particle2->theSpriteHolder[i]->x, m_particle2->theSpriteHolder[i]->y);
-		modelStack.PopMatrix();
-	}
 	/*
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
@@ -653,25 +565,16 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
-	m_save->SavePlayer(m_player);
-	if (m_particle)
-	{
-		delete m_particle;
-		m_particle = NULL;
-	}
-	if (m_particle2)
-	{
-		delete m_particle2;
-		m_particle2 = NULL;
-	}
+	if (m_Quitfrompause != true)
+		m_save->SavePlayer(m_player);
 
 
-	/*
+	
 	if (m_spriteAnimation)
 	{
 		delete m_spriteAnimation->m_anim;
 		m_spriteAnimation->m_anim = NULL;
-	}*/
+	}
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{

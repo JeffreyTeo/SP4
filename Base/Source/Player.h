@@ -41,7 +41,11 @@ public:
 
 	void SetAmtOfLevelDiff(short AmtOfLevelDiff);
 	short GetAmtOfLevelDiff();
+
+	void SetAmtOfCurrency(short AmtOfCurrency);
+	short GetAmtOfCurrency();
 private:
+	short AmtOfCurrency;
 	short AmtOfLevelDiff;
 	short AmtOfClearedLevelEasy;
 	bool EasyLevelUnlocked;

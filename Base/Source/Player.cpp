@@ -1,3 +1,4 @@
+
 #include "Player.h"
 
 
@@ -25,6 +26,7 @@ void Player::PlayerInit(string PlayerFileName)
 {
 	thePlayerinfoLua = new LuaUsage();
 	thePlayerinfoLua->LuaUsageInit(PlayerFileName);
+	AmtOfCurrency = thePlayerinfoLua->get<int>("Currency");
 	AmtOfLevelDiff = thePlayerinfoLua->get<int>("LevelAmt");
 	for (int i = 0; i < AmtOfLevelDiff; ++i)
 	{
@@ -119,4 +121,13 @@ void Player::SetAmtOfLevelDiff(short AmtOfLevelDiff)
 short Player::GetAmtOfLevelDiff()
 {
 	return this->AmtOfLevelDiff;
+}
+
+void Player::SetAmtOfCurrency(short AmtOfCurrency)
+{
+	this->AmtOfCurrency = AmtOfCurrency;
+}
+short Player::GetAmtOfCurrency()
+{
+	return this->AmtOfCurrency;
 }
