@@ -19,6 +19,12 @@
     <Filter Include="Game State Management">
       <UniqueIdentifier>{9a6248ec-ad50-48c8-831a-3e31d5971492}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Level Loader">
+      <UniqueIdentifier>{adb7c7b7-affb-48b8-bd6a-1f604dc3fc12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Grid System">
+      <UniqueIdentifier>{4f77955c-071e-401f-ab76-5017ce0dc0af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -105,12 +111,6 @@
     <ClCompile Include="Source\SpriteAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GridSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\HighscoreState.cpp">
       <Filter>Game State Management</Filter>
     </ClCompile>
@@ -158,6 +158,15 @@
     </ClCompile>
     <ClCompile Include="Source\Item.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LevelLoader.cpp">
+      <Filter>Level Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Grid.cpp">
+      <Filter>Grid System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GridSystem.cpp">
+      <Filter>Grid System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,12 +266,6 @@
     <ClInclude Include="Source\SpriteAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GridSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\HighscoreState.h">
       <Filter>Game State Management</Filter>
     </ClInclude>
@@ -316,6 +319,15 @@
     </ClInclude>
     <ClInclude Include="Source\Item.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LevelLoader.h">
+      <Filter>Level Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Grid.h">
+      <Filter>Grid System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GridSystem.h">
+      <Filter>Grid System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

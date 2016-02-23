@@ -16,6 +16,7 @@ CSceneManager2D::CSceneManager2D()
 , Playfield(NULL)
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
+, m_cLevel(NULL)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -40,6 +41,7 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 , Playfield(NULL)
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
+, m_cLevel(NULL)
 {
 	this->m_windowWidth = m_window_width;
 	this->m_windowHeight = m_window_height;
@@ -69,6 +71,12 @@ CSceneManager2D::~CSceneManager2D()
 	{
 		delete m_SpriteAnimationLoad;
 		m_SpriteAnimationLoad = NULL;
+	}
+
+	if (m_cLevel)
+	{
+		delete m_cLevel;
+		m_cLevel = NULL;
 	}
 	/*
 	if (m_spriteAnimation)
@@ -105,7 +113,7 @@ CSceneManager2D::~CSceneManager2D()
 void CSceneManager2D::PreInit()
 {
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
@@ -207,44 +215,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
-	/*
-	// Initialise and load the tile map
-	m_cMap = new CMap();
-	m_cMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cMap->LoadMap( "Image//MapDesign.csv" );
-
-	// Initialise and load the REAR tile map
-	m_cRearMap = new CMap();
-	m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
-
-	// Initialise the hero's position
-	theHero = new CPlayerInfo();
-	theHero->SetPos_x(50);
-	theHero->SetPos_y(100);
-
-	// Load the texture for minimap
-	m_cMinimap = new CMinimap();
-	m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-	m_cMinimap->GetBackground()->textureID = LoadTGA("Image//grass_darkgreen.tga");
-	m_cMinimap->SetBorder( MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f) );
-	m_cMinimap->SetAvatar( MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1.f) );
-
-	// Set the strategy for the enemy
-	theEnemy = new CEnemy();
-	theEnemy->ChangeStrategy( NULL, false);
-	theEnemy->SetPos_x(575);
-	theEnemy->SetPos_y(100);
-
-	theArrayOfGoodies = new CGoodies*[10];
-	for (int i=0; i<10; i++)
-	{
-		theArrayOfGoodies[i] = theGoodiesFactory.Create( TREASURECHEST );
-		theArrayOfGoodies[i]->SetPos( 150 + i*25, 150 );
-		theArrayOfGoodies[i]->SetMesh(MeshBuilder::Generate2DMesh("GEO_TILE_TREASURECHEST", Color(1, 1, 1), 0, 0, 25, 25));
-		theArrayOfGoodies[i]->SetTextureID(LoadTGA("Image//tile4_treasurechest.tga"));
-	}
-	*/
+	
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -258,15 +229,35 @@ void CSceneManager2D::Init()
 	m_player = new Player();
 	m_player->PlayerInit("Player");
 
+	//level loader
+	m_cLevel = new LevelLoader();
+	m_cLevel->Init(125 * 2 + 25, 125 * 2, 11, 10);
+	m_cLevel->LevelLoaded("Levels//Test.csv");
+
 	//initailise grid system
 	Playfield = new GridSystem();
 	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
-	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 5, 5);
+	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 10, 10);
+	
+	Playfield->PlayerGridSetUp(5, 5);
+
+	Playfield->SetMap(m_cLevel->screenMap);
+
+	/*for (int a = 0; a < 11; a++)
+	{
+		for (int b = 0; b < 10; b++)
+		{
+			cout << m_cLevel->screenMap[a][b];
+		}
+		cout << endl;
+	}*/
 }
+
 void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 {
 	this->m_Quitfrompause = m_Quitfrompause;
 }
+
 void CSceneManager2D::AddHighscore()
 {
 	const int MAX_SCORES = 5;
@@ -276,10 +267,12 @@ void CSceneManager2D::AddHighscore()
 		theScore[i].ReadTextFile("highscore.txt");
 	}
 }
+
 int CSceneManager2D::GetWinCondition()
 {
 	return m_WinCondition;
 }
+
 void CSceneManager2D::Update(double dt)
 {
 	if(Application::IsKeyPressed('1'))
@@ -296,6 +289,22 @@ void CSceneManager2D::Update(double dt)
 
 	//cout << Sound.volume << endl;
 
+	if (Application::IsKeyPressed('W'))
+	{
+		Playfield->PlayerGridUpdate('w');
+	}
+	else if (Application::IsKeyPressed('S'))
+	{
+		Playfield->PlayerGridUpdate('s');
+	}
+	else if (Application::IsKeyPressed('A'))
+	{
+		Playfield->PlayerGridUpdate('a');
+	}
+	else if (Application::IsKeyPressed('D'))
+	{
+		Playfield->PlayerGridUpdate('d');
+	}
 	camera.Update(dt);
 	//m_spriteAnimation->Update(dt);
 	
@@ -489,17 +498,17 @@ void CSceneManager2D::RenderGridSystem()
 		modelStack.PushMatrix();
 		//get position of a grid in the vector 
 		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
-		if (Playfield->GetGridsVec()[a] ->GetType() == Grid::GridType::EMPTY)
+		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
 			Render2DMesh(meshList[GEO_TILESTRUCTURE], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::CROSS)
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
 			Render2DMesh(meshList[GEO_TILEGROUND], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FILLED)
-			Render2DMesh(meshList[GEO_TILEHERO], false, false, 1, GridPos.x, GridPos.y);
-		
 		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
 		modelStack.PopMatrix();
 	}
-
+	
+	Vector3 PlayerGridPos = Playfield->GetPlayerGrid()->GetPos();
+	Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
+	
 
 }
 

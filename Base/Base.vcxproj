@@ -25,6 +25,7 @@
     <ClCompile Include="Source\HighscoreState.cpp" />
     <ClCompile Include="Source\InstructionState.cpp" />
     <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\LevelLoader.cpp" />
     <ClCompile Include="Source\LevelSelectState.cpp" />
     <ClCompile Include="Source\LevelShopSelectionState.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Source\HighscoreState.h" />
     <ClInclude Include="Source\InstructionState.h" />
     <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\LevelLoader.h" />
     <ClInclude Include="Source\LevelSelectState.h" />
     <ClInclude Include="Source\LevelShopSelectionState.h" />
     <ClInclude Include="Source\Light.h" />

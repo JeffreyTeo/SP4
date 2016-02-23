@@ -2,7 +2,7 @@
 
 
 Grid::Grid()
-:Type(EMPTY)
+:Type(FLOOR)
 {
 }
 
@@ -10,6 +10,11 @@ Grid::Grid()
 Grid::~Grid()
 {
 	
+}
+
+void Grid::SetType(int newType)
+{
+	this->Type = (GridType)(newType);
 }
 
 int Grid::GetType(void)
@@ -22,7 +27,7 @@ void Grid::ChangeType(void)
 	this->Type = (GridType)(this->Type + 1);
 	if (this->Type >= TOTAL_TYPE)
 	{
-		this->Type = EMPTY;
+		this->Type = FLOOR;
 	}
 }
 
