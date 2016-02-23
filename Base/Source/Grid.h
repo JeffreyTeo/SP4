@@ -6,15 +6,15 @@ class Grid
 public:
 	enum GridType
 	{
-		EMPTY = 0,
-		CROSS,
-		FILLED,
+		FLOOR = 0,
+		WALL,
 		TOTAL_TYPE,
 	};
 
 	Grid();
 	~Grid();
 
+	void SetType(int);
 	int GetType(void);
 	void ChangeType(void);
 

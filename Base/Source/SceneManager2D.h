@@ -29,6 +29,8 @@
 //grid system and grid class
 #include "GridSystem.h"
 
+// level loader
+#include "LevelLoader.h"
 
 class CSceneManager2D : public Scene
 {
@@ -169,34 +171,9 @@ private:
 	//window height and width
 	int m_windowHeight;
 	int m_windowWidth;
-	/*
-	// Handle to the minimap
-	CMinimap* m_cMinimap;
 
-	// Handle to the tilemaps
-	CMap* m_cMap;
-	void RenderTileMap();
-	// Hero's information
-	CPlayerInfo* theHero;
-
-	// Codes for Scrolling
-	int tileOffset_x, tileOffset_y;
-
-	// Codes for Parallax Scrolling
-	CMap* m_cRearMap;
-	void RenderRearTileMap();
-	int rearWallOffset_x, rearWallOffset_y;
-	int rearWallTileOffset_x, rearWallTileOffset_y;
-	int rearWallFineOffset_x, rearWallFineOffset_y;
-
-	// Enemies
-	CEnemy* theEnemy;
-
-	// Goodies and Goodies Factory
-	CGoodiesFactory theGoodiesFactory;
-	CGoodies** theArrayOfGoodies;
-	void RenderGoodies(void);
-	*/
+	//loaded level;
+	LevelLoader *m_cLevel;
 };
 
 #endif

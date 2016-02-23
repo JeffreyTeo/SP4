@@ -70,11 +70,12 @@ void GridSystem::Init(Vector3 Pos, float LengthX, float LengthY, int NumOfGridsX
 			Grid* PlayGrid = new Grid();
 			PlayGrid->SetPos(x, y);
 			GridsVec.push_back(PlayGrid);
-			std:: cout << x << ", " << y << std::endl;
+			//std:: cout << x << ", " << y << std::endl;
 		}
 	}
 	
 }
+
 void GridSystem::UpdateGrid(Vector3 CursorPos)
 {
 	for (int a = 0; a < GridsVec.size(); a++)
@@ -92,6 +93,75 @@ void GridSystem::UpdateGrid(Vector3 CursorPos)
 	}
 }
 
+void GridSystem::SetMap(vector<vector<int>> maplayout)
+{
+	for (int a = 0; a < this->NumOfGridsY; a++)
+	{
+		for (int b = 0; b < this->NumOfGridsX; b++)
+		{
+			//if ((a * 5 + b) > maplayout.size() * maplayout[0].size())
+			{
+				std::cout << maplayout[NumOfGridsY - a][b];
+				//maplayout has to have +1 in the y axis the first line in the excel file is not part of the actual map
+				this->GridsVec[a * NumOfGridsX + b]->SetType(maplayout[a+1][b]);
+			}
+		}
+		std::cout << std::endl;
+	}
+}
+
+Vector3 GridSystem::PlayerGridSetUp(int xGrid, int yGrid)
+{
+	this->PlayerGrid = this->GridsVec[yGrid * NumOfGridsX + xGrid];
+	std::cout << PlayerGrid->GetPos() << std::endl;
+	return this->GridsVec[yGrid * NumOfGridsX + xGrid]->GetPos();
+}
+
+void GridSystem::PlayerGridUpdate(char key)
+{
+	Vector3 PlayerPos = this->PlayerGrid->GetPos();
+	if (key == 'w')
+	{
+		PlayerPos += Vector3(0, LengthOfGridsY, 0);
+	}
+	else if (key == 's')
+	{
+		PlayerPos -= Vector3(0, LengthOfGridsY, 0);
+	}
+	else if (key == 'a')
+	{
+		PlayerPos -= Vector3(LengthOfGridsX, 0, 0);
+	}
+	else if (key == 'd')
+	{
+		PlayerPos += Vector3(LengthOfGridsX, 0, 0);
+	}
+	
+	Vector3 TopLeft = this->GridsVec[0]->GetPos();
+	
+	Vector3 BottomRight = this->GridsVec[this->GridsVec.size() - 1]->GetPos();
+	
+	
+	if (TopLeft.x <= PlayerPos.x && PlayerPos.x <= BottomRight.x
+		&& BottomRight.y <= PlayerPos.y && PlayerPos.y <= TopLeft.y)
+	{
+		
+		for (int a = 0; a < this->GridsVec.size(); a++)
+		{
+			Vector3 GridPos = GridsVec[a]->GetPos();
+			
+			if (GridsVec[a]->GetType() == Grid::GridType::FLOOR)
+			{
+				if (PlayerPos == GridPos)
+				{
+					this->PlayerGrid = GridsVec[a];
+				}
+			}
+		}
+	}
+
+}
+
 void GridSystem::SetAnswer()
 {
 
@@ -100,4 +170,9 @@ void GridSystem::SetAnswer()
 vector<Grid*> GridSystem::GetGridsVec()
 {
 	return this->GridsVec;
+}
+
+Grid* GridSystem::GetPlayerGrid()
+{
+	return this->PlayerGrid;
 }
