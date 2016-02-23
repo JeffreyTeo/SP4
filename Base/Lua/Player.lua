@@ -1,7 +1,14 @@
 --Player Save File--
-EASYLEVELSCLEARED = 0
-NORMALLEVELSCLEARED = 5
-HARDLEVELSCLEARED = 10
-EASYLEVELUNLOCKED = false
-NORMALLEVELUNLOCKED = false
-HARDLEVELUNLOCKED = false
+LevelAmt = 3
+Currency = 0
+Player = {
+EASYLEVEL = {
+LevelCleared = 0,LevelUnlocked = false
+},
+NORMALLEVEL = {
+LevelCleared = 5,LevelUnlocked = false
+},
+HARDLEVEL = {
+LevelCleared = 20,LevelUnlocked = false
+}
+}

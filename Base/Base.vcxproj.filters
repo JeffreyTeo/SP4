@@ -138,6 +138,27 @@
     <ClCompile Include="Source\Highscore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LevelSelectState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LevelShopSelectionState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PauseState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShopState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Shop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WinState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -274,6 +295,27 @@
     </ClInclude>
     <ClInclude Include="Source\Highscore.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LevelSelectState.h">
+      <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LevelShopSelectionState.h">
+      <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PauseState.h">
+      <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ShopState.h">
+      <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Shop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WinState.h">
+      <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Item.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,3 @@
-
 #include "Application.h"
 
 //Include GLEW
@@ -257,21 +256,12 @@ void Application::Init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Request a specific OpenGL version
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
-
-	//theAppLua = new LuaUsage();
-	//theAppLua->LuaUsageInit("Lua/Application.Lua");
-	//m_window_height = theAppLua->GetIntegerValue("SCREENHEIGHT");
-	//m_window_width = theAppLua->GetIntegerValue("SCREENWIDTH");
-	//theAppLua->LuaUsageClose();
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Does not allow scaleable window
 
 	theAppLua = new LuaUsage();
-	theAppLua->LuaUsageInit("Lua/Application.lua");
-	int index = theAppLua->GetIntegerValue("Index");
-	m_window_height = theAppLua->GetArrayValue("WindowSize", index);
-	index--;
-	m_window_width = theAppLua->GetArrayValue("WindowSize", index);
-	
-	
+	theAppLua->LuaUsageInit("Application");
+	m_window_height = theAppLua->get<float>("WindowSize.ScreenSize.ScreenHeight");
+	m_window_width = theAppLua->get<float>("WindowSize.ScreenSize.ScreenWidth");
 	theAppLua->LuaUsageClose();
 
 

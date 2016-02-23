@@ -71,7 +71,7 @@ void CGameStateManager::PushState(CGameState* state)
 #endif
 }
 
-void CGameStateManager::PopState()
+void CGameStateManager::PopState(bool m_resume)
 {
 	// cleanup the current state
 	if ( !StackOfStates.empty() ) {
@@ -81,7 +81,7 @@ void CGameStateManager::PopState()
 
 	// resume previous state
 	if ( !StackOfStates.empty() ) {
-		StackOfStates.back()->Resume();
+		StackOfStates.back()->Resume(m_resume);
 	}
 #if GSM_DEBUG_MODE
 	cout << "CGameStateManager::PopState\n" << endl;

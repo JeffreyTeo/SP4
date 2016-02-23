@@ -12,7 +12,10 @@
 SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen()
 : m_player(NULL)
 , m_save(NULL)
-, tempsound(0.5)
+, m_shop(NULL)
+, m_particle(NULL)
+, m_particle2(NULL)
+, tempsound(0)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -33,7 +36,10 @@ SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen()
 SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen(const int m_window_width, const int m_window_height, const int m_screenvalue)
 : m_player(NULL)
 , m_save(NULL)
-, tempsound(0.5)
+, m_shop(NULL)
+, m_particle(NULL)
+, m_particle2(NULL)
+, tempsound(0)
 {
 	this->m_screenvalue = m_screenvalue;
 	this->m_windowWidth = m_window_width;
@@ -42,12 +48,23 @@ SceneManagerLevel2DforScreen::SceneManagerLevel2DforScreen(const int m_window_wi
 
 SceneManagerLevel2DforScreen::~SceneManagerLevel2DforScreen()
 {
+	
+	if (m_shop)
+	{
+		delete m_shop;
+		m_shop = NULL;
+	}
 	if (m_player)
 	{
 		delete m_player;
 		m_player = NULL;
 	}
-	
+	if (m_loading)
+	{
+		delete m_loading;
+		m_loading = NULL;
+	}
+
 	if (m_save)
 	{
 		delete m_save;
@@ -56,14 +73,14 @@ SceneManagerLevel2DforScreen::~SceneManagerLevel2DforScreen()
 
 }
 
-void SceneManagerLevel2DforScreen::Init()
+void SceneManagerLevel2DforScreen::PreInit()
 {
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
-	
+
 	// Render mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -76,8 +93,8 @@ void SceneManagerLevel2DforScreen::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	// Load the shaders
-	m_programID = LoadShaders( "Shader//Texture.vertexshader", "Shader//Fog.fragmentshader" );
-	
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Fog.fragmentshader");
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -96,6 +113,11 @@ void SceneManagerLevel2DforScreen::Init()
 	glUseProgram(m_programID);
 
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+}
+
+void SceneManagerLevel2DforScreen::Init()
+{
+	PreInit();
 
 	// Initialise the camera
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
@@ -150,23 +172,77 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_SOUND]->textureID = LoadTGA("Image//OptionsSoundOn.tga");
 	meshList[GEO_INSTRUCTION] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONS", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_INSTRUCTION]->textureID = LoadTGA("Image//Instructions.tga");
+	meshList[GEO_PAUSE] = MeshBuilder::Generate2DMesh("GEO_PAUSE", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_PAUSE]->textureID = LoadTGA("Image//Pause.tga");
+	meshList[GEO_SHOP] = MeshBuilder::Generate2DMesh("GEO_SHOP", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_SHOP]->textureID = LoadTGA("Image//Shop.tga");
+	meshList[GEO_WIN] = MeshBuilder::Generate2DMesh("GEO_WIN", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_WIN]->textureID = LoadTGA("Image//Win.tga");
+	meshList[GEO_LEVELSHOPSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSHOPSELECT", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_LEVELSHOPSELECT]->textureID = LoadTGA("Image//LevelShopSelect.tga");
+	
+	meshList[GEO_LEVELSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevelSelect.tga");
 
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
-	m_alpha = 1.0f;
-	
+
+
+	if (m_screenvalue == Winscreen)
+	{
+		m_SpriteAnimationLoad = new LuaUsage();
+		m_SpriteAnimationLoad->LuaUsageInit("Sprite");
+		confettiRightside = false;
+		m_particle = new Particle();
+		m_particle2 = new Particle();
+
+		SetParticleStyle(m_particle, PARTICLE_STYLE::DROPDOWN);
+		SetParticleStyle(m_particle2, PARTICLE_STYLE::DROPDOWN);
+		//SetParticleStyle(m_particle, PARTICLE_STYLE::CONFETTI);
+		//SetParticleStyle(m_particle2, PARTICLE_STYLE::CONFETTI);
+
+		Math::InitRNG();
+		for (int i = 0; i < m_particle->GetSize(); i++)
+		{
+			SetSpriteAnimation(m_particle, i);
+		}
+
+		for (int i = 0; i < m_particle2->GetSize(); i++)
+		{
+			SetSpriteAnimation(m_particle2, i);
+		}
+		m_SpriteAnimationLoad->LuaUsageClose();
+
+	}
+
+	m_select = -1;
+	m_alpha = 0.0f;
+	m_ChangeScreen = false;
+	m_ScreenTransition = true;
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
-	
-	rotateAngle = 0;
 	m_save = new Save();
-	m_player = new Player();
-	m_player->PlayerInit("Lua/Player.lua");
+	rotateAngle = 0;
+	m_loading = new LuaUsage();
+	m_loading->LuaUsageInit("Sound");
+	tempsound = m_loading->get<float>("Volume");
+	m_loading->LuaUsageClose();
+	
 
-	AddHighscore();
+	if (m_screenvalue == Shopscreen)
+	{
+		m_player = new Player();
+		m_player->PlayerInit("Player");
+		m_shop = new Shop();
+		m_shop->PlayerInit(m_player);
+		m_shop->ItemInit();
+	}
+	
+	if (m_screenvalue == Highscorescreen)
+		AddHighscore();
 }
 
 void SceneManagerLevel2DforScreen::AddHighscore()
@@ -178,6 +254,93 @@ void SceneManagerLevel2DforScreen::AddHighscore()
 		theScore[i].ReadTextFile("highscore.txt");
 	}
 }
+void SceneManagerLevel2DforScreen::SetChangeScreen(bool m_ChangeScreen)
+{
+	this->m_ChangeScreen = m_ChangeScreen;
+}
+void SceneManagerLevel2DforScreen::SetSelection(short m_select)
+{
+	this->m_select = m_select;
+}
+void SceneManagerLevel2DforScreen::SetScreenTransition(bool m_ScreenTransition)
+{
+	this->m_ScreenTransition = m_ScreenTransition;
+}
+bool SceneManagerLevel2DforScreen::ReturnScreenTransition()
+{
+	return this->m_ScreenTransition;
+}
+bool SceneManagerLevel2DforScreen::ReturnChangeScreen()
+{
+	return this->m_ChangeScreen;
+}
+
+
+void SceneManagerLevel2DforScreen::SetParticleStyle(Particle *ParticleVector, int ParticleStyle)
+{
+
+	if (ParticleStyle == PARTICLE_STYLE::DROPDOWN)
+		ParticleVector->ParticleInit(20, 0, m_windowHeight, PARTICLE_STYLE::DROPDOWN);
+	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside == false)
+	{
+		ParticleVector->ParticleInit(20, m_windowWidth * 0.125, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
+		confettiRightside = true;
+	}
+	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside)
+	{
+		ParticleVector->ParticleInit(20, m_windowWidth * 0.875, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
+		ParticleVector->SetConfettiRightSide(confettiRightside);
+	}
+
+}
+
+void SceneManagerLevel2DforScreen::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
+{
+	/*meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", 6, 3);
+	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
+	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
+	m_spriteAnimation->m_anim = new Animation();
+	if (m_spriteAnimation)
+	{
+	Math::InitRNG();
+	m_spriteAnimation->m_anim->Set(0, 16, 0, 0.5f);
+	//m_spriteAnimation->x = Math::RandIntMinMax(100,700);//64;
+	//	m_spriteAnimation->y = 600 + Math::RandIntMinMax(100, 200);
+
+	m_spriteAnimation->x = m_particle->GetX();
+	m_spriteAnimation->y = m_particle->GetY();
+
+	m_spriteAnimation->speed = Math::RandIntMinMax(100, 800);
+	m_spriteAnimation->index = i;
+	m_particle->SpritePushBack(m_spriteAnimation, /*0*///m_spriteAnimation->y + Math::RandIntMinMax(-600, 300), 400/*0*/);
+	/*m_particle->SpritePushBack(m_spriteAnimation, 0, 0, i);*/
+	//}
+	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", Color(), m_SpriteAnimationLoad->get<int>("StarRow"), m_SpriteAnimationLoad->get<int>("StarCol"));
+	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
+	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
+	m_spriteAnimation->m_anim = new Animation();
+	if (m_spriteAnimation)
+	{
+		m_spriteAnimation->m_anim->Set(0, 18, 0, Math::RandFloatMinMax((m_SpriteAnimationLoad->get<float>("StarMinTime")), (m_SpriteAnimationLoad->get<float>("StarMaxTime"))));
+		if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::DROPDOWN)
+		{
+			m_spriteAnimation->x = m_spriteAnimation->x + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth - m_windowWidth*0.125);//64;
+			m_spriteAnimation->y = ParticleVector->GetY() + Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth*0.25);
+			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
+			m_spriteAnimation->index = SAIndex;
+			ParticleVector->SpritePushBack(m_spriteAnimation, 0, 0);
+		}
+		else if (ParticleVector->Getparticlestyle() == PARTICLE_STYLE::CONFETTI)
+		{
+			m_spriteAnimation->x = ParticleVector->GetX();
+			m_spriteAnimation->y = ParticleVector->GetY();
+			m_spriteAnimation->speed = Math::RandIntMinMax(m_windowWidth*0.125, m_windowWidth);
+			m_spriteAnimation->index = SAIndex;
+			ParticleVector->SpritePushBack(m_spriteAnimation, m_spriteAnimation->y + Math::RandIntMinMax(0, m_windowWidth*0.125 + m_windowWidth*0.25), m_windowWidth*0.5);
+		}
+	}
+}
+
 void SceneManagerLevel2DforScreen::Update(double dt)
 {
 	//cout << m_player->GetAmtOfClearedLevelEasy() << " " << m_player->GetAmtOfClearedLevelNormal() << " " << m_player->GetAmtOfClearedLevelHard();
@@ -194,6 +357,28 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 		m_alpha += 0.05f;
 	if (Application::IsKeyPressed('6'))
 		m_alpha -= 0.05f;
+
+	if (m_screenvalue == Winscreen)
+	{
+		m_particle->Update(dt);
+		m_particle2->Update(dt);
+	}
+	
+	if (m_ScreenTransition && m_ChangeScreen)
+	{
+		m_alpha -= 0.04f;
+		if (m_alpha < 0)
+		{
+			m_ScreenTransition = false;
+		}
+	}
+	else if (m_ScreenTransition)
+	{
+		m_alpha += 0.04f;
+		if (m_alpha >= 1.0f)
+			m_ScreenTransition = false;
+	}
+
 
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
@@ -393,6 +578,31 @@ void SceneManagerLevel2DforScreen::Render()
 						 RenderOption();
 						 break;
 	}
+	case LevelShopSelectionscreen:
+	{
+									 RenderLevelShopSelect();
+									 break;
+	}
+	case Shopscreen:
+	{
+					   RenderShop();
+						break;
+	}
+	case LevelSelectscreen:
+	{
+							  RenderLevelSelect();
+							   break;
+	}
+	case Pausescreen:
+	{
+						RenderPause();
+						 break;
+	}
+	case Winscreen:
+	{
+					  RenderWin();
+					  break;
+	}
 	}
 	
 
@@ -402,78 +612,196 @@ void SceneManagerLevel2DforScreen::Render()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6 ,false);*/
 }
 
+void SceneManagerLevel2DforScreen::RenderPause()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_PAUSE], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 230, 275);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
+}
+void SceneManagerLevel2DforScreen::RenderShop()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_SHOP], false, true);
+	modelStack.PopMatrix();
+	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
+	{
+		modelStack.PushMatrix();
+		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
+		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
+		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
+		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
+		if (m_shop->theItemHolder[i]->GetBought())
+			RenderTextOnScreen(meshList[GEO_TEXT], "bought", Color(0, 0, 1), 30, 300, (390 - i * 75), true);
+		else
+			RenderTextOnScreen(meshList[GEO_TEXT], "nope", Color(0, 0, 1), 30, 300, (390 - i * 75), true);
+		modelStack.PopMatrix();
+	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+}
+void SceneManagerLevel2DforScreen::RenderWin()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_WIN], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
 
+	for (int i = 0; i < m_particle->GetSize(); i++)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(m_particle->theSpriteHolder[i], false, true, 50, m_particle->theSpriteHolder[i]->x, m_particle->theSpriteHolder[i]->y);
+		Render2DMesh(m_particle2->theSpriteHolder[i], false, true, 50, m_particle2->theSpriteHolder[i]->x, m_particle2->theSpriteHolder[i]->y);
+		modelStack.PopMatrix();
+	}
+}
+void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 275);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 220);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
+}
+void SceneManagerLevel2DforScreen::RenderLevelSelect()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_LEVELSELECT], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+}
 void SceneManagerLevel2DforScreen::RenderMainMenu()
 {
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_MENU], false, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
-
-	if (PlaySelect)
+	switch (m_select)
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
-		modelStack.PopMatrix();
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+			  modelStack.PopMatrix();
+			  break;
 	}
-	else if (InstructionSelect)
+	case 2:
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
-		modelStack.PopMatrix();
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+			  modelStack.PopMatrix();
+			  break;
 	}
-	else if (HighscoreSelect)
+	case 3:
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
-		modelStack.PopMatrix();
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
+			  modelStack.PopMatrix();
+			  break;
 	}
-	else if (OptionSelect)
+	case 4:
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 210, 110);
-		modelStack.PopMatrix();
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 210, 110);
+			  modelStack.PopMatrix();
+			  break;
 	}
-	else if (ExitSelect)
+	case 5:
 	{
-		modelStack.PushMatrix();
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 260, 50);
-		modelStack.PopMatrix();
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 260, 50);
+			  modelStack.PopMatrix();
+			  break;
+	}
 	}
 }
 
 void SceneManagerLevel2DforScreen::RenderHighscore()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_HIGHSCORE], false, false);
 
+	Render2DMesh(meshList[GEO_HIGHSCORE], false, true);
+	
 	std::ostringstream ss;
 	const int size = 5;
 	for (int i = 0; i < size; i++)
 	{
 		ss.str(std::string());
 		ss << i + 1 << ". " << theScore[i].GetAllHighscores(i);
-		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1), 60, 300, 300 - (i * 40), false);
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1, m_alpha), 60, 300, 300 - (i * 40), true);
 	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
 void SceneManagerLevel2DforScreen::RenderOption()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_SOUND], false, false);
+	Render2DMesh(meshList[GEO_SOUND], false, true);
 
+	if (SoundSelect && !muted)
+	{
+		Render2DMesh(meshList[GEO_SOUND], false, true);
+	}
+	else if (SoundSelect && muted)
+	{
+		Render2DMesh(meshList[GEO_SOUND_MUTE], false, true);
+	}
+	else if (VolumeSelect && !muted)
+	{
+		Render2DMesh(meshList[GEO_VOL], false, true);
+	}
+	else if (VolumeSelect && muted)
+	{
+		Render2DMesh(meshList[GEO_VOL_MUTE], false, true);
+	}
+	
 	std::ostringstream ssVol;
 	ssVol << tempsound;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(0, 1, 0), 30, 300, 300, false);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(0, 1, 0), 30, 250, 180, true);
 
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
 void SceneManagerLevel2DforScreen::RenderInstructions()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_INSTRUCTION], false, false);
+	Render2DMesh(meshList[GEO_INSTRUCTION], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
@@ -482,14 +810,48 @@ void SceneManagerLevel2DforScreen::RenderInstructions()
  ********************************************************************************/
 void SceneManagerLevel2DforScreen::Exit()
 {
-	m_save->SavePlayer(m_player);
-	// Cleanup VBO
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
-	{
+	if (m_screenvalue == Optionscreen)
+		m_save->SaveMusic(tempsound);
 
-		if (meshList[i] && i != GEO_SPRITE_ANIMATION)
-			delete meshList[i];
+
+	if (m_screenvalue == Shopscreen)
+	{
+		m_shop->Set(m_player);
+		m_save->SavePlayer(m_player);
 	}
+	if (m_screenvalue == Winscreen)
+	{
+		if (m_SpriteAnimationLoad)
+		{
+			delete m_SpriteAnimationLoad;
+			m_SpriteAnimationLoad = NULL;
+		}
+		if (m_particle)
+		{
+			delete m_particle;
+			m_particle = NULL;
+		}
+		if (m_particle2)
+		{
+			delete m_particle2;
+			m_particle2 = NULL;
+		}
+		for (int i = 0; i < NUM_GEOMETRY; ++i)
+		{
+			if (meshList[i] && i != GEO_SPRITE_ANIMATION)
+				delete meshList[i];
+		}
+	}
+	else
+	{
+		for (int i = 0; i < NUM_GEOMETRY; ++i)
+		{
+			if (meshList[i])
+				delete meshList[i];
+		}
+	}
+	// Cleanup VBO
+	
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 	

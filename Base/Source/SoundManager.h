@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <irrKlang.h>
+#include "LuaUsage.h"
 #pragma comment(lib, "irrKlang.lib")
 
 using namespace irrklang;	// Link with irrklang.dll
@@ -12,12 +13,12 @@ class CSoundManager
 
 public:
 	ISoundEngine* engine;
-
+	
 	CSoundManager(void);
 	~CSoundManager(void);
 
 	void adjustVol();
-	int getVol();
+	void muteSound();
 
 	//Main Menu
 	void mainMenuBGM();

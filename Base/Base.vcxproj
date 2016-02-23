@@ -24,6 +24,9 @@
     <ClCompile Include="Source\HighscoreData.cpp" />
     <ClCompile Include="Source\HighscoreState.cpp" />
     <ClCompile Include="Source\InstructionState.cpp" />
+    <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\LevelSelectState.cpp" />
+    <ClCompile Include="Source\LevelShopSelectionState.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />
     <ClCompile Include="Source\LuaUsage.cpp" />
@@ -36,6 +39,7 @@
     <ClCompile Include="Source\OptionState.cpp" />
     <ClCompile Include="Source\Particle.cpp" />
     <ClCompile Include="Source\PathFinding.cpp" />
+    <ClCompile Include="Source\PauseState.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayerInfo.cpp" />
     <ClCompile Include="Source\PlayInfo3PV.cpp" />
@@ -44,12 +48,15 @@
     <ClCompile Include="Source\SceneManager2D.cpp" />
     <ClCompile Include="Source\SceneManager2DforScreen.cpp" />
     <ClCompile Include="Source\shader.cpp" />
+    <ClCompile Include="Source\Shop.cpp" />
+    <ClCompile Include="Source\ShopState.cpp" />
     <ClCompile Include="Source\SoundManager.cpp" />
     <ClCompile Include="Source\SpriteAnimation.cpp" />
     <ClCompile Include="Source\Strategy.cpp" />
     <ClCompile Include="Source\Strategy_Kill.cpp" />
     <ClCompile Include="Source\TreasureChest.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
+    <ClCompile Include="Source\WinState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
@@ -67,6 +74,9 @@
     <ClInclude Include="Source\HighscoreData.h" />
     <ClInclude Include="Source\HighscoreState.h" />
     <ClInclude Include="Source\InstructionState.h" />
+    <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\LevelSelectState.h" />
+    <ClInclude Include="Source\LevelShopSelectionState.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LoadOBJ.h" />
     <ClInclude Include="Source\LoadTGA.h" />
@@ -81,6 +91,7 @@
     <ClInclude Include="Source\OptionState.h" />
     <ClInclude Include="Source\Particle.h" />
     <ClInclude Include="Source\PathFinding.h" />
+    <ClInclude Include="Source\PauseState.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\PlayInfo3PV.h" />
@@ -90,6 +101,8 @@
     <ClInclude Include="Source\SceneManager2D.h" />
     <ClInclude Include="Source\SceneManager2DforScreen.h" />
     <ClInclude Include="Source\shader.hpp" />
+    <ClInclude Include="Source\Shop.h" />
+    <ClInclude Include="Source\ShopState.h" />
     <ClInclude Include="Source\SoundManager.h" />
     <ClInclude Include="Source\SpriteAnimation.h" />
     <ClInclude Include="Source\Strategy.h" />
@@ -97,6 +110,7 @@
     <ClInclude Include="Source\TreasureChest.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
+    <ClInclude Include="Source\WinState.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

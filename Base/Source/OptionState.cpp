@@ -20,6 +20,7 @@ void COptionState::Init(const int width, const int height)
 	Select = 1;
 
 	Sound.mainMenuBGM();
+	Sound.volume = theScene->tempsound;
 }
 
 void COptionState::Cleanup()
@@ -34,7 +35,7 @@ void COptionState::Pause()
 
 }
 
-void COptionState::Resume()
+void COptionState::Resume(bool m_resume)
 {
 
 }
@@ -55,52 +56,70 @@ void COptionState::Update(CGameStateManager* theGSM)
 
 void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
-	if (Application::IsKeyPressed(VK_BACK))
+	theScene->Update(m_dElapsedTime);
+	if (theScene->ReturnScreenTransition() == false)
+	{
+		if (Application::IsKeyPressed(VK_BACK))
+		{
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
+		}
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			if (Select < 2) // Max. Number of Options
+			{
+				Select++;	// Move the cursor down
+				Sleep(150);
+				cout << Select << endl;
+			}
+		}
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			if (Select >= 1) // Selection is not the first one.
+			{
+				Select--;
+				Sleep(150);
+				cout << Select << endl;
+			}
+		}
+	}
+
+	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
 		theGSM->ChangeState(CMenuState::Instance());
 	}
 
-	if (Application::IsKeyPressed(VK_DOWN))
-	{
-		if (Select < 2) // Max. Number of Options
-		{
-			Select++;	// Move the cursor down
-			Sleep(150);
-			cout << Select << endl;
-		}
-	}
-	if (Application::IsKeyPressed(VK_UP))
-	{
-		if (Select >= 1) // Selection is not the first one.
-		{
-			Select--;
-			Sleep(150);
-			cout << Select << endl;
-		}
-	}
+	
 
 	if (Select == 1) // Sound
 	{
 		theScene->SoundSelect = true;
 		theScene->VolumeSelect = false;
+		Sound.muteSound();
 	}
 	else if (Select == 2) // Volume
 	{
 		theScene->SoundSelect = false;
 		theScene->VolumeSelect = true;
-	}
-
-	
-	if (Select == 1)
-	{
-		
-	}
-	if (Select == 2)
-	{
 		Sound.adjustVol();
 	}
 
 	theScene->tempsound = Sound.volume;
+	if (theScene->tempsound == 0)
+	{
+		theScene->muted = true;
+	}
+	else
+	{
+		theScene->muted = false;
+	}
+
+	if (Application::IsKeyPressed(VK_BACK))
+	{
+		theGSM->ChangeState(CMenuState::Instance());
+		Sound.engine->stopAllSounds();
+	}
 }
 
 void COptionState::Draw(CGameStateManager* theGSM)

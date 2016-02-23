@@ -6,8 +6,7 @@ CSoundManager::CSoundManager(void)
 	engine = createIrrKlangDevice();
 	engine->setDefault3DSoundMinDistance(2.0f);
 	engine->setDefault3DSoundMaxDistance(5.0f);
-
-	volume = 0.5;
+	volume = 0.0f;
 	clicked = false;
 	gameVol = 5;
 }
@@ -16,7 +15,6 @@ CSoundManager::~CSoundManager(void)
 {
 	engine->drop();
 } 
-
 // Adjust Volume
 void CSoundManager::adjustVol()
 {
@@ -54,10 +52,33 @@ void CSoundManager::adjustVol()
 	engine->setSoundVolume(volume);
 }
 
-// Get Volume
-int CSoundManager::getVol()
+//Mute Volume
+void CSoundManager::muteSound()
 {
-	return gameVol;
+	static bool pressedLeft = false;
+	if (Application::IsKeyPressed(VK_LEFT) && pressedLeft == false && volume == 0)
+	{
+		volume = 0.1f;
+		pressedLeft = true;
+	}
+	else if (!Application::IsKeyPressed(VK_LEFT) && pressedLeft == true)
+	{
+		pressedLeft = false;
+	}
+
+	static bool pressedRight = false;
+	if (Application::IsKeyPressed(VK_RIGHT) && pressedRight == false)
+	{
+		volume = 0;
+		pressedRight = true;
+	}
+	else if (!Application::IsKeyPressed(VK_RIGHT) && pressedRight == true)
+	{
+		pressedRight = false;
+	}
+
+	cout << "Volume: " << volume << "\n" << endl;
+	engine->setSoundVolume(volume);
 }
 
 // main menu

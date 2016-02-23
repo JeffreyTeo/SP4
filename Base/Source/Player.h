@@ -7,8 +7,18 @@
 
 using namespace std;
 
+
+
 class Player
 {
+	enum LevelType
+	{
+		Easylevel = 0,
+		Normallevel,
+		Hardlevel,
+
+		TotalLevel,
+	};
 public:
 	Player(void);
 	~Player(void);
@@ -28,7 +38,15 @@ public:
 	bool GetNormalLevelUnlocked();
 	void SetHardLevelUnlocked(bool HardLevelUnlocked);
 	bool GetHardLevelUnlocked();
+
+	void SetAmtOfLevelDiff(short AmtOfLevelDiff);
+	short GetAmtOfLevelDiff();
+
+	void SetAmtOfCurrency(short AmtOfCurrency);
+	short GetAmtOfCurrency();
 private:
+	short AmtOfCurrency;
+	short AmtOfLevelDiff;
 	short AmtOfClearedLevelEasy;
 	bool EasyLevelUnlocked;
 	short AmtOfClearedLevelNormal;

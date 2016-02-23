@@ -1,6 +1,7 @@
 #ifndef SCENE_MANAGER_2D_FS_H
 #define SCENE_MANAGER_2D_FS_H
 
+#include <string>
 #include "GameStateManager.h"
 #include "Scene.h"
 #include "Mtx44.h"
@@ -31,6 +32,7 @@
 //grid system and grid class
 #include "GridSystem.h"
 
+#include "Shop.h"
 
 class SceneManagerLevel2DforScreen : public Scene
 {
@@ -71,6 +73,11 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_SELECT,
 		GEO_INSTRUCTION,
 		GEO_HIGHSCORE,
+		GEO_PAUSE,
+		GEO_LEVELSHOPSELECT,
+		GEO_SHOP,
+		GEO_WIN,
+		GEO_LEVELSELECT,
 		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
@@ -92,6 +99,7 @@ public:
 	~SceneManagerLevel2DforScreen();
 
 	virtual void Init();
+	void PreInit();
 	virtual void Update(double dt);
 	// Update Camera status
 	virtual void UpdateCameraStatus(const unsigned char key, const bool status = true);
@@ -100,25 +108,35 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
+	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
+
+	// States Function
+	void SetSelection(short m_select);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
 	void RenderMainMenu();
 	void RenderHighscore();
 	void RenderInstructions();
 	void RenderOption();
+	void RenderPause();
+	void RenderShop();
+	void RenderWin();
+	void RenderLevelShopSelect();
+	void RenderLevelSelect();
 	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
+	void SetScreenTransition(bool m_ScreenTransition);
+	bool ReturnScreenTransition();
+	void SetChangeScreen(bool m_ChangeScreen);
+	bool ReturnChangeScreen();
 
-	// Menu States
-	bool PlaySelect;
-	bool InstructionSelect;
-	bool HighscoreSelect;
-	bool OptionSelect;
-	bool ExitSelect;
+
+	
 
 	// Option States
 	bool SoundSelect;
 	bool VolumeSelect;
-	bool mute;
+	bool muted;
 
 	void AddHighscore();
 	HighscoreData theScore[5];
@@ -137,15 +155,27 @@ public:
 	};
 
 private:
+	//sprite animation
+	LuaUsage* m_SpriteAnimationLoad;
+	SpriteAnimation *m_spriteAnimation;
+	Particle *m_particle;
+	Particle *m_particle2;
+	bool confettiRightside;
+
+	Shop* m_shop;
 	Player* m_player;
 	Save* m_save;
-
+	LuaUsage* m_loading;
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
 
+	short m_select;
+
 	float m_alpha;
+	bool m_ChangeScreen;
+	bool m_ScreenTransition;
 
 	Camera3 camera;
 

@@ -1,3 +1,4 @@
+
 #include "Player.h"
 
 
@@ -25,12 +26,42 @@ void Player::PlayerInit(string PlayerFileName)
 {
 	thePlayerinfoLua = new LuaUsage();
 	thePlayerinfoLua->LuaUsageInit(PlayerFileName);
-	this->AmtOfClearedLevelEasy = thePlayerinfoLua->GetIntegerValue("EASYLEVELSCLEARED");
-	this->AmtOfClearedLevelNormal = thePlayerinfoLua->GetIntegerValue("NORMALLEVELSCLEARED");
-	this->AmtOfClearedLevelHard = thePlayerinfoLua->GetIntegerValue("HARDLEVELSCLEARED");
-	this->EasyLevelUnlocked = thePlayerinfoLua->GetBooleanValue("EASYLEVELUNLOCKED");
-	this->NormalLevelUnlocked = thePlayerinfoLua->GetBooleanValue("NORMALLEVELUNLOCKED"); 
-	this->HardLevelUnlocked = thePlayerinfoLua->GetBooleanValue("HARDLEVELUNLOCKED");
+	AmtOfCurrency = thePlayerinfoLua->get<int>("Currency");
+	AmtOfLevelDiff = thePlayerinfoLua->get<int>("LevelAmt");
+	for (int i = 0; i < AmtOfLevelDiff; ++i)
+	{
+		string GetLevel = PlayerFileName;
+		switch (i)
+		{
+		case Easylevel:
+		{
+						  GetLevel = GetLevel + ".EASYLEVEL.";
+						  string IntLevel = GetLevel + "LevelCleared";
+						  string BoolLevel = GetLevel + "LevelUnlocked";
+						  this->AmtOfClearedLevelEasy = thePlayerinfoLua->get<int>(IntLevel);
+						  this->EasyLevelUnlocked = thePlayerinfoLua->get<bool>(BoolLevel);
+						  break;
+		}
+		case Normallevel:
+		{
+							GetLevel = GetLevel + ".NORMALLEVEL.";
+							string IntLevel = GetLevel + "LevelCleared";
+							string BoolLevel = GetLevel + "LevelUnlocked";
+							this->AmtOfClearedLevelNormal = thePlayerinfoLua->get<int>(IntLevel);
+							this->NormalLevelUnlocked = thePlayerinfoLua->get<bool>(BoolLevel);
+							break;
+		}
+		case Hardlevel:
+		{
+						  GetLevel = GetLevel + ".HARDLEVEL.";
+						  string IntLevel = GetLevel + "LevelCleared";
+						  string BoolLevel = GetLevel + "LevelUnlocked";
+						  this->AmtOfClearedLevelHard = thePlayerinfoLua->get<int>(IntLevel);
+						  this->HardLevelUnlocked = thePlayerinfoLua->get<bool>(BoolLevel);
+						  break;
+		}
+		}
+	}
 	thePlayerinfoLua->LuaUsageClose();
 }
 
@@ -82,4 +113,21 @@ void Player::SetHardLevelUnlocked(bool HardLevelUnlocked)
 bool Player::GetHardLevelUnlocked()
 {
 	return this->HardLevelUnlocked;
+}
+void Player::SetAmtOfLevelDiff(short AmtOfLevelDiff)
+{
+	this->AmtOfLevelDiff = AmtOfLevelDiff;
+}
+short Player::GetAmtOfLevelDiff()
+{
+	return this->AmtOfLevelDiff;
+}
+
+void Player::SetAmtOfCurrency(short AmtOfCurrency)
+{
+	this->AmtOfCurrency = AmtOfCurrency;
+}
+short Player::GetAmtOfCurrency()
+{
+	return this->AmtOfCurrency;
 }

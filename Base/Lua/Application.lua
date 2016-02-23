@@ -4,5 +4,8 @@
 --SCREENWIDTH = 800--
 --SCREENHEIGHT = 600--
 --ScreenWidth, ScreenHeight--
-WindowSize = {800,600}
-Index = 2
+WindowSize = {
+	ScreenSize = {
+	ScreenWidth = 800,ScreenHeight = 600
+	}
+}

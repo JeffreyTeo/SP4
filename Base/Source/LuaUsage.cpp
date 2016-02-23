@@ -3,6 +3,8 @@
 
 LuaUsage::LuaUsage(void) 
 :LuaState(NULL)
+, Errorstring("")
+, Filename("")
 {
 }
 
@@ -12,125 +14,99 @@ LuaUsage::~LuaUsage(void)
 
 void LuaUsage::LuaUsageInit(string LuaFileName)
 {
+	Filename = LuaFileName;
 	LuaState = lua_open();
-	luaL_openlibs(LuaState);
-
-	if (luaL_loadfile(LuaState, LuaFileName.c_str()) || lua_pcall(LuaState, 0, 0, 0))
+	string LuaOpenFilename = "Lua/";
+	LuaOpenFilename = LuaOpenFilename + LuaFileName;
+	LuaOpenFilename = LuaOpenFilename + ".lua";
+	if (luaL_loadfile(LuaState, LuaOpenFilename.c_str()) || lua_pcall(LuaState, 0, 0, 0))
 	{
-		LuaErrorLog(LuaFileName);
-		exit(EXIT_FAILURE);
+		std::cout << "Error: failed to load (" << LuaFileName << ")" << std::endl;
+		LuaState = NULL;
 	}
+	if (LuaState)
+		luaL_openlibs(LuaState);
+}
+
+void LuaUsage::Seterrorstring(const string& Variablename, const string& reason)
+{
+	Errorstring = Errorstring + Variablename + ": " + reason + "\n";
 }
 
 void LuaUsage::LuaUsageClose()
 {
-	lua_close(LuaState);
-}
-
-int LuaUsage::GetArrayValue(string Values, int index)
-{
-	int returnvalue = 0;
-	int ReturnIndication = 0;
-	lua_getglobal(LuaState, Values.c_str());
-	if (lua_isnil(LuaState, -1))
+	if (LuaState)
+		lua_close(LuaState);
+	if (Errorstring.size() > 1)
 	{
+		LuaErrorLog();
 	}
-	lua_pushnil(LuaState);
-	while (lua_next(LuaState, -2)){
-		returnvalue = (int)lua_tonumber(LuaState, -1);
-		ReturnIndication++;
-		lua_pop(LuaState, 1);
-		if (ReturnIndication == index)
-			break;
-	}
-	int n = lua_gettop(LuaState);
-	lua_pop(LuaState, n);
-	return returnvalue;
 }
-float LuaUsage::GetFloatValue(string Values)
+void LuaUsage::clean()
 {
-	float returnvalue = 0;
-
-	lua_getglobal(LuaState, Values.c_str());
-	if (!lua_isnumber(LuaState, -1))
-	{
-		LuaErrorLog(Values);
-		exit(EXIT_FAILURE);
-	}
-	returnvalue = (float)lua_tonumber(LuaState, -1);
-	int n = lua_gettop(LuaState);
-	lua_pop(LuaState, n);
-	return returnvalue;
+	int i = lua_gettop(LuaState);
+	lua_pop(LuaState, i);
 }
-int LuaUsage::GetIntegerValue(string Values)
+void LuaUsage::LuaErrorLog()
 {
-	int returnvalue = 0;
-
-	lua_getglobal(LuaState, Values.c_str());
-	if (!lua_isnumber(LuaState, -1))
-	{
-		LuaErrorLog(Values);
-		exit(EXIT_FAILURE);
-	}
-	returnvalue = (int)lua_tonumber(LuaState, -1);
-	int n = lua_gettop(LuaState);
-	lua_pop(LuaState, n);
-	return returnvalue;
-}
-
-bool LuaUsage::GetBooleanValue(string Values)
-{
-	bool returnvalue = false;
-
-	lua_getglobal(LuaState, Values.c_str());
-	if (!lua_isboolean(LuaState, -1))
-	{
-		LuaErrorLog(Values);
-		exit(EXIT_FAILURE);
-	}
-	returnvalue = (bool)lua_toboolean(LuaState, -1);
-	int n = lua_gettop(LuaState);
-	lua_pop(LuaState, n);
-	return returnvalue;
-}
-
-string LuaUsage::GetStringValue(string Values)
-{
-	string returnvalue = "";
-
-	lua_getglobal(LuaState, Values.c_str());
-	if (!lua_isstring(LuaState, -1))
-	{
-		LuaErrorLog(Values);
-		exit(EXIT_FAILURE);
-	}
-	returnvalue = (string)lua_tostring(LuaState, -1);
-	int n = lua_gettop(LuaState);
-	lua_pop(LuaState, n);
-	return returnvalue;
-}
-
-char LuaUsage::GetCharacterValue(string Values)
-{
-	string holder = "";
-	lua_getglobal(LuaState, Values.c_str());
-	if (!lua_isnumber(LuaState, -1))
-	{
-		LuaErrorLog(Values);
-		exit(EXIT_FAILURE);
-	}
-	holder = (char)lua_tostring(LuaState, -1);
-	return 0;
-}
-
-void LuaUsage::LuaErrorLog(string Errorstring)
-{
-	ofstream Error("Lua/ErrorLog.lua");
+	string thefilename = "Lua/";
+	thefilename = thefilename + this->Filename;
+	thefilename = thefilename + "Error.lua";
+	ofstream Error(thefilename);
 	if (Error.is_open())
 	{
 		Error << "--ErrorLog--" << endl;
-		Error << "Error with" << endl;
-		Error << Errorstring << endl;
-		Error.close();
+		Error << this->Errorstring << endl;
 	}
+}
+
+vector<int> LuaUsage::getIntVector(const std::string& name) {
+	vector<int> v;
+	lua_gettostack(name.c_str());
+	if (lua_isnil(LuaState, -1)) 
+	{ 
+		return vector<int>();
+	}
+	lua_pushnil(LuaState);
+	while (lua_next(LuaState, -2)) 
+	{
+		v.push_back((int)lua_tonumber(LuaState, -1));
+		lua_pop(LuaState, 1);
+	}
+	clean();
+	return v;
+}
+
+vector<std::string> LuaUsage::getTableKeys(const std::string& name) {
+	string code =
+		"function getKeys(name) "
+		"s = \"\""
+		"for k, v in pairs(_G[name]) do "
+		"    s = s..k..\",\" "
+		"    end "
+		"return s "
+		"end"; // function for getting table keys
+	luaL_loadstring(LuaState,code.c_str()); // execute code
+	lua_pcall(LuaState, 0, 0, 0);
+	lua_getglobal(LuaState, "getKeys"); // get function
+	lua_pushstring(LuaState, name.c_str());
+	lua_pcall(LuaState, 1, 1, 0); // execute function
+	string test = lua_tostring(LuaState, -1);
+	vector<std::string> strings;
+	string temp = "";
+	cout << "TEMP:" << test << std::endl;
+	for (unsigned int i = 0; i < test.size(); i++) 
+	{
+		if (test.at(i) != ',') 
+		{
+			temp += test.at(i);
+		}
+		else 
+		{
+			strings.push_back(temp);
+			temp = "";
+		}
+	}
+	clean();
+	return strings;
 }

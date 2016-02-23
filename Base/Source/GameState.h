@@ -11,7 +11,7 @@ public:
 	virtual void Cleanup() = 0;
 
 	virtual void Pause() = 0;
-	virtual void Resume() = 0;
+	virtual void Resume(bool m_resume) = 0;
 
 	virtual void HandleEvents(CGameStateManager* theGSM) = 0;
 	virtual void HandleEvents(CGameStateManager* theGSM, const unsigned char key, const bool status = true) = 0;
