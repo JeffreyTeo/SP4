@@ -11,6 +11,15 @@ public:
 		TOTAL_TYPE,
 	};
 
+	enum GridStatus
+	{
+		//can walk on
+		PASSABLE = 0,
+		//cannot walk on(anymore)
+		UNPASSABLE,
+		TOTAL_STATUS,
+	};
+
 	Grid();
 	~Grid();
 
@@ -18,11 +27,19 @@ public:
 	int GetType(void);
 	void ChangeType(void);
 
+	void SetStatus(int);
+	int GetStatus(void);
+
+	void SetDirection(char);
+	float GetDirection(void);
+
 	void SetPos(float, float);
 	Vector3 GetPos();
 
 private:
 	GridType Type;
+	GridStatus Status;
 	Vector3 Pos;
+	float direction;
 };
 
