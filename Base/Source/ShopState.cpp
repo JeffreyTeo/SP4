@@ -14,6 +14,10 @@ void CShopState::Init()
 	theScene->Init();
 	Select = 1;
 	theScene->SetSelection(Select);
+	pressed = false;
+	boughtOne = false;
+	boughtTwo = false;
+	boughtThree = false;
 }
 
 void CShopState::Init(const int width, const int height)
@@ -22,6 +26,10 @@ void CShopState::Init(const int width, const int height)
 	theScene->Init();
 	Select = 1;
 	theScene->SetSelection(Select);
+	pressed = false;
+	boughtOne = false;
+	boughtTwo = false;
+	boughtThree = false;
 }
 
 void CShopState::Cleanup()
@@ -79,6 +87,70 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			}
 		}
 
+		switch (Select)
+		{
+			case 1:
+			{
+				theScene->SetSelection(Select);
+				break;
+			}
+			case 2:
+			{
+				theScene->SetSelection(Select);
+				break;
+			}
+			case 3:
+			{
+				theScene->SetSelection(Select);
+				break;
+			}
+		}
+
+		switch (Select)
+		{
+			case 1:
+			{
+				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtOne == false)
+				{
+					theScene->SetShopSelect((Select - 1));
+					pressed = true;
+					boughtOne = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			}
+			case 2:
+			{
+				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtTwo == false)
+				{
+					theScene->SetShopSelect((Select - 1));
+					pressed = true;
+					boughtTwo = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			}
+			case 3:
+			{
+				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtThree == false)
+				{
+					theScene->SetShopSelect((Select - 1));
+					pressed = true;
+					boughtThree = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			}
+		}
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{

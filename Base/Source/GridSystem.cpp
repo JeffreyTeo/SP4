@@ -106,7 +106,10 @@ void GridSystem::SetMap(vector<vector<int>> maplayout)
 				std::cout << maplayout[NumOfGridsY - a][b];
 				//maplayout has to have +1 in the y axis the first line in the excel file is not part of the actual map
 				this->GridsVec[a * NumOfGridsX + b]->SetType(maplayout[a + 1][b]);
-				this->GridsVec[a * NumOfGridsX + b]->SetStatus(maplayout[a + 1][b]);
+				if (maplayout[a + 1][b] == 0 || 2 || 5)
+					this->GridsVec[a * NumOfGridsX + b]->SetStatus(0);
+				else
+					this->GridsVec[a * NumOfGridsX + b]->SetStatus(1);
 			}
 		}
 		std::cout << std::endl;
@@ -121,7 +124,7 @@ Vector3 GridSystem::PlayerGridSetUp(int xGrid, int yGrid)
 	return this->GridsVec[yGrid * NumOfGridsX + xGrid]->GetPos();
 }
 
-void GridSystem::PlayerGridUpdate(char key)
+bool GridSystem::PlayerGridUpdate(char key)
 {
 	Vector3 PlayerPos = this->PlayerGrid->GetPos();
 	
@@ -156,7 +159,7 @@ void GridSystem::PlayerGridUpdate(char key)
 		{
 			Vector3 GridPos = GridsVec[a]->GetPos();
 			
-			if (GridsVec[a]->GetType() == Grid::GridType::FLOOR && GridsVec[a]->GetStatus() != 1)
+			if ((GridsVec[a]->GetType() == Grid::GridType::FLOOR || GridsVec[a]->GetType() == Grid::GridType::KEY || GridsVec[a]->GetType() == Grid::GridType::EXIT) && GridsVec[a]->GetStatus() != 1)
 			{
 				if (PlayerPos == GridPos)
 				{
@@ -165,11 +168,20 @@ void GridSystem::PlayerGridUpdate(char key)
 					GridsVec[a]->SetStatus(1);
 					GridsVec[a]->SetDirection(key);
 					PlayerMoved = true;
+					if (GridsVec[a]->GetType() == Grid::GridType::KEY)
+					{
+						GridsVec[a]->keyCollected = true;
+					}
+					if (GridsVec[a]->GetType() == Grid::GridType::EXIT)
+					{
+						GridsVec[a]->Win = true;
+					}
+					return true;
 				}
 			}
 		}
 	}
-
+	return false;
 }
 
 void GridSystem::AIGridSetUp(vector<cAI*> AIList)

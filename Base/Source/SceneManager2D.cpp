@@ -228,7 +228,6 @@ void CSceneManager2D::Init()
 	meshList[GEO_INSTRUCTION] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONS", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_INSTRUCTION]->textureID = LoadTGA("Image//Instructions.tga");
 
-
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
@@ -255,7 +254,8 @@ void CSceneManager2D::Init()
 	meshList[GEO_KEY]->textureID = LoadTGA("Image//Key.tga");
 	meshList[GEO_FEET] = MeshBuilder::Generate2DMesh("GEO_FEET", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_FEET]->textureID = LoadTGA("Image//Feet.tga");
-
+	meshList[GEO_EXIT] = MeshBuilder::Generate2DMesh("GEO_EXIT", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_EXIT]->textureID = LoadTGA("Image//Exit.tga");
 	
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -266,7 +266,7 @@ void CSceneManager2D::Init()
 	m_WinCondition = 0;
 
 
-	NoOfMoves = 1000;
+	NoOfMoves = 30;
 	KeysCollected = 0;
 	m_LevelDetails = new LevelDetails();
 	m_LevelDetails->LevelDetailsInit(1, 1, "Level");
@@ -344,11 +344,37 @@ void CSceneManager2D::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	if (Application::IsKeyPressed('5'))
-		m_WinCondition = 1;
+	//if (Application::IsKeyPressed('5'))
+		//m_WinCondition = 1;
+
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
 	//cout << Sound.volume << endl;
+int TempKeyCollectedCalc = 0;
+int TempWin = 0;
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		
+		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		{
+			if (Playfield->GetGridsVec()[a]->keyCollected == true)
+			{
+				TempKeyCollectedCalc++;
+			}
+			
+		}
+		this->KeysCollected = TempKeyCollectedCalc;
+
+
+		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+		{
+			if (Playfield->GetGridsVec()[a]->Win == true)
+			{
+				TempWin = 1;
+			}
+		}
+		this->m_WinCondition = TempWin;
+	}
 
 	if (NoOfMoves <= 0)
 	{
@@ -362,28 +388,40 @@ void CSceneManager2D::Update(double dt)
 		{
 			if (Application::IsKeyPressed('W'))
 			{
-				Playfield->PlayerGridUpdate('w');
-				timeBuffer = 0.f;
-				NoOfMoves--;
+				if (Playfield->PlayerGridUpdate('w'))
+				{
+					timeBuffer = 0.f;
+					NoOfMoves--;
+				}
+				
 			}
 			else if (Application::IsKeyPressed('S'))
 			{
-				Playfield->PlayerGridUpdate('s');
-				timeBuffer = 0.f;
-				NoOfMoves--;
+				if (Playfield->PlayerGridUpdate('s'))
+				{
+					timeBuffer = 0.f;
+					NoOfMoves--;
+				}
+				
 			}
 			else if (Application::IsKeyPressed('A'))
 			{
-				Playfield->PlayerGridUpdate('a');
-				timeBuffer = 0.f;
-				NoOfMoves--;
+				if (Playfield->PlayerGridUpdate('a'))
+				{
+					timeBuffer = 0.f;
+					NoOfMoves--;
+				}
+				
 
 			}
 			else if (Application::IsKeyPressed('D'))
 			{
-				Playfield->PlayerGridUpdate('d');
-				timeBuffer = 0.f;
-				NoOfMoves--;
+				if (Playfield->PlayerGridUpdate('d'))
+				{
+					timeBuffer = 0.f;
+					NoOfMoves--;
+				}
+				
 			}
 		}
 		timeBuffer += 1.f;
@@ -586,7 +624,25 @@ void CSceneManager2D::RenderGridSystem()
 		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
 			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
 		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
-			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);			
+			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);	
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		{
+			if (Playfield->GetGridsVec()[a]->keyCollected == false)
+			{
+				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
+			}
+			else
+			{
+				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+			}
+		}
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
+			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);	
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
+			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
+		
 		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
 		modelStack.PopMatrix();
 	}
@@ -596,7 +652,7 @@ void CSceneManager2D::RenderGridSystem()
 		modelStack.PushMatrix();
 		//get position of a grid in the vector 
 		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
-		if (Playfield->GetGridsVec()[a]->GetStatus() == 1 && Playfield->GetGridsVec()[a]->GetType() == 0)
+		if (Playfield->GetGridsVec()[a]->GetStatus() == 1 && (Playfield->GetGridsVec()[a]->GetType() == 0 || Playfield->GetGridsVec()[a]->GetType() == 2))
 		{
 			float FeetDirection = Playfield->GetGridsVec()[a]->GetDirection();
 			if (FeetDirection == 0.f)
@@ -607,7 +663,7 @@ void CSceneManager2D::RenderGridSystem()
 			offset = Vector3(50, 0, 0);
 			else if (FeetDirection == -90.f)
 			offset = Vector3(0, 50, 0);
-
+			
 			Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, FeetDirection);
 			//Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, direction);
 

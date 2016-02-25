@@ -4,6 +4,8 @@
 Grid::Grid()
 :Type(FLOOR)
 , Status(PASSABLE)
+, keyCollected(true)
+, Win(true)
 {
 }
 
@@ -16,6 +18,10 @@ Grid::~Grid()
 void Grid::SetType(int newType)
 {
 	this->Type = (GridType)(newType);
+	if (Type == KEY)
+		keyCollected = false;
+	if (Type == EXIT)
+		Win = false;
 }
 
 int Grid::GetType(void)
@@ -44,7 +50,7 @@ int Grid::GetStatus(void)
 
 void Grid::SetDirection(char newDirection)
 {
-	if (this->Type == FLOOR && this->Status == UNPASSABLE)
+	if ((this->Type == FLOOR || this->Type == KEY) && this->Status == UNPASSABLE)
 	switch (newDirection)
 	{
 		case 'w':

@@ -326,9 +326,6 @@
     <ClInclude Include="Source\WinState.h">
       <Filter>Game State Management</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Item.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\LevelLoader.h">
       <Filter>Level Loader</Filter>
     </ClInclude>
@@ -343,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="Source\LevelDetails.h">
       <Filter>Level Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Item.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

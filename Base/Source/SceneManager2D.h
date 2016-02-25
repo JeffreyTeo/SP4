@@ -87,6 +87,7 @@ class CSceneManager2D : public Scene
 		GEO_MONSTER,
 		GEO_WALL,
 		GEO_KEY,
+		GEO_EXIT,
 
 		GEO_KEYSCOLLECTED,
 		GEO_MOVESLEFT,

@@ -29,6 +29,9 @@ Shop::~Shop()
 void Shop::PlayerInit(Player* playerinfo)
 {
 	m_playerMoney = playerinfo->GetAmtOfCurrency();
+	m_playerEasyModeUnlocked = playerinfo->GetEasyLevelUnlocked();
+	m_playerNormalModeUnlocked = playerinfo->GetNormalLevelUnlocked();
+	m_playerHardModeUnlocked = playerinfo->GetHardLevelUnlocked();
 }
 void Shop::ItemInit()
 {
@@ -54,13 +57,47 @@ void Shop::ItemInit()
 void Shop::Set(Player* playerinfo)
 {
 	playerinfo->SetAmtOfCurrency(m_playerMoney);
+	playerinfo->SetEasyLevelUnlocked(m_playerEasyModeUnlocked);
+	playerinfo->SetNormalLevelUnlocked(m_playerNormalModeUnlocked);
+	playerinfo->SetHardLevelUnlocked(m_playerHardModeUnlocked);
+}
+int Shop::GetPlayerMoney()
+{
+	return m_playerMoney;
 }
 void Shop::Buy(int selected)
 {
-	if (selected < theItemHolder.size())
+	if (selected < theItemHolder.size() && m_playerMoney >= theItemHolder[selected]->GetPrice())
 	{
-		m_playerMoney = m_playerMoney - theItemHolder[selected]->GetPrice();
-		theItemHolder[selected]->SetBought(true);
+		if (selected == 0 && m_playerEasyModeUnlocked)
+		{
+			m_playerMoney = m_playerMoney - theItemHolder[selected]->GetPrice();
+			theItemHolder[selected]->SetBought(true);
+		}
+		else if (selected == 1 && m_playerNormalModeUnlocked)
+		{
+			m_playerMoney = m_playerMoney - theItemHolder[selected]->GetPrice();
+			theItemHolder[selected]->SetBought(true);
+		}
+		else if (selected == 2 && m_playerHardModeUnlocked)
+		{
+			m_playerMoney = m_playerMoney - theItemHolder[selected]->GetPrice();
+			theItemHolder[selected]->SetBought(true);
+		}
 	}
-	
+}
+
+bool Shop::GetplayerEasyModeUnlocked()
+{
+	return m_playerEasyModeUnlocked;
+}
+
+bool Shop::GetplayerNormalModeUnlocked()
+{
+	return m_playerNormalModeUnlocked;
+}
+
+bool Shop::GetplayerHardModeUnlocked()
+{
+	return m_playerHardModeUnlocked;
 }
