@@ -8,6 +8,10 @@ public:
 	{
 		FLOOR = 0,
 		WALL,
+		KEY,
+		TRAP,
+		ROCK,
+		EXIT,
 		TOTAL_TYPE,
 	};
 
@@ -36,10 +40,14 @@ public:
 	void SetPos(float, float);
 	Vector3 GetPos();
 
+	bool keyCollected;
+	bool Win;
+
 private:
 	GridType Type;
 	GridStatus Status;
 	Vector3 Pos;
 	float direction;
+
 };
 

@@ -55,7 +55,7 @@ void CWinState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	theScene->Update(m_dElapsedTime);
 	if (theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_BACK))
 		{
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);

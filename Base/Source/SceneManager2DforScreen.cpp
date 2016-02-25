@@ -275,6 +275,10 @@ bool SceneManagerLevel2DforScreen::ReturnChangeScreen()
 	return this->m_ChangeScreen;
 }
 
+void SceneManagerLevel2DforScreen::SetShopSelect(int shopSelect)
+{
+	this->m_shop->Buy(shopSelect);
+}
 
 void SceneManagerLevel2DforScreen::SetParticleStyle(Particle *ParticleVector, int ParticleStyle)
 {
@@ -641,6 +645,59 @@ void SceneManagerLevel2DforScreen::RenderShop()
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_SHOP], false, true);
 	modelStack.PopMatrix();
+
+	string notUnlocked = "Level is still locked";
+	string Insufficient = "Insufficient Funds to purchase level";
+
+	switch (m_select)
+	{
+		case 1:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 417);
+			if (!m_shop->GetplayerEasyModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 2:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 341);
+			if (!m_shop->GetplayerNormalModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 3:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 265);
+			if (!m_shop->GetplayerHardModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+	}
+
 	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
 	{
 		modelStack.PushMatrix();
@@ -649,11 +706,13 @@ void SceneManagerLevel2DforScreen::RenderShop()
 		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
 		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
 		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "bought", Color(0, 0, 1), 30, 300, (390 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
 		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "nope", Color(0, 0, 1), 30, 300, (390 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
 		modelStack.PopMatrix();
 	}
+	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
+	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 void SceneManagerLevel2DforScreen::RenderWin()
@@ -791,7 +850,7 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	
 	std::ostringstream ssVol;
 	ssVol << tempsound;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(0, 1, 0), 30, 250, 180, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(1, 0, 0), 80, 450, 180, true);
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();

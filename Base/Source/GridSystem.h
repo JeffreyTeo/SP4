@@ -21,7 +21,7 @@ public:
 	//set player grid and Position
 	Vector3 PlayerGridSetUp(int, int);
 	//Player Update
-	void PlayerGridUpdate(char key);
+	bool PlayerGridUpdate(char key);
 	//set player grid and Position
 	void AIGridSetUp(vector<cAI*>);
 	//AI Update

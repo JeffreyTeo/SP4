@@ -18,11 +18,17 @@ public:
 	void ItemInit();
 	void Buy(int selected);
 	void Set(Player* playerinfo);
+	int GetPlayerMoney();
+	bool GetplayerEasyModeUnlocked();
+	bool GetplayerNormalModeUnlocked();
+	bool GetplayerHardModeUnlocked();
 	vector<Item*> theItemHolder;
 private:
 	Item* itemholder;
 	LuaUsage* ShopItem;
 	int m_playerMoney;
-	
+	bool m_playerEasyModeUnlocked;
+	bool m_playerNormalModeUnlocked;
+	bool m_playerHardModeUnlocked;
 };
 #endif

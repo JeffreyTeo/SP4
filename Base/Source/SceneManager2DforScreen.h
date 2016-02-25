@@ -130,7 +130,7 @@ public:
 	void SetChangeScreen(bool m_ChangeScreen);
 	bool ReturnChangeScreen();
 
-
+	void SetShopSelect(int shopSelect);
 	
 
 	// Option States

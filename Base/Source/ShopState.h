@@ -2,6 +2,7 @@
 
 #include "gamestate.h"
 #include "application.h"
+#include "Shop.h"
 
 class CShopState : public CGameState
 {
@@ -32,4 +33,8 @@ private:
 	static CShopState theShopState;
 	SceneManagerLevel2DforScreen* theScene;
 	int Select;
+	bool pressed;
+	bool boughtOne;
+	bool boughtTwo;
+	bool boughtThree;
 };

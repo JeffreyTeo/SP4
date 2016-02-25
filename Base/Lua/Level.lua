@@ -23,7 +23,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
-				NameOfLevelFile = "Levels//Test.csv",
+				NameOfLevelFile = "Levels//test.csv",
 				Difficulty = "Easy",
 				Cleared = false
 			}
