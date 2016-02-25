@@ -1,0 +1,146 @@
+
+#include "LevelDetails.h"
+
+
+LevelDetails::LevelDetails(void) 
+: theLevelDetailsinfoLua(NULL)
+{
+}
+
+LevelDetails::~LevelDetails(void)
+{
+	if (theLevelDetailsinfoLua)
+	{
+		delete theLevelDetailsinfoLua;
+		theLevelDetailsinfoLua = NULL;
+	}
+}
+//void LevelDetailsInit(int Difficulty, int LevelinDifficulty);
+void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, string FilePath)
+{
+	theLevelDetailsinfoLua = new LuaUsage();
+	theLevelDetailsinfoLua->LuaUsageInit(FilePath);
+	string GetLevelDetails = FilePath;
+	switch (Difficulty)
+	{
+	case 1:
+	{
+			  GetLevelDetails = GetLevelDetails + ".Easy";
+			  break;
+	}
+	case 2:
+	{
+			  GetLevelDetails = GetLevelDetails + ".Normal";
+			  break;
+	}
+	case 3:
+	{
+			  GetLevelDetails = GetLevelDetails + ".Hard";
+			  break;
+	}
+	}
+	GetLevelDetails = GetLevelDetails + ".Level" + std::to_string(LevelinDifficulty) + ".";
+	this->m_PositionXOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails+"PositionXOfGrid"));
+	this->m_PositionYOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "PositionYOfGrid"));
+	this->m_LengthXOfAGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "LengthXOfAGrid"));
+	this->m_LengthYOfAGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "LengthYOfAGrid"));
+	this->m_NumberOfGridX = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "NumberOfGridX"));
+	this->m_NumberOfGridY = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "NumberOfGridY"));
+	this->m_PlayerPositionX = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "PlayerPositionX"));
+	this->m_PlayerPositionY = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "PlayerPositionY"));
+	this->m_NameOfLevelFile = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "NameOfLevelFile"));
+	this->m_Difficulty = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "Difficulty"));
+	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
+	theLevelDetailsinfoLua->LuaUsageClose();
+}
+
+
+float LevelDetails::GetPositionXOfGrid()
+{
+	return m_PositionXOfGrid;
+}
+float LevelDetails::GetPositionYOfGrid()
+{
+	return m_PositionYOfGrid;
+}
+float LevelDetails::GetLengthXOfAGrid()
+{
+	return m_LengthXOfAGrid;
+}
+float LevelDetails::GetLengthYOfAGrid()
+{
+	return m_LengthYOfAGrid;
+}
+int LevelDetails::GetNumberOfGridX()
+{
+	return m_NumberOfGridX;
+}
+int LevelDetails::GetNumberOfGridY()
+{
+	return m_NumberOfGridY;
+}
+int LevelDetails::GetPlayerPositionX()
+{
+	return m_PlayerPositionX;
+}
+int LevelDetails::GetPlayerPositionY()
+{
+	return m_PlayerPositionY;
+}
+string LevelDetails::GetNameOfLevelFile()
+{
+	return m_NameOfLevelFile;
+}
+string LevelDetails::GetDifficulty()
+{
+	return m_Difficulty;
+}
+bool LevelDetails::GetCleared()
+{
+	return m_Cleared;
+}
+
+void LevelDetails::SetPositionXOfGrid(float m_PositionXOfGrid)
+{
+	this->m_PositionXOfGrid = m_PositionXOfGrid;
+}
+void LevelDetails::SetPositionYOfGrid(float m_PositionYOfGrid)
+{
+	this->m_PositionYOfGrid = m_PositionYOfGrid;
+}
+void LevelDetails::SetLengthXOfAGrid(float m_LengthXOfAGrid)
+{
+	this->m_LengthXOfAGrid = m_LengthXOfAGrid;
+}
+void LevelDetails::SetLengthYOfAGrid(float m_LengthYOfAGrid)
+{
+	this->m_LengthYOfAGrid = m_LengthYOfAGrid;
+}
+void LevelDetails::SetNumberOfGridX(int m_NumberOfGridX)
+{
+	this->m_NumberOfGridX = m_NumberOfGridX;
+}
+void LevelDetails::SetNumberOfGridY(int m_NumberOfGridY)
+{
+	this->m_NumberOfGridY = m_NumberOfGridY;
+}
+void LevelDetails::SetPlayerPositionX(int m_PlayerPositionX)
+{
+	this->m_PlayerPositionX = m_PlayerPositionX;
+}
+void LevelDetails::SetPlayerPositionY(int m_PlayerPositionY)
+{
+	this->m_PlayerPositionY = m_PlayerPositionY;
+}
+void LevelDetails::SetNameOfLevelFile(string m_NameOfLevelFile)
+{
+	this->m_NameOfLevelFile = m_NameOfLevelFile;
+}
+void LevelDetails::SetDifficulty(string m_Difficulty)
+{
+	this->m_Difficulty = m_Difficulty;
+}
+void LevelDetails::SetCleared(bool m_Cleared)
+{
+	this->m_Cleared = m_Cleared;
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include "Grid.h"
 #include <vector>
+#include "AI.h"
 
 
 using std::vector;
@@ -21,18 +22,28 @@ public:
 	Vector3 PlayerGridSetUp(int, int);
 	//Player Update
 	void PlayerGridUpdate(char key);
+	//set player grid and Position
+	void AIGridSetUp(vector<cAI*>);
+	//AI Update
+	void AIGridUpdate();
 	// set correct answer
 	void SetAnswer();
 
 	// get grid vector to get each grids pos
 	vector<Grid*> GetGridsVec();
 	Grid* GetPlayerGrid();
+	vector<Grid*> GetAIGrids();
 private:
 	vector<Grid*> GridsVec;
 	Grid* PlayerGrid;
+	vector<cAI*> AIVec;
+	vector<int> AIGridsVec;
+	
 
 	Vector3 Pos;
-	
+	Vector3 PlayerGridPos;
+	bool PlayerMoved;
+
 	int NumOfGridsX;
 	int NumOfGridsY;
 	float LengthOfGridsX;

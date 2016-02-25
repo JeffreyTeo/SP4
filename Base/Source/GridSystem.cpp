@@ -1,7 +1,9 @@
 #include "GridSystem.h"
 #include <iostream>
 
+
 GridSystem::GridSystem()
+	:PlayerMoved(false)
 {
 }
 
@@ -103,7 +105,8 @@ void GridSystem::SetMap(vector<vector<int>> maplayout)
 			{
 				std::cout << maplayout[NumOfGridsY - a][b];
 				//maplayout has to have +1 in the y axis the first line in the excel file is not part of the actual map
-				this->GridsVec[a * NumOfGridsX + b]->SetType(maplayout[a+1][b]);
+				this->GridsVec[a * NumOfGridsX + b]->SetType(maplayout[a + 1][b]);
+				this->GridsVec[a * NumOfGridsX + b]->SetStatus(maplayout[a + 1][b]);
 			}
 		}
 		std::cout << std::endl;
@@ -113,16 +116,19 @@ void GridSystem::SetMap(vector<vector<int>> maplayout)
 Vector3 GridSystem::PlayerGridSetUp(int xGrid, int yGrid)
 {
 	this->PlayerGrid = this->GridsVec[yGrid * NumOfGridsX + xGrid];
-	std::cout << PlayerGrid->GetPos() << std::endl;
+	//std::cout << PlayerGrid->GetPos() << std::endl;
+	this->PlayerGridPos = Vector3(xGrid, yGrid, 0);
 	return this->GridsVec[yGrid * NumOfGridsX + xGrid]->GetPos();
 }
 
 void GridSystem::PlayerGridUpdate(char key)
 {
 	Vector3 PlayerPos = this->PlayerGrid->GetPos();
+	
 	if (key == 'w')
 	{
 		PlayerPos += Vector3(0, LengthOfGridsY, 0);
+		
 	}
 	else if (key == 's')
 	{
@@ -150,16 +156,51 @@ void GridSystem::PlayerGridUpdate(char key)
 		{
 			Vector3 GridPos = GridsVec[a]->GetPos();
 			
-			if (GridsVec[a]->GetType() == Grid::GridType::FLOOR)
+			if (GridsVec[a]->GetType() == Grid::GridType::FLOOR && GridsVec[a]->GetStatus() != 1)
 			{
 				if (PlayerPos == GridPos)
 				{
 					this->PlayerGrid = GridsVec[a];
+					this->PlayerGridPos = Vector3(a % NumOfGridsX, a / NumOfGridsX, 0);
+					GridsVec[a]->SetStatus(1);
+					GridsVec[a]->SetDirection(key);
+					PlayerMoved = true;
 				}
 			}
 		}
 	}
 
+}
+
+void GridSystem::AIGridSetUp(vector<cAI*> AIList)
+{
+	for (int a = 0; a < AIList.size(); a++)
+	{
+		this->AIVec.push_back(AIList[a]);
+		this->AIGridsVec.push_back(AIList[a]->getPos().y * NumOfGridsX + AIList[a]->getPos().x);
+	}
+}
+
+void GridSystem::AIGridUpdate()
+{
+	if (this->AIGridsVec.size() == 0)
+	{
+		return;
+	}
+	else
+	{
+		for (int a = 0; a < this->AIGridsVec.size(); a++)
+		{
+			//if (AIVec[a]->getState() == cAI::FSM_PLAYER::STATE_MOVE)
+			{
+				
+				AIVec[a]->update(this->PlayerGridPos, PlayerMoved);
+				//AIVec[a]->UpdateWaypoint();
+				AIGridsVec[a] = AIVec[a]->getPos().y * NumOfGridsX + AIVec[a]->getPos().x;
+
+			}
+		}
+	}
 }
 
 void GridSystem::SetAnswer()
@@ -175,4 +216,14 @@ vector<Grid*> GridSystem::GetGridsVec()
 Grid* GridSystem::GetPlayerGrid()
 {
 	return this->PlayerGrid;
+}
+
+vector<Grid*> GridSystem::GetAIGrids()
+{
+	vector<Grid*> aigrid;
+	for (int a = 0; a < this->AIGridsVec.size(); a++)
+	{
+		aigrid.push_back(this->GridsVec[AIGridsVec[a]]);
+	}
+	return aigrid;
 }

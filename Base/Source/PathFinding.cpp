@@ -167,19 +167,6 @@ void CPathFinding::ContinuePath()
 		// Bottom
 		PathOpened(currentCell->m_xCoord, currentCell->m_zCoord - 1, currentCell->G + 1, currentCell);
 
-		// Diagonals (if needed, remove otherwise)
-		// Left-Top Diagonal
-		PathOpened(currentCell->m_xCoord - 1, currentCell->m_zCoord + 1, currentCell->G + 1.414f, currentCell);
-
-		// Right-Top Diagonal
-		PathOpened(currentCell->m_xCoord + 1, currentCell->m_zCoord + 1, currentCell->G + 1.414f, currentCell);
-
-		// Left-Bottom Diagonal
-		PathOpened(currentCell->m_xCoord - 1, currentCell->m_zCoord - 1, currentCell->G + 1.414f, currentCell);
-
-		// Right-Bottom Diagonal
-		PathOpened(currentCell->m_xCoord + 1, currentCell->m_zCoord - 1, currentCell->G + 1.414f, currentCell);
-
 		for (int i = 0; i < m_openList.size(); i++)
 		{
 			if (currentCell->m_id == m_openList[i]->m_id)
@@ -198,7 +185,7 @@ Vector3 CPathFinding::NextPathPos()	// Gets first position from the shortest pat
 	nextPos.x = m_pathToGoal[m_pathToGoal.size() - index]->x;
 	nextPos.z = m_pathToGoal[m_pathToGoal.size() - index]->z;
 
-	Vector3 distance = nextPos;// -  AI's current pos;
+	Vector3 distance = nextPos - AI->getPos();
 
 	if (index < m_pathToGoal.size())
 	{

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Camera3.cpp" />
@@ -25,6 +26,7 @@
     <ClCompile Include="Source\HighscoreState.cpp" />
     <ClCompile Include="Source\InstructionState.cpp" />
     <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\LevelDetails.cpp" />
     <ClCompile Include="Source\LevelLoader.cpp" />
     <ClCompile Include="Source\LevelSelectState.cpp" />
     <ClCompile Include="Source\LevelShopSelectionState.cpp" />
@@ -60,6 +62,7 @@
     <ClCompile Include="Source\WinState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Camera3.h" />
@@ -76,6 +79,7 @@
     <ClInclude Include="Source\HighscoreState.h" />
     <ClInclude Include="Source\InstructionState.h" />
     <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\LevelDetails.h" />
     <ClInclude Include="Source\LevelLoader.h" />
     <ClInclude Include="Source\LevelSelectState.h" />
     <ClInclude Include="Source\LevelShopSelectionState.h" />

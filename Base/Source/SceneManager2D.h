@@ -16,6 +16,7 @@
 #include "Save.h"
 #include "SpriteAnimation.h"
 #include "SoundManager.h"
+#include "LevelDetails.h"
 
 #include "Highscore.h"
 #include "HighscoreData.h"
@@ -73,11 +74,24 @@ class CSceneManager2D : public Scene
 		GEO_SELECT,
 		GEO_INSTRUCTION,
 		GEO_HIGHSCORE,
-		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
 		GEO_SOUND_MUTE,
 		GEO_SOUND,
+
+		GEO_FLOORING,
+		GEO_CHARACTER,
+		GEO_ROCK,
+		GEO_TRAP,
+		GEO_SNAKE,
+		GEO_MONSTER,
+		GEO_WALL,
+		GEO_KEY,
+
+		GEO_KEYSCOLLECTED,
+		GEO_MOVESLEFT,
+		//show movement
+		GEO_FEET,
 
 		GEO_TEXT,
 		NUM_GEOMETRY,
@@ -107,7 +121,8 @@ public:
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
-	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
+	void RenderUI();
+	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, float rotateAngle = 0.f, const bool flip = false);
 	void PreInit();
 	void RenderGridSystem();
 
@@ -122,6 +137,11 @@ public:
 	bool SoundSelect;
 	bool VolumeSelect;
 	bool muted;
+	
+	// UI
+	int KeysCollected;
+	int NoOfMoves;
+	bool MoveChar;
 
 	void AddHighscore();
 	HighscoreData theScore[5];
@@ -148,6 +168,7 @@ private:
 	Player* m_player;
 	Save* m_save;
 	SpriteAnimation *m_spriteAnimation;
+	LevelDetails* m_LevelDetails;
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -165,15 +186,23 @@ private:
 	bool confettiRightside;
 	float fps;
 
+	//time Buffer for continuous key press
+
+	float timeBuffer;
+
 	//grid system and grids
 	GridSystem* Playfield;
-
+	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
+	float direction;
+	Vector3 offset;
 	//window height and width
 	int m_windowHeight;
 	int m_windowWidth;
 
 	//loaded level;
 	LevelLoader *m_cLevel;
+	// vector of AI
+	vector<cAI*> AIList;
 };
 
 #endif

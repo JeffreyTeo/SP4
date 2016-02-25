@@ -17,6 +17,8 @@ CSceneManager2D::CSceneManager2D()
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
 , m_cLevel(NULL)
+, m_LevelDetails(NULL)
+, MoveChar(true)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -42,6 +44,8 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 , tempsound(0.5)
 , m_SpriteAnimationLoad(NULL)
 , m_cLevel(NULL)
+, m_LevelDetails(NULL)
+, MoveChar(true)
 {
 	this->m_windowWidth = m_window_width;
 	this->m_windowHeight = m_window_height;
@@ -78,6 +82,19 @@ CSceneManager2D::~CSceneManager2D()
 		delete m_cLevel;
 		m_cLevel = NULL;
 	}
+	if (m_LevelDetails)
+	{
+		delete m_LevelDetails;
+		m_LevelDetails = NULL;
+	}
+	if (AIList.size() > 0)
+	{
+		for (int a = 0; a < AIList.size(); a++)
+		{
+			delete AIList[a];
+		}
+		AIList.clear();
+	}
 	/*
 	if (m_spriteAnimation)
 	{
@@ -110,6 +127,7 @@ CSceneManager2D::~CSceneManager2D()
 	}
 	*/
 }
+
 void CSceneManager2D::PreInit()
 {
 	// Black background
@@ -152,7 +170,6 @@ void CSceneManager2D::PreInit()
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
 }
 
-
 void CSceneManager2D::Init()
 {
 	PreInit();
@@ -171,7 +188,7 @@ void CSceneManager2D::Init()
 
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//sky_background.tga");
+	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_TILEGROUND] = MeshBuilder::Generate2DMesh("GEO_TILEGROUND", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILEGROUND]->textureID = LoadTGA("Image//tile1_ground.tga");
 	meshList[GEO_TILEHERO] = MeshBuilder::Generate2DMesh("GEO_TILEHERO", Color(1, 1, 1), 0, 0, 25, 25);
@@ -193,7 +210,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
 	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
-	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
+	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
@@ -215,6 +232,30 @@ void CSceneManager2D::Init()
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
+	meshList[GEO_KEYSCOLLECTED] = MeshBuilder::Generate2DMesh("GEO_KEYSCOLLECTED", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_KEYSCOLLECTED]->textureID = LoadTGA("Image//KeysCollected.tga");
+	meshList[GEO_MOVESLEFT] = MeshBuilder::Generate2DMesh("GEO_MOVESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_MOVESLEFT]->textureID = LoadTGA("Image//MovesLeft.tga");
+
+	meshList[GEO_CHARACTER] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_CHARACTER]->textureID = LoadTGA("Image//Temp.tga");
+	meshList[GEO_FLOORING] = MeshBuilder::Generate2DMesh("GEO_FLOORING", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_FLOORING]->textureID = LoadTGA("Image//Floor.tga");
+	meshList[GEO_ROCK] = MeshBuilder::Generate2DMesh("GEO_ROCK", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_ROCK]->textureID = LoadTGA("Image//Rock.tga");
+	meshList[GEO_TRAP] = MeshBuilder::Generate2DMesh("GEO_TRAP", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_TRAP]->textureID = LoadTGA("Image//Trap.tga");
+	meshList[GEO_SNAKE] = MeshBuilder::Generate2DMesh("GEO_SNAKE", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_SNAKE]->textureID = LoadTGA("Image//Snake.tga");
+	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("GEO_MONSTER", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
+	meshList[GEO_WALL] = MeshBuilder::Generate2DMesh("GEO_WALL", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_WALL]->textureID = LoadTGA("Image//Wall.tga");
+	meshList[GEO_KEY] = MeshBuilder::Generate2DMesh("GEO_KEY", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_KEY]->textureID = LoadTGA("Image//Key.tga");
+	meshList[GEO_FEET] = MeshBuilder::Generate2DMesh("GEO_FEET", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_FEET]->textureID = LoadTGA("Image//Feet.tga");
+
 	
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -224,6 +265,11 @@ void CSceneManager2D::Init()
 	m_Quitfrompause = false;
 	m_WinCondition = 0;
 
+
+	NoOfMoves = 1000;
+	KeysCollected = 0;
+	m_LevelDetails = new LevelDetails();
+	m_LevelDetails->LevelDetailsInit(1, 1, "Level");
 	rotateAngle = 0;
 	m_save = new Save();
 	m_player = new Player();
@@ -231,18 +277,28 @@ void CSceneManager2D::Init()
 
 	//level loader
 	m_cLevel = new LevelLoader();
-	m_cLevel->Init(125 * 2 + 25, 125 * 2, 11, 10);
-	m_cLevel->LevelLoaded("Levels//Test.csv");
+	m_cLevel->Init((m_LevelDetails->GetNumberOfGridY() + 1) * m_LevelDetails->GetLengthYOfAGrid(), m_LevelDetails->GetNumberOfGridX() * m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetNumberOfGridY() + 1, m_LevelDetails->GetNumberOfGridX());
+	m_cLevel->LevelLoaded(m_LevelDetails->GetNameOfLevelFile());
 
 	//initailise grid system
 	Playfield = new GridSystem();
 	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
-	Playfield->Init(Vector3(400, 300, 0), 25.f, 25.f, 10, 10);
-	
-	Playfield->PlayerGridSetUp(5, 5);
+	Playfield->Init(Vector3(m_LevelDetails->GetPositionXOfGrid(), m_LevelDetails->GetPositionYOfGrid(), 0), m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetLengthYOfAGrid(), m_LevelDetails->GetNumberOfGridY(), m_LevelDetails->GetNumberOfGridX());
+
+	Playfield->PlayerGridSetUp(m_LevelDetails->GetPlayerPositionX(), m_LevelDetails->GetPlayerPositionY());
 
 	Playfield->SetMap(m_cLevel->screenMap);
 
+	cAI * AI = new cAI();
+	AI->init();
+	AI->setPos(8, 8);
+	AI->setWaypoint(3, 8);
+	AI->setWaypoint(3, 3);
+	AI->setWaypoint(8, 3);
+	AI->setWaypoint(8, 8);
+	AIList.push_back(AI);
+
+	Playfield->AIGridSetUp(AIList);
 	/*for (int a = 0; a < 11; a++)
 	{
 		for (int b = 0; b < 10; b++)
@@ -251,6 +307,11 @@ void CSceneManager2D::Init()
 		}
 		cout << endl;
 	}*/
+	//direction and offset
+	direction = 0.f;
+	offset = Vector3(0, 0, 0);
+
+	timeBuffer = 0.f;
 }
 
 void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
@@ -289,25 +350,49 @@ void CSceneManager2D::Update(double dt)
 
 	//cout << Sound.volume << endl;
 
-	if (Application::IsKeyPressed('W'))
+	if (NoOfMoves <= 0)
 	{
-		Playfield->PlayerGridUpdate('w');
+		MoveChar = false;
+		NoOfMoves = 0;
 	}
-	else if (Application::IsKeyPressed('S'))
+
+	if (MoveChar == true)
 	{
-		Playfield->PlayerGridUpdate('s');
+		if (timeBuffer > 5.f)
+		{
+			if (Application::IsKeyPressed('W'))
+			{
+				Playfield->PlayerGridUpdate('w');
+				timeBuffer = 0.f;
+				NoOfMoves--;
+			}
+			else if (Application::IsKeyPressed('S'))
+			{
+				Playfield->PlayerGridUpdate('s');
+				timeBuffer = 0.f;
+				NoOfMoves--;
+			}
+			else if (Application::IsKeyPressed('A'))
+			{
+				Playfield->PlayerGridUpdate('a');
+				timeBuffer = 0.f;
+				NoOfMoves--;
+
+			}
+			else if (Application::IsKeyPressed('D'))
+			{
+				Playfield->PlayerGridUpdate('d');
+				timeBuffer = 0.f;
+				NoOfMoves--;
+			}
+		}
+		timeBuffer += 1.f;
 	}
-	else if (Application::IsKeyPressed('A'))
-	{
-		Playfield->PlayerGridUpdate('a');
-	}
-	else if (Application::IsKeyPressed('D'))
-	{
-		Playfield->PlayerGridUpdate('d');
-	}
+
 	camera.Update(dt);
 	//m_spriteAnimation->Update(dt);
 	
+	Playfield->AIGridUpdate();
 	/*
 
 	// Update the hero
@@ -432,7 +517,7 @@ void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color col
 /********************************************************************************
  Render 2D Mesh
  ********************************************************************************/
-void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealpha, int size, int x, int y, bool rotate, bool flip)
+void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealpha, int size, int x, int y, bool rotate, float rotateAngle,bool flip)
 {
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
@@ -492,24 +577,75 @@ void CSceneManager2D::RenderBackground()
 
 void CSceneManager2D::RenderGridSystem()
 {
-
+	//render grid layout
 	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
 	{
 		modelStack.PushMatrix();
 		//get position of a grid in the vector 
 		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
 		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
-			Render2DMesh(meshList[GEO_TILESTRUCTURE], false, false, 1, GridPos.x, GridPos.y);
+			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
 		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
-			Render2DMesh(meshList[GEO_TILEGROUND], false, false, 1, GridPos.x, GridPos.y);
+			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);			
 		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
 		modelStack.PopMatrix();
 	}
-	
-	Vector3 PlayerGridPos = Playfield->GetPlayerGrid()->GetPos();
-	Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
-	
+	//render player trail
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		modelStack.PushMatrix();
+		//get position of a grid in the vector 
+		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
+		if (Playfield->GetGridsVec()[a]->GetStatus() == 1 && Playfield->GetGridsVec()[a]->GetType() == 0)
+		{
+			float FeetDirection = Playfield->GetGridsVec()[a]->GetDirection();
+			if (FeetDirection == 0.f)
+			offset = Vector3(0, 0, 0);
+			else if (FeetDirection == 180.f)
+			offset = Vector3(50, 50, 0);
+			else if (FeetDirection == 90.f)
+			offset = Vector3(50, 0, 0);
+			else if (FeetDirection == -90.f)
+			offset = Vector3(0, 50, 0);
 
+			Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, FeetDirection);
+			//Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, direction);
+
+		}
+
+		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+		modelStack.PopMatrix();
+	}
+
+	//render player
+	Vector3 PlayerGridPos = Playfield->GetPlayerGrid()->GetPos();
+	Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
+	//render AI
+	for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+	{
+		Vector3 AIGridPos = Playfield->GetAIGrids()[a]->GetPos();
+		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, false, 1, AIGridPos.x, AIGridPos.y);
+	}
+		
+}
+
+void CSceneManager2D::RenderUI()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_MOVESLEFT], false, false, 1, 0, 500);
+
+	std::ostringstream MovesLeft;
+	MovesLeft << "x " << NoOfMoves;
+	RenderTextOnScreen(meshList[GEO_TEXT], MovesLeft.str(), Color(0, 0, 0), 40, 100, 520, true);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_KEYSCOLLECTED], false, false, 1, 200, 500);
+
+	std::ostringstream Keys;
+	Keys << "x " << KeysCollected;
+	RenderTextOnScreen(meshList[GEO_TEXT], Keys.str(), Color(0, 0, 0), 40, 300, 520, true);
+	modelStack.PopMatrix();
 }
 
 /********************************************************************************
@@ -537,16 +673,18 @@ void CSceneManager2D::Render()
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
 	modelStack.PopMatrix();*/
-	/*
+	
 	// Render the background image
 	RenderBackground();
-	// Render the rear tile map
+	/*// Render the rear tile map
 	RenderRearTileMap();
 	// Render the tile map
 	RenderTileMap();
 	// Render the goodies
 	RenderGoodies();
 	*/
+
+	RenderUI();
 
 	//render the grid system and the corresponding image for the each grid
 	RenderGridSystem();

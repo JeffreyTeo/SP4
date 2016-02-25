@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include <vector>
 #include "SearchCell.h"
+#include "AI.h"
 
 class CPathFinding
 {
@@ -28,4 +29,6 @@ private:
 	std::vector<CSearchCell*> m_openList;
 	std::vector<CSearchCell*> m_visitedList;
 	std::vector<Vector3*> m_pathToGoal;
+
+	cAI *AI;
 };

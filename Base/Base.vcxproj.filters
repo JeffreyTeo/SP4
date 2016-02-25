@@ -25,6 +25,9 @@
     <Filter Include="Grid System">
       <UniqueIdentifier>{4f77955c-071e-401f-ab76-5017ce0dc0af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{98d369fa-5ed8-46a4-9f5e-5419926625c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -167,6 +170,12 @@
     </ClCompile>
     <ClCompile Include="Source\GridSystem.cpp">
       <Filter>Grid System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LevelDetails.cpp">
+      <Filter>Level Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +337,12 @@
     </ClInclude>
     <ClInclude Include="Source\GridSystem.h">
       <Filter>Grid System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LevelDetails.h">
+      <Filter>Level Loader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
