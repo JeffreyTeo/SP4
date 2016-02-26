@@ -4,6 +4,7 @@ using namespace std;
 #include "GameStateManager.h"
 #include "LevelShopSelectionState.h"
 #include "LevelSelectState.h"
+#include "DifficultySelectState.h"
 #include "menustate.h"
 
 CLevelSelectState CLevelSelectState::theLevelSelectState;
@@ -77,11 +78,12 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 		{
 		case -1:
 		{
-				   theGSM->ChangeState(CLevelShopSelectionState::Instance());
+				   theGSM->ChangeState(CDifficultySelectState::Instance());
 				   break;
 		}
 		case 1:
 		{
+				  theScene->setLevel(1);
 				  theGSM->ChangeState(CPlayState::Instance());
 				  break;
 		}

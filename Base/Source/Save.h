@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include "Player.h"
+#include "Shop.h"
 
 using namespace std;
 
@@ -18,9 +19,10 @@ public:
 	string BoolToStringConversion(bool convert);
 	void SavePlayer(Player* playerinfo);
 	void SaveMusic(float sound);
+	void SaveShop(Shop* shopinfo);
 
 	string OpenTable(string text);
-	string SaveTableIndiv(string text, int integertosave = 0, string stringtosave = "");
+	string SaveTableIndiv(string text, int integertosave = 0, string booltosave = "", string stringtosave = "");
 	string CloseTable(bool close = false);
 	void SaveIndividual();
 	//void SaveLevel(/*Level* Levelinfo*/);

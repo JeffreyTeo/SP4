@@ -39,6 +39,12 @@ public:
 	void SetDifficulty(string m_Difficulty);
 	void SetCleared(bool m_Cleared);
 
+	void SetDifficultyReference(int m_DifficultyReference);
+	void SetLevelinDifficultyReference(int m_LevelinDifficultyReference);
+	short GetDifficultyReference();
+	short GetLevelinDifficultyReference();
+
+
 
 private:
 	float m_PositionXOfGrid;
@@ -53,6 +59,9 @@ private:
 	string m_Difficulty;
 	bool m_Cleared;
 
+
+	short m_DifficultyReference; 
+	short m_LevelinDifficultyReference;
 	LuaUsage* theLevelDetailsinfoLua;
 };
 #endif

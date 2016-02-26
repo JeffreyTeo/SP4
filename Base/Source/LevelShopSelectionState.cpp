@@ -4,6 +4,7 @@ using namespace std;
 #include "GameStateManager.h"
 #include "LevelShopSelectionState.h"
 #include "LevelSelectState.h"
+#include "DifficultySelectState.h"
 #include "ShopState.h"
 #include "menustate.h"
 
@@ -63,7 +64,7 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 	{
 		if (Application::IsKeyPressed(VK_DOWN))
 		{
-			if (Select < 2) // Max. Number of Options
+			if (Select < 3) // Max. Number of Options
 			{
 				Select++;	// Move the cursor down
 				Sleep(150);
@@ -103,12 +104,17 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		}
 		case 1:
 		{
-				  theGSM->ChangeState(CLevelSelectState::Instance());
+				  theGSM->ChangeState(CDifficultySelectState::Instance());
 				  break;
 		}
 		case 2:
 		{
 				  theGSM->ChangeState(CShopState::Instance());
+				  break;
+		}
+		case 3:
+		{
+				  theGSM->ChangeState(CPlayState::Instance());
 				  break;
 		}
 		}
@@ -123,6 +129,11 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 				  break;
 		}
 		case 2:
+		{
+				  theScene->SetSelection(Select);
+				  break;
+		}
+		case 3:
 		{
 				  theScene->SetSelection(Select);
 				  break;
