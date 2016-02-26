@@ -59,9 +59,6 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM)
 
 void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
-#if GSM_DEBUG_MODE
-#endif
-
 	theScene->Update(m_dElapsedTime);
 	if (theScene->ReturnScreenTransition() == false)
 	{

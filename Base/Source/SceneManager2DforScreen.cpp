@@ -182,7 +182,7 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_LEVELSHOPSELECT]->textureID = LoadTGA("Image//LevelShopSelect.tga");
 	
 	meshList[GEO_LEVELSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevelSelect.tga");
+	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevTemp.tga");
 
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
@@ -784,6 +784,31 @@ void SceneManagerLevel2DforScreen::RenderLevelSelect()
 	Render2DMesh(meshList[GEO_LEVELSELECT], false, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
+
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 3:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
 }
 void SceneManagerLevel2DforScreen::RenderMainMenu()
 {
