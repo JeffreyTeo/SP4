@@ -70,8 +70,10 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	{
 		if (Application::IsKeyPressed(VK_DOWN))
 		{
-			if (Select < 5) // Max. Number of Options
+			if (Select < 3) // Max. Number of Options
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select++;	// Move the cursor down
 				Sleep(150);
 				cout << Select << endl;
@@ -81,6 +83,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select--;
 				Sleep(150);
 				cout << Select << endl;
@@ -112,6 +116,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtOne == false)
 				{
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtOne = true;
@@ -126,6 +132,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtTwo == false)
 				{
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtTwo = true;
@@ -140,6 +148,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtThree == false)
 				{
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtThree = true;
@@ -154,6 +164,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

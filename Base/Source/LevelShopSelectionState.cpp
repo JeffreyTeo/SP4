@@ -66,6 +66,8 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		{
 			if (Select < 3) // Max. Number of Options
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select++;	// Move the cursor down
 				Sleep(150);
 				cout << Select << endl;
@@ -75,6 +77,8 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select--;
 				Sleep(150);
 				cout << Select << endl;
@@ -82,12 +86,16 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		}
 		if (Application::IsKeyPressed(VK_RETURN))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			Select = -1;
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);

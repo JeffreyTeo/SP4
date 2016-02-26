@@ -69,6 +69,8 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		{
 			if (Select < 3)
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select++;
 				Sleep(150);
 			}
@@ -77,6 +79,8 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		{
 			if (Select > 1)
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select--;
 				Sleep(150);
 			}
@@ -84,12 +88,16 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 
 		if (Application::IsKeyPressed(VK_RETURN))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			Select = -1;
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);

@@ -25,6 +25,8 @@ public:
 		return &theDifficultySelectState;
 	}
 
+	CSoundManager Sound;
+
 protected:
 	CDifficultySelectState() { }
 

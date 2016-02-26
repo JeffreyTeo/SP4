@@ -25,6 +25,8 @@ public:
 		return &thePauseState;
 	}
 
+	CSoundManager Sound;
+
 protected:
 	CPauseState() { }
 

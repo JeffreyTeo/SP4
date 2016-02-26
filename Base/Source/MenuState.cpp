@@ -70,6 +70,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select < 5) // Max. Number of Options
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select++;	// Move the cursor down
 				Sleep(150);
 				cout << Select << endl;
@@ -79,6 +81,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select--;
 				Sleep(150);
 				cout << Select << endl;
@@ -121,6 +125,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	{
 		if (Select != 5)
 		{
+			Sound.engine->stopAllSounds();
+			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

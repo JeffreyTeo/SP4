@@ -24,6 +24,7 @@ public:
 	void mainMenuBGM();
 	void ConfirmSound();
 	void SelectSound();
+	void BackSound();
 
 	//Level BGMs
 	void level1BGM();

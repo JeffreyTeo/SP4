@@ -94,19 +94,28 @@ void CSoundManager::mainMenuBGM()
 void CSoundManager::ConfirmSound()
 {
 	//main menu confirming choice sound
-	//ISound* music = engine->play2D(//add sound effect here,
-	//	false, false, true);
+	ISound* music = engine->play2D("../irrklang/media/confirm.wav",
+		false, false, true);
 
-	engine->setSoundVolume(0.25f * volume);
+	engine->setSoundVolume(10.f);
 }
 
 void CSoundManager::SelectSound()
 {
 	//main menu selecting choice sound
-	//ISound* music = engine->play2D(//add sound effect here,
-	//	false, false, true);
+	ISound* music = engine->play2D("../irrklang/media/select.wav",
+		false, false, true);
 
-	engine->setSoundVolume(0.25f * volume);
+	engine->setSoundVolume(10.f);
+}
+
+void CSoundManager::BackSound()
+{
+	//main menu selecting choice sound
+	ISound* music = engine->play2D("../irrklang/media/back.mp3",
+		false, false, true);
+
+	engine->setSoundVolume(10.f);
 }
 
 void CSoundManager::level1BGM()

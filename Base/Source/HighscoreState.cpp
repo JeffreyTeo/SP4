@@ -58,6 +58,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 	{
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

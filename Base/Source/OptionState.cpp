@@ -61,6 +61,8 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 	{
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
@@ -118,7 +120,6 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 	if (Application::IsKeyPressed(VK_BACK))
 	{
 		theGSM->ChangeState(CMenuState::Instance());
-		Sound.engine->stopAllSounds();
 	}
 }
 

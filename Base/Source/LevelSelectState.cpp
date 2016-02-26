@@ -61,12 +61,16 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 	{
 		if (Application::IsKeyPressed(VK_BACK))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 			Select = -1;
 		}
 		if (Application::IsKeyPressed(VK_RETURN))
 		{
+			Sound.engine->stopAllSounds();
+			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 			Select = 1;
