@@ -182,11 +182,13 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_LEVELSHOPSELECT]->textureID = LoadTGA("Image//LevelShopSelect.tga");
 	
 	meshList[GEO_LEVELSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevelSelect.tga");
+	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevTemp.tga");
 
 	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
 	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
+	meshList[GEO_DIFFICULTYSELECT] = MeshBuilder::Generate2DMesh("GEO_DIFFICULTYSELECT", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_DIFFICULTYSELECT]->textureID = LoadTGA("Image//DiffTemp.tga");
 
 	if (m_screenvalue == Winscreen)
 	{
@@ -231,11 +233,10 @@ void SceneManagerLevel2DforScreen::Init()
 	tempsound = m_loading->get<float>("Volume");
 	m_loading->LuaUsageClose();
 	
-
+	m_player = new Player();
+	m_player->PlayerInit("Player");
 	if (m_screenvalue == Shopscreen)
 	{
-		m_player = new Player();
-		m_player->PlayerInit("Player");
 		m_shop = new Shop();
 		m_shop->PlayerInit(m_player);
 		m_shop->ItemInit();
@@ -253,6 +254,10 @@ void SceneManagerLevel2DforScreen::AddHighscore()
 	{
 		theScore[i].ReadTextFile("highscore.txt");
 	}
+}
+int SceneManagerLevel2DforScreen::GetLevelReferencetoContinue()
+{
+	return m_player->GetLevelStopAt();
 }
 void SceneManagerLevel2DforScreen::SetChangeScreen(bool m_ChangeScreen)
 {
@@ -607,6 +612,11 @@ void SceneManagerLevel2DforScreen::Render()
 					  RenderWin();
 					  break;
 	}
+	case DifficultySelectscreen:
+	{
+								   RenderDifficulty();
+								   break;
+	}
 	}
 	
 
@@ -734,7 +744,7 @@ void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
 {
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	
 	modelStack.PopMatrix();
 
 	switch (m_select)
@@ -753,7 +763,20 @@ void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
 			  modelStack.PopMatrix();
 			  break;
 	}
+	case 3:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 110, 165);
+			  if (m_player->GetLevelStopAt() == 0)
+				  RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 0, 0), 30, 200, 110, true);
+			  else
+				  RenderTextOnScreen(meshList[GEO_TEXT], "Continue?", Color(1, 0, 0), 30, 200, 110, true);
+
+			  modelStack.PopMatrix();
+			  break;
 	}
+	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 void SceneManagerLevel2DforScreen::RenderLevelSelect()
 {
@@ -761,6 +784,31 @@ void SceneManagerLevel2DforScreen::RenderLevelSelect()
 	Render2DMesh(meshList[GEO_LEVELSELECT], false, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
+
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 3:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
 }
 void SceneManagerLevel2DforScreen::RenderMainMenu()
 {
@@ -863,6 +911,37 @@ void SceneManagerLevel2DforScreen::RenderInstructions()
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
+void SceneManagerLevel2DforScreen::RenderDifficulty()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_DIFFICULTYSELECT], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 3:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
+}
 
 /********************************************************************************
  Exit this scene
@@ -875,9 +954,10 @@ void SceneManagerLevel2DforScreen::Exit()
 
 	if (m_screenvalue == Shopscreen)
 	{
+		m_save->SaveShop(m_shop);
 		m_shop->Set(m_player);
-		m_save->SavePlayer(m_player);
 	}
+	m_save->SavePlayer(m_player);
 	if (m_screenvalue == Winscreen)
 	{
 		if (m_SpriteAnimationLoad)

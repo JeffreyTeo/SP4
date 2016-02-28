@@ -78,6 +78,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_SHOP,
 		GEO_WIN,
 		GEO_LEVELSELECT,
+		GEO_DIFFICULTYSELECT,
 		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
@@ -111,6 +112,8 @@ public:
 	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
 	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
 
+	int GetLevelReferencetoContinue();
+
 	// States Function
 	void SetSelection(short m_select);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
@@ -124,6 +127,7 @@ public:
 	void RenderWin();
 	void RenderLevelShopSelect();
 	void RenderLevelSelect();
+	void RenderDifficulty();
 	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
 	void SetScreenTransition(bool m_ScreenTransition);
 	bool ReturnScreenTransition();
@@ -132,6 +136,8 @@ public:
 
 	void SetShopSelect(int shopSelect);
 	
+	void setDifficulty(int Difficulty);
+	void setLevel(int Level);
 
 	// Option States
 	bool SoundSelect;
@@ -176,6 +182,7 @@ private:
 	float m_alpha;
 	bool m_ChangeScreen;
 	bool m_ScreenTransition;
+
 
 	Camera3 camera;
 

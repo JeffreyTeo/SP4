@@ -4,6 +4,10 @@
 
 Player::Player(void) 
 : thePlayerinfoLua(NULL)
+, LevelToStartAt(0)
+, LevelToDifficultyStartAt(0)
+, LevelStopAt(0)
+, LevelDifficultyStopAt(0)
 , AmtOfClearedLevelEasy(0)
 , EasyLevelUnlocked(false)
 , AmtOfClearedLevelNormal(0)
@@ -28,6 +32,11 @@ void Player::PlayerInit(string PlayerFileName)
 	thePlayerinfoLua->LuaUsageInit(PlayerFileName);
 	AmtOfCurrency = thePlayerinfoLua->get<int>("Currency");
 	AmtOfLevelDiff = thePlayerinfoLua->get<int>("LevelAmt");
+
+	LevelToStartAt = thePlayerinfoLua->get<int>("LevelToStartAt");
+	LevelToDifficultyStartAt = thePlayerinfoLua->get<int>("LevelDifficultyToStartAt");
+	LevelStopAt = thePlayerinfoLua->get<int>("LevelStopAt");
+	LevelDifficultyStopAt = thePlayerinfoLua->get<int>("LevelDifficultyStopAt");
 	for (int i = 0; i < AmtOfLevelDiff; ++i)
 	{
 		string GetLevel = PlayerFileName;
@@ -130,4 +139,37 @@ void Player::SetAmtOfCurrency(short AmtOfCurrency)
 short Player::GetAmtOfCurrency()
 {
 	return this->AmtOfCurrency;
+}
+
+void Player::SetLevelStopAt(short LevelStopAt, short LevelDifficultyStopAt)
+{
+	this->LevelStopAt = LevelStopAt;
+	this->LevelDifficultyStopAt = LevelDifficultyStopAt;
+}
+short Player::GetLevelStopAt()
+{
+	return this->LevelStopAt;
+}
+
+short Player::GetLevelDifficultyStopAt()
+{
+	return this->LevelDifficultyStopAt;
+}
+
+short Player::GetLevelToStartAt()
+{
+	return this->LevelToStartAt;
+}
+short Player::GetLevelToDifficultyStartAt()
+{
+	return this->LevelToDifficultyStartAt;
+}
+
+void Player::SetLevelToStartAt(short LevelToStartAt)
+{
+	this->LevelToStartAt = LevelToStartAt;
+}
+void Player::SetLevelToDifficultyStartAt(short LevelToDifficultyStartAt)
+{
+	this->LevelToDifficultyStartAt = LevelToDifficultyStartAt;
 }

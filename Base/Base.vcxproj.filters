@@ -177,6 +177,9 @@
     <ClCompile Include="Source\LevelDetails.cpp">
       <Filter>Level Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DifficultySelectState.cpp">
+      <Filter>Game State Management</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -343,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="Source\Item.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DifficultySelectState.h">
+      <Filter>Game State Management</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

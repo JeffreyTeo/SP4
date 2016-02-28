@@ -26,6 +26,8 @@ public:
 		return &theShopState;
 	}
 
+	CSoundManager Sound;
+
 protected:
 	CShopState() { }
 

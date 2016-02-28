@@ -264,16 +264,18 @@ void CSceneManager2D::Init()
 	projectionStack.LoadMatrix(perspective);
 	m_Quitfrompause = false;
 	m_WinCondition = 0;
-
-
-	NoOfMoves = 30;
-	KeysCollected = 0;
-	m_LevelDetails = new LevelDetails();
-	m_LevelDetails->LevelDetailsInit(1, 1, "Level");
-	rotateAngle = 0;
 	m_save = new Save();
 	m_player = new Player();
 	m_player->PlayerInit("Player");
+	NoOfMoves = 30;
+	KeysCollected = 0;
+	m_LevelDetails = new LevelDetails();
+	m_LevelDetails->LevelDetailsInit(m_player->GetLevelToDifficultyStartAt(), m_player->GetLevelToStartAt(), "Level");
+	m_player->SetLevelToDifficultyStartAt(0);
+	m_player->SetLevelToStartAt(0);
+	rotateAngle = 0;
+	
+	
 
 	//level loader
 	m_cLevel = new LevelLoader();
@@ -317,6 +319,7 @@ void CSceneManager2D::Init()
 void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 {
 	this->m_Quitfrompause = m_Quitfrompause;
+	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
 }
 
 void CSceneManager2D::AddHighscore()
@@ -333,6 +336,15 @@ int CSceneManager2D::GetWinCondition()
 {
 	return m_WinCondition;
 }
+void SceneManagerLevel2DforScreen::setDifficulty(int m_Difficulty)
+{
+	this->m_player->SetLevelToDifficultyStartAt(m_Difficulty);
+}
+void SceneManagerLevel2DforScreen::setLevel(int m_Level)
+{
+	this->m_player->SetLevelToStartAt(m_Level);
+}
+
 
 void CSceneManager2D::Update(double dt)
 {
@@ -768,8 +780,7 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
-	if (m_Quitfrompause != true)
-		m_save->SavePlayer(m_player);
+	m_save->SavePlayer(m_player);
 
 
 	

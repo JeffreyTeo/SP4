@@ -44,9 +44,25 @@ public:
 
 	void SetAmtOfCurrency(short AmtOfCurrency);
 	short GetAmtOfCurrency();
+
+	void SetLevelStopAt(short LevelStopAt, short LevelDifficultyStopAt);
+	short GetLevelStopAt();
+	short GetLevelDifficultyStopAt();
+
+
+	void SetLevelToStartAt(short LevelToStartAt);
+	void SetLevelToDifficultyStartAt(short LevelToDifficultyStartAt);
+	short GetLevelToStartAt();
+	short GetLevelToDifficultyStartAt();
+
+
 private:
 	short AmtOfCurrency;
 	short AmtOfLevelDiff;
+	short LevelToStartAt;
+	short LevelToDifficultyStartAt;
+	short LevelStopAt;
+	short LevelDifficultyStopAt;
 	short AmtOfClearedLevelEasy;
 	bool EasyLevelUnlocked;
 	short AmtOfClearedLevelNormal;

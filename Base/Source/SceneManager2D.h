@@ -117,6 +117,7 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+
 	int GetWinCondition();
 	void SetQuitfrompause(bool m_Quitfrompause);
 
