@@ -33,6 +33,7 @@
 #include "GridSystem.h"
 
 #include "Shop.h"
+#include "Button.h"
 
 class SceneManagerLevel2DforScreen : public Scene
 {
@@ -80,6 +81,26 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_WIN,
 		GEO_LEVELSELECT,
 		GEO_DIFFICULTYSELECT,
+		//Menu button
+		GEO_MENU_PLAY,
+		GEO_MENU_INSTRUCTION,
+		GEO_MENU_HIGHSCORE,
+		GEO_MENU_OPTION,
+		GEO_MENU_EXIT,
+		//LevelShopSelect button
+		GEO_LEVELSHOPSELECT_LEVELSELECT,
+		GEO_LEVELSHOPSELECT_SHOP,
+		GEO_LEVELSHOPSELECT_CONTINUELEVEL,
+		//Difficulty button
+		GEO_DIFFICULTY_EASY,
+		GEO_DIFFICULTY_NORMAL,
+		GEO_DIFFICULTY_HARD,
+
+		GEO_LEVELSELECT_LEVEL,
+		//Pause button
+		GEO_PAUSE_RESUME,
+		GEO_PAUSE_QUITTOMENU,
+
 		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
@@ -110,10 +131,14 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+	void CreateButton(string name);
+
 	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
 	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
 
 	int GetLevelReferencetoContinue();
+
+	void SetContinuedLevel();
 
 	// States Function
 	void SetSelection(short m_select);
@@ -129,7 +154,7 @@ public:
 	void RenderLevelShopSelect();
 	void RenderLevelSelect();
 	void RenderDifficulty();
-	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
+	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const float size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
 	void SetScreenTransition(bool m_ScreenTransition);
 	bool ReturnScreenTransition();
 	void SetChangeScreen(bool m_ChangeScreen);
@@ -162,6 +187,8 @@ public:
 	};
 
 private:
+	vector<Button*> theButtonHolder;
+	Button* m_button;
 	//sprite animation
 	LuaUsage* m_SpriteAnimationLoad;
 	SpriteAnimation *m_spriteAnimation;

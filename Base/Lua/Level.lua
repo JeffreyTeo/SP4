@@ -7,6 +7,7 @@
 --		,NumberOfGridY--
 --		,PlayerPositionX--
 --		,PlayerPositionY--
+--		,AmountOfMoves--
 --		,NameOfLevelFile--
 --		,Difficulty--
 --		,Cleared}--
@@ -23,6 +24,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
 				Difficulty = "Easy",
 				Cleared = false
@@ -37,6 +39,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
 				Difficulty = "Easy",
 				Cleared = false
@@ -51,6 +54,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
 				Difficulty = "Easy",
 				Cleared = false
@@ -67,6 +71,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
 				Difficulty = "Normal",
 				Cleared = false
@@ -81,6 +86,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
 				Difficulty = "Normal",
 				Cleared = false
@@ -95,6 +101,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
 				Difficulty = "Normal",
 				Cleared = false
@@ -111,6 +118,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
 				Difficulty = "Hard",
 				Cleared = false
@@ -125,6 +133,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
 				Difficulty = "Hard",
 				Cleared = false
@@ -139,6 +148,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
+				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
 				Difficulty = "Hard",
 				Cleared = false

@@ -42,6 +42,7 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	}
 	}
 	GetLevelDetails = GetLevelDetails + ".Level" + std::to_string(this->m_LevelinDifficultyReference) + ".";
+	this->m_AmountOfMoves = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "AmountOfMoves"));
 	this->m_PositionXOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails+"PositionXOfGrid"));
 	this->m_PositionYOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "PositionYOfGrid"));
 	this->m_LengthXOfAGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "LengthXOfAGrid"));
@@ -53,6 +54,10 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	this->m_NameOfLevelFile = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "NameOfLevelFile"));
 	this->m_Difficulty = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "Difficulty"));
 	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
+	theLevelDetailsinfoLua->LuaUsageClose();
+
+	theLevelDetailsinfoLua->LuaUsageInit("LeveltoSave");
+	this->m_AmountOfMoves = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "CollectedKeys"));
 	theLevelDetailsinfoLua->LuaUsageClose();
 }
 
@@ -162,4 +167,16 @@ short LevelDetails::GetDifficultyReference()
 short LevelDetails::GetLevelinDifficultyReference()
 {
 	return this->m_LevelinDifficultyReference;
+}
+short LevelDetails::GetAmountOfMoves()
+{
+	return this->m_AmountOfMoves;
+}
+void LevelDetails::SetCollectedKeys(int m_CollectedKeys)
+{
+	this->m_CollectedKeys = m_CollectedKeys;
+}
+short LevelDetails::GetCollectedKeys()
+{
+	return this->m_CollectedKeys;
 }

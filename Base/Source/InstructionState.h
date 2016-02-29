@@ -33,4 +33,5 @@ protected:
 private:
 	static CInstructionState theInstructionState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
 };

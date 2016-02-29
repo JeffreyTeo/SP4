@@ -17,6 +17,62 @@ string Save::BoolToStringConversion(bool convert)
 		ReturnString = "false";
 	return ReturnString;
 }
+void Save::SaveLevelKeys(LevelDetails* Levelinfo)
+{
+	ofstream SaveFile("Lua/LeveltoSave.lua");
+	if (SaveFile.is_open())
+	{
+		SaveFile << "--Level Template--" << endl;
+		SaveFile << "--LevelNumber = { Key }--" << endl;
+		SaveFile << "Level = {" << endl;
+		//Create a class with 3 vector
+		//Should only accept money,highscore
+		SaveFile << "Easy = {" << endl;
+		for (int i = 0; i < 5; ++i)
+		{
+			string itemnumber = "Level";
+			itemnumber = itemnumber + to_string(i + 1);
+			SaveFile << OpenTable(itemnumber) << endl;
+			SaveFile << SaveTableIndiv("CollectedKeys",Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 4)
+				SaveFile << CloseTable(true) << endl;
+			else
+				SaveFile << CloseTable() << endl;
+		}
+		SaveFile << "}" << endl;
+
+		SaveFile << "Normal = {" << endl;
+		for (int i = 0; i < 5; ++i)
+		{
+			string itemnumber = "Level";
+			itemnumber = itemnumber + to_string(i + 1);
+			SaveFile << OpenTable(itemnumber) << endl;
+			SaveFile << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 4)
+				SaveFile << CloseTable(true) << endl;
+			else
+				SaveFile << CloseTable() << endl;
+		}
+		SaveFile << "}" << endl;
+
+		SaveFile << "Hard = {" << endl;
+		for (int i = 0; i < 5; ++i)
+		{
+			string itemnumber = "Level";
+			itemnumber = itemnumber + to_string(i + 1);
+			SaveFile << OpenTable(itemnumber) << endl;
+			SaveFile << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 4)
+				SaveFile << CloseTable(true) << endl;
+			else
+				SaveFile << CloseTable() << endl;
+		}
+		SaveFile << "}" << endl;
+
+		SaveFile << "}" << endl;
+	}
+}
+
 void Save::SaveMusic(float sound)
 {
 	ofstream SaveFile("Lua/Sound.lua");

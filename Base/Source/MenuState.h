@@ -35,5 +35,6 @@ protected:
 private:
 	static CMenuState theMenuState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
 	int Select;
 };

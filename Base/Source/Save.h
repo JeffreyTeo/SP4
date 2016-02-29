@@ -7,6 +7,7 @@
 #include <vector>
 #include "Player.h"
 #include "Shop.h"
+#include "LevelDetails.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
 	~Save(void);
 
 	string BoolToStringConversion(bool convert);
+	void SaveLevelKeys(LevelDetails* Levelinfo);
 	void SavePlayer(Player* playerinfo);
 	void SaveMusic(float sound);
 	void SaveShop(Shop* shopinfo);

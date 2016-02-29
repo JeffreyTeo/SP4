@@ -10,12 +10,14 @@ CHighscoreState CHighscoreState::theHighscoreState;
 void CHighscoreState::Init()
 {
 	theScene = new SceneManagerLevel2DforScreen(800, 600,Highscorescreen);
+	timer = 0.0f;
 	theScene->Init();
 }
 
 void CHighscoreState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, Highscorescreen);
+	timer = 0.0f;
 	theScene->Init();
 }
 
@@ -54,9 +56,10 @@ void CHighscoreState::Update(CGameStateManager* theGSM)
 void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
+	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_BACK))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
 			Sound.engine->stopAllSounds();
 			Sound.BackSound();

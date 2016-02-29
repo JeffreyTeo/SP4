@@ -180,6 +180,9 @@
     <ClCompile Include="Source\DifficultySelectState.cpp">
       <Filter>Game State Management</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="Source\DifficultySelectState.h">
       <Filter>Game State Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Button.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

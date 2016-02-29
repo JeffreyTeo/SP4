@@ -33,5 +33,6 @@ protected:
 private:
 	static CPauseState thePauseState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
 	int Select;
 };

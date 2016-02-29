@@ -33,4 +33,5 @@ protected:
 private:
 	static CHighscoreState theHighscoreState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
 };

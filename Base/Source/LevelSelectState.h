@@ -33,5 +33,6 @@ protected:
 private:
 	static CLevelSelectState theLevelSelectState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
 	int Select;
 };

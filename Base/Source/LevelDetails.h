@@ -44,7 +44,9 @@ public:
 	short GetDifficultyReference();
 	short GetLevelinDifficultyReference();
 
-
+	short GetAmountOfMoves();
+	void SetCollectedKeys(int m_CollectedKeys);
+	short GetCollectedKeys();
 
 private:
 	float m_PositionXOfGrid;
@@ -55,11 +57,13 @@ private:
 	int m_NumberOfGridY;
 	int m_PlayerPositionX;
 	int m_PlayerPositionY;
+	
 	string m_NameOfLevelFile;
 	string m_Difficulty;
 	bool m_Cleared;
 
-
+	short m_AmountOfMoves;
+	short m_CollectedKeys;
 	short m_DifficultyReference; 
 	short m_LevelinDifficultyReference;
 	LuaUsage* theLevelDetailsinfoLua;
