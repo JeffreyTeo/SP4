@@ -68,6 +68,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_TILE_TREASURECHEST,
 		GEO_SPRITE_ANIMATION,
 		GEO_OBJECT,
+		GEO_VOL_BAR,
 
 		GEO_MENU,
 		GEO_SELECT,

@@ -2,7 +2,7 @@
 LevelAmt = 3
 Currency = 5
 LevelToStartAt = 0
-LevelDifficultyToStartAt = 0
+LevelDifficultyToStartAt = 1
 LevelStopAt = 1
 LevelDifficultyStopAt = 1
 Player = {

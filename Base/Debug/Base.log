@@ -1,8 +1,5 @@
-﻿Build started 26/2/2016 6:00:48 PM.
-     1>Project "C:\Users\angus_000\Desktop\Documents\SP4\Base\Base.vcxproj" on node 2 (Clean target(s)).
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'c:\users\angus_000\desktop\documents\sp4\base\debug\vc120.idb' because it is being used by another process.
-     1>Done Building Project "C:\Users\angus_000\Desktop\Documents\SP4\Base\Base.vcxproj" (Clean target(s)).
+﻿Build started 29/2/2016 10:07:42 AM.
 
 Build succeeded.
 
-Time Elapsed 00:00:01.06
+Time Elapsed 00:00:00.00

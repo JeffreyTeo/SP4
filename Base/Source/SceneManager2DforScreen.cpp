@@ -190,6 +190,8 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_DIFFICULTYSELECT] = MeshBuilder::Generate2DMesh("GEO_DIFFICULTYSELECT", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_DIFFICULTYSELECT]->textureID = LoadTGA("Image//DiffTemp.tga");
 
+	meshList[GEO_VOL_BAR] = MeshBuilder::GenerateQuad("volume bar", Color(1, 0, 0), 20);
+
 	if (m_screenvalue == Winscreen)
 	{
 		m_SpriteAnimationLoad = new LuaUsage();
@@ -879,6 +881,8 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_SOUND], false, true);
 
+	
+
 	if (SoundSelect && !muted)
 	{
 		Render2DMesh(meshList[GEO_SOUND], false, true);
@@ -896,11 +900,24 @@ void SceneManagerLevel2DforScreen::RenderOption()
 		Render2DMesh(meshList[GEO_VOL_MUTE], false, true);
 	}
 	
-	std::ostringstream ssVol;
+	/*std::ostringstream ssVol;
 	ssVol << tempsound;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(1, 0, 0), 80, 450, 180, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(1, 0, 0), 80, 450, 180, true);*/
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+
+	for (int i = 0; i < (int)tempsound; i++)
+	{
+			Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);	
+	}
+	/*Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 0, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 30, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 60, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 90, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 120, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 150, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 180, 185);*/
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 210, 185);
 	modelStack.PopMatrix();
 }
 
