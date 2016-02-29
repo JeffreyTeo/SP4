@@ -24,17 +24,19 @@ void Save::SaveLevelKeys(LevelDetails* Levelinfo)
 	{
 		SaveFile << "--Level Template--" << endl;
 		SaveFile << "--LevelNumber = { Key }--" << endl;
+
 		SaveFile << "Level = {" << endl;
+
 		//Create a class with 3 vector
 		//Should only accept money,highscore
 		SaveFile << "Easy = {" << endl;
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			string itemnumber = "Level";
 			itemnumber = itemnumber + to_string(i + 1);
 			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("CollectedKeys",Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 4)
+			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 2)
 				SaveFile << CloseTable(true) << endl;
 			else
 				SaveFile << CloseTable() << endl;
@@ -42,13 +44,13 @@ void Save::SaveLevelKeys(LevelDetails* Levelinfo)
 		SaveFile << "}" << endl;
 
 		SaveFile << "Normal = {" << endl;
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			string itemnumber = "Level";
 			itemnumber = itemnumber + to_string(i + 1);
 			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 4)
+			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 2)
 				SaveFile << CloseTable(true) << endl;
 			else
 				SaveFile << CloseTable() << endl;
@@ -56,13 +58,13 @@ void Save::SaveLevelKeys(LevelDetails* Levelinfo)
 		SaveFile << "}" << endl;
 
 		SaveFile << "Hard = {" << endl;
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			string itemnumber = "Level";
 			itemnumber = itemnumber + to_string(i + 1);
 			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 4)
+			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
+			if (i == 2)
 				SaveFile << CloseTable(true) << endl;
 			else
 				SaveFile << CloseTable() << endl;

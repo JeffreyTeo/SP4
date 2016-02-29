@@ -26,8 +26,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
-				Difficulty = "Easy",
-				Cleared = false
+				Difficulty = "Easy"
         },
         
          Level2 = {	
@@ -41,8 +40,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
-				Difficulty = "Easy",
-				Cleared = false
+				Difficulty = "Normal"
         },
         
          Level3 = {	
@@ -56,8 +54,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
-				Difficulty = "Easy",
-				Cleared = false
+				Difficulty = "Hard"
         }
 	},
     
@@ -73,8 +70,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
-				Difficulty = "Normal",
-				Cleared = false
+				Difficulty = "Easy"
         },
         
          Level2 = {	
@@ -88,8 +84,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
-				Difficulty = "Normal",
-				Cleared = false
+				Difficulty = "Normal"
         },
         
          Level3 = {	
@@ -103,8 +98,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
-				Difficulty = "Normal",
-				Cleared = false
+				Difficulty = "Hard"
         }
 	},
     
@@ -120,8 +114,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level1.csv",
-				Difficulty = "Hard",
-				Cleared = false
+				Difficulty = "Easy"
         },
         
          Level2 = {	
@@ -135,8 +128,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Test.csv",
-				Difficulty = "Hard",
-				Cleared = false
+				Difficulty = "Normal"
         },
         
          Level3 = {	
@@ -150,8 +142,7 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Level2.csv",
-				Difficulty = "Hard",
-				Cleared = false
+				Difficulty = "Hard"
         }
 	}
 }

@@ -53,10 +53,10 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	this->m_PlayerPositionY = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "PlayerPositionY"));
 	this->m_NameOfLevelFile = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "NameOfLevelFile"));
 	this->m_Difficulty = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "Difficulty"));
-	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
 	theLevelDetailsinfoLua->LuaUsageClose();
 
 	theLevelDetailsinfoLua->LuaUsageInit("LeveltoSave");
+	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
 	this->m_AmountOfMoves = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "CollectedKeys"));
 	theLevelDetailsinfoLua->LuaUsageClose();
 }

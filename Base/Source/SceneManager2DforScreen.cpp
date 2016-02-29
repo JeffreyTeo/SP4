@@ -843,6 +843,13 @@ void SceneManagerLevel2DforScreen::RenderLevelSelect()
 
 	switch (m_select)
 	{
+	case -1:
+	{
+			   modelStack.PushMatrix();
+			   Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
+			   modelStack.PopMatrix();
+			   break;
+	}
 	case 1:
 	{
 			  modelStack.PushMatrix();
