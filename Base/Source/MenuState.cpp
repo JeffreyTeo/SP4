@@ -127,6 +127,7 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	{
 		if (Select != 5)
 		{
+			timer = 0;
 			Sound.engine->stopAllSounds();
 			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
@@ -134,6 +135,7 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		}
 		if (Select == 5)
 		{
+			timer = 0;
 			theGSM->Quit();
 		}
 		timer = 0.0f;

@@ -84,6 +84,15 @@ SceneManagerLevel2DforScreen::~SceneManagerLevel2DforScreen()
 		m_save = NULL;
 	}
 
+	for (vector<AllLevelDetails*>::iterator it = theLevelDetailsHolder.begin(); it != theLevelDetailsHolder.end(); ++it)
+	{
+		AllLevelDetails* leveldetails = (AllLevelDetails*)*it;
+		if (leveldetails != NULL)
+		{
+			delete leveldetails;
+			leveldetails = NULL;
+		}
+	}
 }
 
 void SceneManagerLevel2DforScreen::PreInit()
@@ -136,7 +145,7 @@ void SceneManagerLevel2DforScreen::Init()
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 	// Create the meshes
-	for(int i = 0; i < NUM_GEOMETRY; ++i)
+	for (int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		meshList[i] = NULL;
 	}
@@ -171,7 +180,7 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
-	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1,0.0f), 0, 0, 800, 600);
+	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1, 0.0f), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
 	meshList[GEO_HIGHSCORE] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_HIGHSCORE]->textureID = LoadTGA("Image//Highscore.tga");
@@ -193,7 +202,7 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_WIN]->textureID = LoadTGA("Image//Win.tga");
 	meshList[GEO_LEVELSHOPSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSHOPSELECT", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_LEVELSHOPSELECT]->textureID = LoadTGA("Image//LevelShopSelect.tga");
-	
+
 	meshList[GEO_LEVELSELECT] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_LEVELSELECT]->textureID = LoadTGA("Image//LevelSelect.tga");
 
@@ -222,6 +231,19 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_LEVELSHOPSELECT_SHOP]->textureID = LoadTGA("Image//ButtonMesh/Shopbutton.tga");
 	meshList[GEO_LEVELSHOPSELECT_CONTINUELEVEL] = MeshBuilder::Generate2DMesh("GEO_LEVELSHOPSELECT_CONTINUELEVEL", Color(1, 1, 1), 0, 0, 311, 34);
 	meshList[GEO_LEVELSHOPSELECT_CONTINUELEVEL]->textureID = LoadTGA("Image//ButtonMesh/ContinueLevelbutton.tga");
+
+
+	meshList[GEO_WIN_NEXTLEVEL] = MeshBuilder::Generate2DMesh("GEO_WIN_NEXTLEVEL", Color(1, 1, 1), 0, 0, 225, 34);
+	meshList[GEO_WIN_NEXTLEVEL]->textureID = LoadTGA("Image//ButtonMesh/NextLevelbutton.tga");
+
+	meshList[GEO_LEVELSELECT_LEVEL1] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT_LEVEL1", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_LEVELSELECT_LEVEL1]->textureID = LoadTGA("Image//ButtonMesh/Level1button.tga");
+	meshList[GEO_LEVELSELECT_LEVEL2] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT_LEVEL2", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_LEVELSELECT_LEVEL2]->textureID = LoadTGA("Image//ButtonMesh/Level2button.tga");
+	meshList[GEO_LEVELSELECT_LEVEL3] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT_LEVEL3", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_LEVELSELECT_LEVEL3]->textureID = LoadTGA("Image//ButtonMesh/Level3button.tga");
+	meshList[GEO_LEVELSELECT_LEVEL4] = MeshBuilder::Generate2DMesh("GEO_LEVELSELECT_LEVEL4", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_LEVELSELECT_LEVEL4]->textureID = LoadTGA("Image//ButtonMesh/Level4button.tga");
 
 	meshList[GEO_DIFFICULTY_EASY] = MeshBuilder::Generate2DMesh("GEO_DIFFICULTY_EASY", Color(1, 1, 1), 0, 0, 95, 34);
 	meshList[GEO_DIFFICULTY_EASY]->textureID = LoadTGA("Image//ButtonMesh/Easybutton.tga");
@@ -275,6 +297,43 @@ void SceneManagerLevel2DforScreen::Init()
 			SetSpriteAnimation(m_particle2, i);
 		}
 		m_SpriteAnimationLoad->LuaUsageClose();
+
+		m_SpriteAnimationLoad->LuaUsageInit("LeveltoSave");
+		m_maxlevel = m_SpriteAnimationLoad->get<int>("AmountOfLevel");
+		m_maxdiff = m_SpriteAnimationLoad->get<int>("AmountOfDiff");
+		m_SpriteAnimationLoad->LuaUsageClose();
+
+		string Start = "Level.";
+		for (int i = 0; i < m_maxdiff; ++i)
+		{
+			string Diff = "";
+			switch (i)
+			{
+			case 0:
+			{
+					  Diff = Start + "Easy.";
+					  break;
+			}
+			case 1:
+			{
+					  Diff = Start + "Normal.";
+					  break;
+			}
+			case 2:
+			{
+					  Diff = Start + "Hard.";
+					  break;
+			}
+			}
+			for (int j = 0; j < m_maxlevel; ++j)
+			{
+				string Level = Diff + "Level" + to_string((j + 1)) + ".";
+				AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+				m_levelofdetail->AllLevelDetailsInit(Level);
+				theLevelDetailsHolder.push_back(m_levelofdetail);
+			}
+		}
+
 	}
 	if (m_screenvalue == Menuscreen)
 	{
@@ -296,6 +355,13 @@ void SceneManagerLevel2DforScreen::Init()
 		CreateButton("DifficultyNormal");
 		CreateButton("DifficultyHard");
 	}
+	if (m_screenvalue == LevelSelectscreen)
+	{
+		CreateButton("Level1");
+		CreateButton("Level2");
+		CreateButton("Level3");
+		CreateButton("Level4");
+	}
 	if (m_screenvalue == Pausescreen)
 	{
 		CreateButton("Resume");
@@ -312,6 +378,11 @@ void SceneManagerLevel2DforScreen::Init()
 		CreateButton("HighscoreLevel4");
 	}
 
+	if (m_screenvalue == Winscreen)
+	{
+		CreateButton("NextLevel");
+		CreateButton("QuitToMenu");
+	}
 
 	m_select = -1;
 	theLevelButtonSelection = -1;
@@ -325,19 +396,20 @@ void SceneManagerLevel2DforScreen::Init()
 	projectionStack.LoadMatrix(perspective);
 	m_save = new Save();
 	rotateAngle = 0;
+
 	m_loading = new LuaUsage();
 	m_loading->LuaUsageInit("Sound");
 	tempsound = m_loading->get<float>("Volume");
 	m_loading->LuaUsageClose();
-	
+
 	m_player = new Player();
 	m_player->PlayerInit("Player");
-	if (m_screenvalue == Shopscreen)
-	{
-		m_shop = new Shop();
-		m_shop->PlayerInit(m_player);
-		m_shop->ItemInit();
-	}
+	m_shop = new Shop();
+	m_shop->PlayerInit(m_player);
+	m_shop->ItemInit();
+
+	//if (m_screenvalue == Highscorescreen)
+		//AddHighscore();
 }
 
 void SceneManagerLevel2DforScreen::AddHighscore()
@@ -387,14 +459,129 @@ void SceneManagerLevel2DforScreen::CreateButton(string name)
 	m_button->ButtonInit(name);
 	theButtonHolder.push_back(m_button);
 }
+bool SceneManagerLevel2DforScreen::ReturnPlayerDifficultySelection(int difficultyselection)
+{
+	if (m_shop->theItemHolder[difficultyselection - 1]->GetBought() == true)
+	{
+		switch (difficultyselection)
+		{
+		case 1:
+		{
+				  if (m_player->GetEasyLevelUnlocked())
+					  return true;
+				  else
+					  return false;
+				  break;
+		}
+		case 2:
+		{
+				  if (m_player->GetNormalLevelUnlocked())
+					  return true;
+				  else
+					  return false;
+				  break;
+		}
+		case 3:
+		{
+				  if (m_player->GetHardLevelUnlocked())
+					  return true;
+				  else
+					  return false;
+				  break;
+		}
+		}
+	}
+	else
+		return false;
+}
+bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
+{
+
+	if (this->m_player->GetLevelToDifficultyStartAt() == m_maxdiff)
+	{
+		if (this->m_player->GetLevelToStartAt() < m_maxlevel)
+			return true;
+		else
+			return false;
+	}
+	else
+	{
+		switch (this->m_player->GetLevelToDifficultyStartAt())
+		{
+		case 1:
+		{
+				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
+				  {
+					  return true;
+				  }
+				  if ((this->m_player->GetNormalLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt()+1]->GetBought() == true)
+				  {
+					  return true;
+				  }
+				  else if ((this->m_player->GetNormalLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
+				  {
+					  this->m_player->SetNormalLevelUnlocked(true);
+					  return false;
+				  }
+				  break;
+		}
+		case 2:
+		{
+				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
+				  {
+					  return true;
+				  }
+				  if ((this->m_player->GetHardLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == true)
+				  {
+					  return true;
+				  }
+				  else if ((this->m_player->GetHardLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
+				  {
+					  this->m_player->SetHardLevelUnlocked(true);
+					  return false;
+				  }
+				  break;
+		}
+		}
+	}
+}
+void SceneManagerLevel2DforScreen::NextLevel()
+{
+	if ((this->m_player->GetLevelToStartAt()) == m_maxlevel)
+	{
+		this->m_player->SetLevelToDifficultyStartAt((this->m_player->GetLevelToDifficultyStartAt() + 1));
+		this->m_player->SetLevelToStartAt(1);
+	}
+	else
+		this->m_player->SetLevelToStartAt((this->m_player->GetLevelToStartAt() + 1));
+
+	
+}
+
+void SceneManagerLevel2DforScreen::ResetPlayer()
+{
+	this->m_player->SetLevelToDifficultyStartAt(NULL);
+	this->m_player->SetLevelToStartAt(NULL);
+	this->m_player->SetLevelStopAt(NULL, NULL);
+}
+
+void SceneManagerLevel2DforScreen::SetLevelDifficulty(int LevelDifficulty)
+{
+	this->m_player->SetLevelToDifficultyStartAt(LevelDifficulty);
+}
+void SceneManagerLevel2DforScreen::SetLevelNumber(int LevelNumber)
+{
+	this->m_player->SetLevelToStartAt(LevelNumber);
+}
+
 void SceneManagerLevel2DforScreen::SetContinuedLevel()
 {
-	m_player->SetLevelToDifficultyStartAt(m_player->GetLevelDifficultyStopAt());
-	m_player->SetLevelToStartAt(m_player->GetLevelStopAt());
+	this->m_player->SetLevelToDifficultyStartAt(m_player->GetLevelDifficultyStopAt());
+	this->m_player->SetLevelToStartAt(m_player->GetLevelStopAt());
 }
 int SceneManagerLevel2DforScreen::GetLevelReferencetoContinue()
 {
-	return m_player->GetLevelStopAt();
+	return this->m_player->GetLevelStopAt();
 }
 void SceneManagerLevel2DforScreen::SetChangeScreen(bool m_ChangeScreen)
 {
@@ -442,25 +629,6 @@ void SceneManagerLevel2DforScreen::SetParticleStyle(Particle *ParticleVector, in
 
 void SceneManagerLevel2DforScreen::SetSpriteAnimation(Particle *ParticleVector, int SAIndex)
 {
-	/*meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", 6, 3);
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	m_spriteAnimation->m_anim = new Animation();
-	if (m_spriteAnimation)
-	{
-	Math::InitRNG();
-	m_spriteAnimation->m_anim->Set(0, 16, 0, 0.5f);
-	//m_spriteAnimation->x = Math::RandIntMinMax(100,700);//64;
-	//	m_spriteAnimation->y = 600 + Math::RandIntMinMax(100, 200);
-
-	m_spriteAnimation->x = m_particle->GetX();
-	m_spriteAnimation->y = m_particle->GetY();
-
-	m_spriteAnimation->speed = Math::RandIntMinMax(100, 800);
-	m_spriteAnimation->index = i;
-	m_particle->SpritePushBack(m_spriteAnimation, /*0*///m_spriteAnimation->y + Math::RandIntMinMax(-600, 300), 400/*0*/);
-	/*m_particle->SpritePushBack(m_spriteAnimation, 0, 0, i);*/
-	//}
 	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("star", Color(), m_SpriteAnimationLoad->get<int>("StarRow"), m_SpriteAnimationLoad->get<int>("StarCol"));
 	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//StarSprite.tga");
 	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
@@ -542,15 +710,15 @@ int SceneManagerLevel2DforScreen::getLevelButtonSelection()
 void SceneManagerLevel2DforScreen::Update(double dt)
 {
 	//cout << m_player->GetAmtOfClearedLevelEasy() << " " << m_player->GetAmtOfClearedLevelNormal() << " " << m_player->GetAmtOfClearedLevelHard();
-	if(Application::IsKeyPressed('1'))
+	if (Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
-	if(Application::IsKeyPressed('2'))
+	if (Application::IsKeyPressed('2'))
 		glDisable(GL_CULL_FACE);
-	if(Application::IsKeyPressed('3'))
+	if (Application::IsKeyPressed('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(Application::IsKeyPressed('4'))
+	if (Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
+
 	if (Application::IsKeyPressed('5'))
 		m_alpha += 0.05f;
 	if (Application::IsKeyPressed('6'))
@@ -567,7 +735,7 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 		m_particle->Update(dt);
 		m_particle2->Update(dt);
 	}
-	
+
 	if (m_ScreenTransition && m_ChangeScreen)
 	{
 		m_alpha -= 0.04f;
@@ -631,50 +799,50 @@ void SceneManagerLevel2DforScreen::UpdateMouseStatus(const unsigned char key)
  ********************************************************************************/
 void SceneManagerLevel2DforScreen::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha)
 {
-	if(!mesh || mesh->textureID <= 0)
+	if (!mesh || mesh->textureID <= 0)
 		return;
-	
+
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
-		projectionStack.LoadMatrix(ortho);
-		viewStack.PushMatrix();
-			viewStack.LoadIdentity();
-			modelStack.PushMatrix();
-				modelStack.LoadIdentity();
-				modelStack.Translate(x, y, 0);
-				modelStack.Scale(size, size, size);
-				if (enablealpha == true)
-				{
-					glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
-					glUniform4fv(m_parameters[U_TEXT_ALPHA], 1, &color.r);
-				}
-				else
-				{
-					glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
-					glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
-				}
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate(x, y, 0);
+	modelStack.Scale(size, size, size);
+	if (enablealpha == true)
+	{
+		glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
+		glUniform4fv(m_parameters[U_TEXT_ALPHA], 1, &color.r);
+	}
+	else
+	{
+		glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+		glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+	}
 
-				//glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
-				//glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
-				//	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
-				glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-				glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				for(unsigned i = 0; i < text.length(); ++i)
-				{
-					Mtx44 characterSpacing;
-					characterSpacing.SetToTranslation((i*0.5f) + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
-					Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
-					glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-	
-					mesh->Render((unsigned)text[i] * 6, 6);
-				}
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
-			modelStack.PopMatrix();
-		viewStack.PopMatrix();
+	//glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+	//glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+	//	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+	glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	for (unsigned i = 0; i < text.length(); ++i)
+	{
+		Mtx44 characterSpacing;
+		characterSpacing.SetToTranslation((i*0.5f) + 0.5f, 0.5f, 0); //1.0f is the spacing of each character, you may change this value
+		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
+		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+
+		mesh->Render((unsigned)text[i] * 6, 6);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
 }
 
@@ -686,59 +854,49 @@ void SceneManagerLevel2DforScreen::Render2DMesh(Mesh *mesh, bool enableLight, bo
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
 	projectionStack.PushMatrix();
-		projectionStack.LoadMatrix(ortho);
-		viewStack.PushMatrix();
-			viewStack.LoadIdentity();
-			modelStack.PushMatrix();
-				modelStack.LoadIdentity();
-				modelStack.Translate( (float)x, (float)y, 0);
-				modelStack.Scale( (float)size, (float)size, (float)size);
-				if (rotate)
-					modelStack.Rotate(rotateAngle, 0, 0, 1);
-       
-				Mtx44 MVP, modelView, modelView_inverse_transpose;
-	
-				MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
-				glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
-				if(mesh->textureID > 0)
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
-					if (enablealpha == false)
-					{
-						glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 0);
-					}
-					else
-					{
-						glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
-					}
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-					glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
-				}
-				else
-				{
-					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
-				}
-				mesh->Render();
-				if(mesh->textureID > 0)
-				{
-					glBindTexture(GL_TEXTURE_2D, 0);
-				}
-       
-			modelStack.PopMatrix();
-		viewStack.PopMatrix();
+	projectionStack.LoadMatrix(ortho);
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+	modelStack.Translate((float)x, (float)y, 0);
+	modelStack.Scale((float)size, (float)size, (float)size);
+	if (rotate)
+		modelStack.Rotate(rotateAngle, 0, 0, 1);
+
+	Mtx44 MVP, modelView, modelView_inverse_transpose;
+
+	MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
+	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+	if (mesh->textureID > 0)
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+		if (enablealpha == false)
+		{
+			glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 0);
+		}
+		else
+		{
+			glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+		glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+	}
+	else
+	{
+		glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
+	}
+	mesh->Render();
+	if (mesh->textureID > 0)
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
 }
-
-/********************************************************************************
- Render the background
- ********************************************************************************/
-void SceneManagerLevel2DforScreen::RenderBackground()
-{
-	// Render the crosshair
-	Render2DMesh(meshList[GEO_BACKGROUND], false, false, 1);
-}
-
 /********************************************************************************
  Render this scene
  ********************************************************************************/
@@ -749,14 +907,14 @@ void SceneManagerLevel2DforScreen::Render()
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
-	
+
 	// Camera matrix
 	viewStack.LoadIdentity();
 	viewStack.LookAt(
-						camera.position.x, camera.position.y, camera.position.z,
-						camera.target.x, camera.target.y, camera.target.z,
-						camera.up.x, camera.up.y, camera.up.z
-					);
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+		);
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
@@ -790,17 +948,17 @@ void SceneManagerLevel2DforScreen::Render()
 	case Shopscreen:
 	{
 					   RenderShop();
-						break;
+					   break;
 	}
 	case LevelSelectscreen:
 	{
 							  RenderLevelSelect();
-							   break;
+							  break;
 	}
 	case Pausescreen:
 	{
 						RenderPause();
-						 break;
+						break;
 	}
 	case Winscreen:
 	{
@@ -813,173 +971,12 @@ void SceneManagerLevel2DforScreen::Render()
 								   break;
 	}
 	}
-	
-
-	/*std::ostringstream ss;
-	ss.precision(5);
-	ss << "test text: " << " 9999999 ";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6 ,false);*/
 }
-void SceneManagerLevel2DforScreen::RenderPause()
-{
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_PAUSE], false, true);
-	Render2DMesh(meshList[GEO_PAUSE_RESUME], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_PAUSE_QUITTOMENU], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
-	if (m_select >= 0)
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
-	modelStack.PopMatrix();
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
-}
-void SceneManagerLevel2DforScreen::RenderShop()
-{
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_SHOP], false, true);
-	modelStack.PopMatrix();
 
-	string notUnlocked = "Level is still locked";
-	string Insufficient = "Insufficient Funds to purchase level";
 
-	switch (m_select)
-	{
-		case 1:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 417);
-			if (!m_shop->GetplayerEasyModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-		case 2:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 341);
-			if (!m_shop->GetplayerNormalModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-		case 3:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 265);
-			if (!m_shop->GetplayerHardModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-	}
-
-	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
-	{
-		modelStack.PushMatrix();
-		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
-		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
-		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
-		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
-		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
-		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
-		modelStack.PopMatrix();
-	}
-	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
-	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
-}
-void SceneManagerLevel2DforScreen::RenderWin()
-{
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_WIN], false, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
-	modelStack.PopMatrix();
-
-	for (int i = 0; i < m_particle->GetSize(); i++)
-	{
-		modelStack.PushMatrix();
-		Render2DMesh(m_particle->theSpriteHolder[i], false, true, 50, m_particle->theSpriteHolder[i]->x, m_particle->theSpriteHolder[i]->y);
-		Render2DMesh(m_particle2->theSpriteHolder[i], false, true, 50, m_particle2->theSpriteHolder[i]->x, m_particle2->theSpriteHolder[i]->y);
-		modelStack.PopMatrix();
-	}
-}
-void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
-{
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
-	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_LEVELSELECT], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_SHOP], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_CONTINUELEVEL], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
-	if (m_select >= 0)
-		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
-	modelStack.PopMatrix();
-
-	if (m_select == 3)
-	{
-		if (m_player->GetLevelStopAt() == 0)
-			RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 0, 0), 30, 200, 110, true);
-		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Continue?", Color(1, 0, 0), 30, 200, 110, true);
-	}
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
-}
-void SceneManagerLevel2DforScreen::RenderLevelSelect()
-{
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_LEVELSELECT], false, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
-	modelStack.PopMatrix();
-
-	switch (m_select)
-	{
-	case -1:
-	{
-			   modelStack.PushMatrix();
-			   Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
-			   modelStack.PopMatrix();
-			   break;
-	}
-	case 1:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 250, 275);
-			  modelStack.PopMatrix();
-			  break;
-	}
-	case 2:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 120, 220);
-			  modelStack.PopMatrix();
-			  break;
-	}
-	case 3:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 180, 160);
-			  modelStack.PopMatrix();
-			  break;
-	}
-	}
-}
+/********************************************************************************
+Render Mainmenu Screen
+********************************************************************************/
 void SceneManagerLevel2DforScreen::RenderMainMenu()
 {
 	modelStack.PushMatrix();
@@ -995,6 +992,23 @@ void SceneManagerLevel2DforScreen::RenderMainMenu()
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
+
+
+/********************************************************************************
+Render Instructions Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderInstructions()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_INSTRUCTION], false, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	modelStack.PopMatrix();
+}
+
+
+/********************************************************************************
+Render Highscore Screen
+********************************************************************************/
 void SceneManagerLevel2DforScreen::RenderHighscore()
 {
 	modelStack.PushMatrix();
@@ -1037,6 +1051,11 @@ void SceneManagerLevel2DforScreen::RenderHighscore()
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	
 }
+
+
+/********************************************************************************
+Render Option Screen
+********************************************************************************/
 void SceneManagerLevel2DforScreen::RenderOption()
 {
 	modelStack.PushMatrix();
@@ -1058,7 +1077,7 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	{
 		Render2DMesh(meshList[GEO_VOL_MUTE], false, true);
 	}
-	
+
 	/*std::ostringstream ssVol;
 	ssVol << tempsound;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssVol.str(), Color(1, 0, 0), 80, 450, 180, true);*/
@@ -1067,7 +1086,7 @@ void SceneManagerLevel2DforScreen::RenderOption()
 
 	for (int i = 0; i < (int)tempsound; i++)
 	{
-			Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);	
+		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
 	/*Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 0, 185);
 	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 30, 185);
@@ -1079,13 +1098,193 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 210, 185);
 	modelStack.PopMatrix();
 }
-void SceneManagerLevel2DforScreen::RenderInstructions()
+
+
+/********************************************************************************
+Render LevelShopSelect Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
 {
 	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_INSTRUCTION], false, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_LEVELSELECT], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_SHOP], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT_CONTINUELEVEL], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
+	if (m_select >= 0)
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
 	modelStack.PopMatrix();
+
+	if (m_select == 3)
+	{
+		if (m_player->GetLevelStopAt() == 0)
+			RenderTextOnScreen(meshList[GEO_TEXT], "There is No Level to continue", Color(1, 0, 0), 30, 200, 110, true);
+		else
+		{
+			string Diff = "";
+			switch (m_player->GetLevelDifficultyStopAt())
+			{
+			case 1:
+			{ Diff = "Easy"; break; }
+			case 2:
+			{Diff = "Normal"; break; }
+			case 3:
+			{Diff = "Hard"; break; }
+			}
+			RenderTextOnScreen(meshList[GEO_TEXT], "Continue Level?", Color(1, 0, 0), 30, theButtonHolder[2]->getPosition().x, 170, true);
+			string StringDiff = "Difficulty:" + Diff;
+			RenderTextOnScreen(meshList[GEO_TEXT], StringDiff, Color(1, 0, 0), 30, theButtonHolder[2]->getPosition().x, 140, true);
+			string StringLevel = "Level:" + to_string(m_player->GetLevelStopAt());
+			RenderTextOnScreen(meshList[GEO_TEXT], StringLevel, Color(1, 0, 0), 30, theButtonHolder[2]->getPosition().x, 110, true);
+		}
+			
+	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
+
+
+/********************************************************************************
+Render Shop Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderShop()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_SHOP], false, true);
+	modelStack.PopMatrix();
+
+	string notUnlocked = "Level is still locked";
+	string Insufficient = "Insufficient Funds to purchase level";
+
+	switch (m_select)
+	{
+	case 1:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 417);
+			  if (!m_shop->GetplayerEasyModeUnlocked())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 2:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 341);
+			  if (!m_shop->GetplayerNormalModeUnlocked())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  modelStack.PopMatrix();
+			  break;
+	}
+	case 3:
+	{
+			  modelStack.PushMatrix();
+			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 265);
+			  if (!m_shop->GetplayerHardModeUnlocked())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			  {
+				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			  }
+			  modelStack.PopMatrix();
+			  break;
+	}
+	}
+
+	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
+	{
+		modelStack.PushMatrix();
+		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
+		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
+		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
+		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
+		if (m_shop->theItemHolder[i]->GetBought())
+			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
+		else
+			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
+		modelStack.PopMatrix();
+	}
+	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
+	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+}
+
+
+/********************************************************************************
+Render LevelSelect Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderLevelSelect()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
+	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL1], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL2], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL3], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL4], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);
+	if (m_select >= 0)
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+	modelStack.PopMatrix();
+
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+}
+
+
+/********************************************************************************
+Render Pause Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderPause()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_PAUSE], false, true);
+	Render2DMesh(meshList[GEO_PAUSE_RESUME], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_PAUSE_QUITTOMENU], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+	if (m_select >= 0)
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+	modelStack.PopMatrix();
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+}
+
+
+/********************************************************************************
+Render Win Screen
+********************************************************************************/
+void SceneManagerLevel2DforScreen::RenderWin()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_WIN], false, true);
+	Render2DMesh(meshList[GEO_WIN_NEXTLEVEL], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_PAUSE_QUITTOMENU], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+	if (m_select >= 0)
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+	modelStack.PopMatrix();
+
+	for (int i = 0; i < m_particle->GetSize(); i++)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(m_particle->theSpriteHolder[i], false, true, 50, m_particle->theSpriteHolder[i]->x, m_particle->theSpriteHolder[i]->y);
+		Render2DMesh(m_particle2->theSpriteHolder[i], false, true, 50, m_particle2->theSpriteHolder[i]->x, m_particle2->theSpriteHolder[i]->y);
+		modelStack.PopMatrix();
+	}
+
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
+}
+
+
+/********************************************************************************
+Render Difficulty Screen
+********************************************************************************/
 void SceneManagerLevel2DforScreen::RenderDifficulty()
 {
 	modelStack.PushMatrix();
@@ -1094,10 +1293,38 @@ void SceneManagerLevel2DforScreen::RenderDifficulty()
 	Render2DMesh(meshList[GEO_DIFFICULTY_NORMAL], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
 	Render2DMesh(meshList[GEO_DIFFICULTY_HARD], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
 	if (m_select >= 0)
-	Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+	switch (m_select)
+	{
+	case 1:
+	{
+			  if (!m_player->GetEasyLevelUnlocked())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  else if (m_player->GetEasyLevelUnlocked() && !m_shop->theItemHolder[0]->GetBought())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Bought yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  break;
+	}
+	case 2:
+	{
+			  if (!m_player->GetNormalLevelUnlocked())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  else if (m_player->GetNormalLevelUnlocked() && !m_shop->theItemHolder[1]->GetBought())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Bought yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  break;
+	}
+	case 3:
+	{
+			  if (!m_player->GetHardLevelUnlocked())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  else if (m_player->GetHardLevelUnlocked() && !m_shop->theItemHolder[2]->GetBought())
+				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Bought yet!", Color(1, 0, 0), 30, 200, 110, true);
+			  break;
+	}
+	}
 	modelStack.PopMatrix();
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
+
 
 /********************************************************************************
  Exit this scene
@@ -1108,11 +1335,8 @@ void SceneManagerLevel2DforScreen::Exit()
 		m_save->SaveMusic(tempsound);
 
 
-	if (m_screenvalue == Shopscreen)
-	{
-		m_save->SaveShop(m_shop);
-		m_shop->Set(m_player);
-	}
+	m_save->SaveShop(m_shop);
+	m_shop->Set(m_player);
 	m_save->SavePlayer(m_player);
 	if (m_screenvalue == Winscreen)
 	{
@@ -1146,10 +1370,10 @@ void SceneManagerLevel2DforScreen::Exit()
 		}
 	}
 	// Cleanup VBO
-	
+
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
-	
+
 }
 
 
@@ -1157,106 +1381,106 @@ void SceneManagerLevel2DforScreen::Exit()
 
 void SceneManagerLevel2DforScreen::RenderTileMap()
 {
-	int m = 0;
-	for (int i = 0; i < m_cMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = tileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((tileOffset_x + k) >= m_cMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cMap->theScreenMap[i][m] == 1)
-			{
-				Render2DMesh(meshList[GEO_TILEGROUND], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 2)
-			{
-				Render2DMesh(meshList[GEO_TILETREE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 10)
-			{
-				Render2DMesh(meshList[GEO_TILE_KILLZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 11)
-			{
-				Render2DMesh(meshList[GEO_TILE_SAFEZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-		}
-	}
+int m = 0;
+for (int i = 0; i < m_cMap->GetNumOfTiles_Height(); i++)
+{
+for (int k = 0; k < m_cMap->GetNumOfTiles_Width() + 1; k++)
+{
+m = tileOffset_x + k;
+// If we have reached the right side of the Map, then do not display the extra column of tiles.
+if ((tileOffset_x + k) >= m_cMap->getNumOfTiles_MapWidth())
+break;
+if (m_cMap->theScreenMap[i][m] == 1)
+{
+Render2DMesh(meshList[GEO_TILEGROUND], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
+}
+else if (m_cMap->theScreenMap[i][m] == 2)
+{
+Render2DMesh(meshList[GEO_TILETREE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
+}
+else if (m_cMap->theScreenMap[i][m] == 10)
+{
+Render2DMesh(meshList[GEO_TILE_KILLZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
+}
+else if (m_cMap->theScreenMap[i][m] == 11)
+{
+Render2DMesh(meshList[GEO_TILE_SAFEZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
+}
+}
+}
 
-	if (theHero->GetAnimationInvert() == false)
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-	}
-	else
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-	}
+if (theHero->GetAnimationInvert() == false)
+{
+if (theHero->GetAnimationCounter() == 0)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
+else if (theHero->GetAnimationCounter() == 1)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
+else if (theHero->GetAnimationCounter() == 2)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
+else if (theHero->GetAnimationCounter() == 3)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
+else
+Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
+}
+else
+{
+if (theHero->GetAnimationCounter() == 0)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
+else if (theHero->GetAnimationCounter() == 1)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
+else if (theHero->GetAnimationCounter() == 2)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
+else if (theHero->GetAnimationCounter() == 3)
+Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
+else
+Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
+}
 
-	// Render the enemy
-	int theEnemy_x = theEnemy->GetPos_x() - theHero->GetMapFineOffset_x();
-	int theEnemy_y = theEnemy->GetPos_y();
-	if (((theEnemy_x >= 0) && (theEnemy_x<800)) &&
-		((theEnemy_y >= 0) && (theEnemy_y<600)))
-	{
-		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1, theEnemy_x, theEnemy_y);
-	}
+// Render the enemy
+int theEnemy_x = theEnemy->GetPos_x() - theHero->GetMapFineOffset_x();
+int theEnemy_y = theEnemy->GetPos_y();
+if (((theEnemy_x >= 0) && (theEnemy_x<800)) &&
+((theEnemy_y >= 0) && (theEnemy_y<600)))
+{
+Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1, theEnemy_x, theEnemy_y);
+}
 }
 
 
 void SceneManagerLevel2DforScreen::RenderRearTileMap()
 {
-	rearWallOffset_x = (int)(theHero->GetMapOffset_x() / 2);
-	rearWallOffset_y = 0;
-	rearWallTileOffset_y = 0;
-	rearWallTileOffset_x = (int)(rearWallOffset_x / m_cRearMap->GetTileSize());
-	if (rearWallTileOffset_x + m_cRearMap->GetNumOfTiles_Width() > m_cRearMap->getNumOfTiles_MapWidth())
-		rearWallTileOffset_x = m_cRearMap->getNumOfTiles_MapWidth() - m_cRearMap->GetNumOfTiles_Width();
-	rearWallFineOffset_x = rearWallOffset_x % m_cRearMap->GetTileSize();
+rearWallOffset_x = (int)(theHero->GetMapOffset_x() / 2);
+rearWallOffset_y = 0;
+rearWallTileOffset_y = 0;
+rearWallTileOffset_x = (int)(rearWallOffset_x / m_cRearMap->GetTileSize());
+if (rearWallTileOffset_x + m_cRearMap->GetNumOfTiles_Width() > m_cRearMap->getNumOfTiles_MapWidth())
+rearWallTileOffset_x = m_cRearMap->getNumOfTiles_MapWidth() - m_cRearMap->GetNumOfTiles_Width();
+rearWallFineOffset_x = rearWallOffset_x % m_cRearMap->GetTileSize();
 
-	int m = 0;
-	for (int i = 0; i < m_cRearMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cRearMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = rearWallTileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((rearWallTileOffset_x + k) >= m_cRearMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cRearMap->theScreenMap[i][m] == 3)
-			{
-				Render2DMesh(meshList[GEO_TILESTRUCTURE], false, 1, k*m_cRearMap->GetTileSize() - rearWallFineOffset_x, 575 - i*m_cRearMap->GetTileSize());
-			}
-		}
-	}
+int m = 0;
+for (int i = 0; i < m_cRearMap->GetNumOfTiles_Height(); i++)
+{
+for (int k = 0; k < m_cRearMap->GetNumOfTiles_Width() + 1; k++)
+{
+m = rearWallTileOffset_x + k;
+// If we have reached the right side of the Map, then do not display the extra column of tiles.
+if ((rearWallTileOffset_x + k) >= m_cRearMap->getNumOfTiles_MapWidth())
+break;
+if (m_cRearMap->theScreenMap[i][m] == 3)
+{
+Render2DMesh(meshList[GEO_TILESTRUCTURE], false, 1, k*m_cRearMap->GetTileSize() - rearWallFineOffset_x, 575 - i*m_cRearMap->GetTileSize());
+}
+}
+}
 }
 
 
 void SceneManagerLevel2DforScreen::RenderGoodies()
 {
-	// Render the goodies
-	for (int i = 0; i<10; i++)
-	{
-		Render2DMesh(theArrayOfGoodies[i]->GetMesh(), false, 1, theArrayOfGoodies[i]->GetPos_x(), theArrayOfGoodies[i]->GetPos_y());
-	}
+// Render the goodies
+for (int i = 0; i<10; i++)
+{
+Render2DMesh(theArrayOfGoodies[i]->GetMesh(), false, 1, theArrayOfGoodies[i]->GetPos_x(), theArrayOfGoodies[i]->GetPos_y());
+}
 }
 */

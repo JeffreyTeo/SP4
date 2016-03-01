@@ -15,8 +15,9 @@ CSceneManager2D::CSceneManager2D()
 , m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
-, m_SpriteAnimationLoad(NULL)
+, m_Load(NULL)
 , m_cLevel(NULL)
+, theLevelDetailsHolder(NULL)
 , m_LevelDetails(NULL)
 , MoveChar(true)
 , ShowStart(false)
@@ -51,8 +52,9 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 , m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
-, m_SpriteAnimationLoad(NULL)
+, m_Load(NULL)
 , m_cLevel(NULL)
+, theLevelDetailsHolder(NULL)
 , m_LevelDetails(NULL)
 , MoveChar(true)
 , ShowStart(false)
@@ -89,10 +91,10 @@ CSceneManager2D::~CSceneManager2D()
 		Playfield = NULL;
 	}
 
-	if (m_SpriteAnimationLoad)
+	if (m_Load)
 	{
-		delete m_SpriteAnimationLoad;
-		m_SpriteAnimationLoad = NULL;
+		delete m_Load;
+		m_Load = NULL;
 	}
 
 	if (m_cLevel)
@@ -105,6 +107,7 @@ CSceneManager2D::~CSceneManager2D()
 		delete m_LevelDetails;
 		m_LevelDetails = NULL;
 	}
+
 	if (AIList.size() > 0)
 	{
 		for (int a = 0; a < AIList.size(); a++)
@@ -112,6 +115,15 @@ CSceneManager2D::~CSceneManager2D()
 			delete AIList[a];
 		}
 		AIList.clear();
+	}
+	for (vector<AllLevelDetails*>::iterator it = theLevelDetailsHolder.begin(); it != theLevelDetailsHolder.end(); ++it)
+	{
+		AllLevelDetails* leveldetails = (AllLevelDetails*)*it;
+		if (leveldetails != NULL)
+		{
+			delete leveldetails;
+			leveldetails = NULL;
+		}
 	}
 	/*
 	if (m_spriteAnimation)
@@ -299,14 +311,49 @@ void CSceneManager2D::Init()
 	m_save = new Save();
 	m_player = new Player();
 	m_player->PlayerInit("Player");
-	NoOfMoves = 30;
+	
 	KeysCollected = 0;
 	m_LevelDetails = new LevelDetails();
 	m_LevelDetails->LevelDetailsInit(m_player->GetLevelToDifficultyStartAt(), m_player->GetLevelToStartAt(), "Level");
-	m_player->SetLevelToDifficultyStartAt(0);
-	m_player->SetLevelToStartAt(0);
+	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
 	rotateAngle = 0;
-	
+
+	m_Load = new LuaUsage();
+	m_Load->LuaUsageInit("LeveltoSave");
+	m_maxlevel = m_Load->get<int>("AmountOfLevel");
+	m_maxdiff = m_Load->get<int>("AmountOfDiff");
+	m_Load->LuaUsageClose();
+	string Start = "Level.";
+	for (int i = 0; i < m_maxdiff; ++i)
+	{
+		string Diff = "";
+		switch (i)
+		{
+		case 0:
+		{
+				  Diff = Start + "Easy.";
+				  break;
+		}
+		case 1:
+		{
+				  Diff = Start + "Normal.";
+				  break;
+		}
+		case 2:
+		{
+				  Diff = Start + "Hard.";
+				  break;
+		}
+		}
+		for (int j = 0; j < m_maxlevel; ++j)
+		{
+			string Level = Diff + "Level" + to_string((j + 1)) + ".";
+			AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+			m_levelofdetail->AllLevelDetailsInit(Level);
+			theLevelDetailsHolder.push_back(m_levelofdetail);
+		}
+	}
+
 	//level loader
 	m_cLevel = new LevelLoader();
 	m_cLevel->Init((m_LevelDetails->GetNumberOfGridY() + 1) * m_LevelDetails->GetLengthYOfAGrid(), m_LevelDetails->GetNumberOfGridX() * m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetNumberOfGridY() + 1, m_LevelDetails->GetNumberOfGridX());
@@ -354,6 +401,7 @@ void CSceneManager2D::Init()
 
 void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 {
+	KeysCollected = 0;
 	this->m_Quitfrompause = m_Quitfrompause;
 	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
 }
@@ -371,14 +419,6 @@ void CSceneManager2D::AddHighscore()
 int CSceneManager2D::GetWinCondition()
 {
 	return m_WinCondition;
-}
-void SceneManagerLevel2DforScreen::setDifficulty(int m_Difficulty)
-{
-	this->m_player->SetLevelToDifficultyStartAt(m_Difficulty);
-}
-void SceneManagerLevel2DforScreen::setLevel(int m_Level)
-{
-	this->m_player->SetLevelToStartAt(m_Level);
 }
 
 void CSceneManager2D::Update(double dt)
@@ -1056,6 +1096,22 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
+	if (!m_Quitfrompause)
+	{
+		int i = m_player->GetLevelToDifficultyStartAt()- 1;
+		int j = i * m_maxlevel;
+		int k = m_player->GetLevelToStartAt();
+		theLevelDetailsHolder[((j + k)-1)]->SetCleared(true);
+		if (theLevelDetailsHolder[((j + k)-1)]->GetCollectedKeys() < KeysCollected)
+		{
+			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys()));
+			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(KeysCollected);
+		}
+			
+		if (theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys() == 3)
+			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(3);	
+	}
+	m_save->SaveLevelStuff(theLevelDetailsHolder, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);
 
 

@@ -15,6 +15,8 @@ public:
 	LuaUsage(void);
 	~LuaUsage(void);
 
+	bool LuaUsageCheckit(string LuaFileName);
+
 	void LuaUsageInit(string LuaFileName);
 	void LuaUsageClose();
 	void clean();

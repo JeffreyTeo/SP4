@@ -17,60 +17,188 @@ string Save::BoolToStringConversion(bool convert)
 		ReturnString = "false";
 	return ReturnString;
 }
-void Save::SaveLevelKeys(LevelDetails* Levelinfo)
+
+void Save::SaveEveryThing(int FileNumber)
+{
+	switch (FileNumber)
+	{
+
+	case 0:
+	{
+			  ofstream SaveFile("Lua/Application.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--ScreenWidth, ScreenHeight--\nWindowSize = {\nScreenSize = {\nScreenWidth = 800, ScreenHeight = 600\n}\n}";
+			  }
+	}
+
+	case 1:
+	{
+			  ofstream SaveFile("Lua/Button.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--Button Save File--" << endl;
+				  SaveFile << "  Button = {" << endl;
+				  SaveFile << "  Play = { Position = { x = 295, y = 290 }, TempPosition = { x = -100, y = 290 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Instruction = { Position = { x = 295, y = 235 }, TempPosition = { x = 800, y = 235 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Highscore = { Position = { x = 295, y = 180 }, TempPosition = { x = -100, y = 180 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Option = { Position = { x = 295, y = 125 }, TempPosition = { x = 800, y = 125 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Exit = { Position = { x = 295, y = 70 }, TempPosition = { x = -100, y = 70 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  LevelSelect = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Shop = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  ContinueLevel = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  DifficultyEasy = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  DifficultyNormal = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  DifficultyHard = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Level1 = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Level2 = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Level3 = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Level4 = { Position = { x = 295, y = 185 }, TempPosition = { x = 800, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreEasy = { Position = { x = 295, y = 275 }, TempPosition = { x = 800, y = 275 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreNormal = { Position = { x = 295, y = 220 }, TempPosition = { x = -100, y = 220 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreHard = { Position = { x = 295, y = 165 }, TempPosition = { x = 800, y = 165 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreLevel1 = { Position = { x = 295, y = 275 }, TempPosition = { x = 800, y = 275 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreLevel2 = { Position = { x = 295, y = 220 }, TempPosition = { x = -100, y = 220 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreLevel3 = { Position = { x = 295, y = 165 }, TempPosition = { x = 800, y = 165 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreLevel4 = { Position = { x = 295, y = 110 }, TempPosition = { x = -100, y = 110 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Resume = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  QuitToMenu = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  NextLevel = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  }" << endl;
+
+			  }
+	}
+
+	case 2:
+	{
+			  ofstream SaveFile("Lua/Item.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--Item Save File--" << endl;
+				  SaveFile << "Amount = 3" << endl;
+				  SaveFile << "Item = {" << endl;
+				  SaveFile << "Number1 = { Name = \"EasyLevel\", Bought = true, Price = 2 }," << endl;
+				  SaveFile << "Number2 = { Name = \"NormalLevel\", Bought = false, Price = 12 }," << endl;
+				  SaveFile << "Number3 = { Name = \"HardLevel\", Bought = false, Price = 15 }" << endl;
+				  SaveFile << "}" << endl;
+			  }
+	}
+
+	case 3:
+	{
+			  ofstream SaveFile("Lua/Level.lua");
+			  if (SaveFile.is_open())
+			  {
+			  }
+	}
+
+	case 4:
+	{
+			  ofstream SaveFile("Lua/LeveltoSave.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--Level Template--\n--LevelNumber = { Key }--\nAmountOfLevel = 4\nAmountOfDiff = 3" << endl;
+				  SaveFile << "Level = {" << endl;
+				  SaveFile << "Easy = { \nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n }, " << endl;
+				  SaveFile << "Normal = {\nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n}," << endl;
+				  SaveFile << "Hard = {\nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n }" << endl;
+				  SaveFile << "}" << endl;
+
+			  }
+	}
+
+	case 5:
+	{
+			  ofstream SaveFile("Lua/Player.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--Player Save File--\nLevelAmt = 3\nCurrency = 0\nLevelToStartAt = 0\nLevelDifficultyToStartAt = 0\nLevelStopAt = 0\nLevelDifficultyStopAt = 0\nPlayer = {\nEASYLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n },\nNORMALLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n },\nHARDLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n }\n }";
+			  }
+	}
+
+	case 6:
+	{
+			  ofstream SaveFile("Lua/Sound.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "Volume = 0.8";
+			  }
+	}
+
+	case 7:
+	{
+			  ofstream SaveFile("Lua/Sprite.lua");
+			  if (SaveFile.is_open())
+			  {
+				  SaveFile << "--Star Sprite = { row, col, float MinTime, float MaxTime }--\n--Time is use to swap--\n--Star = { 6, 3, 0.5, 1.0 }--\nStarRow = 6\nStarCol = 3\nStarMinTime = 0.5\nStarMaxTime = 1.0";
+			  }
+	}
+
+	}
+}
+
+void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int maxlevel, int maxdifficulty)
 {
 	ofstream SaveFile("Lua/LeveltoSave.lua");
 	if (SaveFile.is_open())
 	{
 		SaveFile << "--Level Template--" << endl;
 		SaveFile << "--LevelNumber = { Key }--" << endl;
-
+		SaveFile << "AmountOfLevel = " << maxlevel << endl;
+		SaveFile << "AmountOfDiff = " << maxdifficulty << endl;
 		SaveFile << "Level = {" << endl;
-
-		//Create a class with 3 vector
-		//Should only accept money,highscore
-		SaveFile << "Easy = {" << endl;
-		for (int i = 0; i < 3; ++i)
+		for (int j = 0; j < maxdifficulty; ++j)
 		{
-			string itemnumber = "Level";
-			itemnumber = itemnumber + to_string(i + 1);
-			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 2)
-				SaveFile << CloseTable(true) << endl;
-			else
-				SaveFile << CloseTable() << endl;
+			switch (j)
+			{
+			case 0:
+			{
+					  SaveFile << "Easy = {" << endl;
+					  for (int i = 0; i < maxlevel; ++i)
+					  {
+						  string itemnumber = "Level";
+						  itemnumber = itemnumber + to_string(i + 1);
+						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
+						  if (i == (maxlevel - 1))
+							  SaveFile << CloseTable(true) << endl;
+						  else
+							  SaveFile << CloseTable() << endl;
+					  }
+					  SaveFile << "}," << endl;
+					  break;
+			}
+			case 1:
+			{
+					  SaveFile << "Normal = {" << endl;
+					  for (int i = 0; i < maxlevel; ++i)
+					  {
+						  string itemnumber = "Level";
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
+						  if (i == (maxlevel - 1))
+							  SaveFile << CloseTable(true) << endl;
+						  else
+							  SaveFile << CloseTable() << endl;
+					  }
+					  SaveFile << "}," << endl;
+					  break;
+			}
+			case 2:
+			{
+					  SaveFile << "Hard = {" << endl;
+					  for (int i = 0; i < maxlevel; ++i)
+					  {
+						  string itemnumber = "Level";
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
+						  if (i == (maxlevel - 1))
+							  SaveFile << CloseTable(true) << endl;
+						  else
+							  SaveFile << CloseTable() << endl;
+					  }
+					  SaveFile << "}" << endl;
+					  break;
+			}
+			}
 		}
-		SaveFile << "}" << endl;
-
-		SaveFile << "Normal = {" << endl;
-		for (int i = 0; i < 3; ++i)
-		{
-			string itemnumber = "Level";
-			itemnumber = itemnumber + to_string(i + 1);
-			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 2)
-				SaveFile << CloseTable(true) << endl;
-			else
-				SaveFile << CloseTable() << endl;
-		}
-		SaveFile << "}" << endl;
-
-		SaveFile << "Hard = {" << endl;
-		for (int i = 0; i < 3; ++i)
-		{
-			string itemnumber = "Level";
-			itemnumber = itemnumber + to_string(i + 1);
-			SaveFile << OpenTable(itemnumber) << endl;
-			SaveFile << SaveTableIndiv("Cleared", 0, BoolToStringConversion(Levelinfo->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", Levelinfo->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", Levelinfo->GetCollectedKeys()) << endl;
-			if (i == 2)
-				SaveFile << CloseTable(true) << endl;
-			else
-				SaveFile << CloseTable() << endl;
-		}
-		SaveFile << "}" << endl;
-
 		SaveFile << "}" << endl;
 	}
 }

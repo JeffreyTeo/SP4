@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Shop.h"
 #include "LevelDetails.h"
+#include "AllLevelDetails.h"
 
 using namespace std;
 
@@ -17,8 +18,10 @@ public:
 	Save(void);
 	~Save(void);
 
+	void SaveEveryThing(int FileNumber);
+
 	string BoolToStringConversion(bool convert);
-	void SaveLevelKeys(LevelDetails* Levelinfo);
+	void SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder,int maxlevel,int maxdifficulty);
 	void SavePlayer(Player* playerinfo);
 	void SaveMusic(float sound);
 	void SaveShop(Shop* shopinfo);

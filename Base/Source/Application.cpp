@@ -238,6 +238,46 @@ Application::~Application()
 /********************************************************************************
  Initialise this program
  ********************************************************************************/
+void Application::CheckInit()
+{
+	LuaUsage* Checker = new LuaUsage();
+	Save* LuaSave = new Save();
+	if (Checker->LuaUsageCheckit("Application"))
+	{
+		LuaSave->SaveEveryThing(0);
+	}
+	if (Checker->LuaUsageCheckit("Button"))
+	{
+		LuaSave->SaveEveryThing(1);
+	}
+	if (Checker->LuaUsageCheckit("Item"))
+	{
+		LuaSave->SaveEveryThing(2);
+	}
+	if (Checker->LuaUsageCheckit("Level"))
+	{
+		LuaSave->SaveEveryThing(3);
+	}
+	if (Checker->LuaUsageCheckit("LeveltoSave"))
+	{
+		LuaSave->SaveEveryThing(4);
+	}
+	if (Checker->LuaUsageCheckit("Player"))
+	{
+		LuaSave->SaveEveryThing(5);
+	}
+	if (Checker->LuaUsageCheckit("Sound"))
+	{
+		LuaSave->SaveEveryThing(6);
+	}
+	if (Checker->LuaUsageCheckit("Sprite"))
+	{
+		LuaSave->SaveEveryThing(7);
+	}
+	delete LuaSave;
+	delete Checker;
+}
+
 void Application::Init()
 {
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -257,6 +297,8 @@ void Application::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Does not allow scaleable window
+	
+	CheckInit();
 
 	theAppLua = new LuaUsage();
 	theAppLua->LuaUsageInit("Application");

@@ -105,7 +105,14 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_PAUSE_RESUME,
 		GEO_PAUSE_QUITTOMENU,
 
-		// Options State
+		GEO_WIN_NEXTLEVEL,
+
+		GEO_LEVELSELECT_LEVEL1,
+		GEO_LEVELSELECT_LEVEL2,
+		GEO_LEVELSELECT_LEVEL3,
+		GEO_LEVELSELECT_LEVEL4,
+
+		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
 		GEO_SOUND_MUTE,
@@ -154,8 +161,11 @@ public:
 	void SetContinuedLevel();
 
 	// States Function
-	void SetSelection(short 
-		);
+	//void SetSelection(short);
+	bool CheckEligibleForNextLevel();
+	void NextLevel();
+	void ResetPlayer();
+	void SetSelection(short m_select);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
 	void RenderMainMenu();
@@ -174,10 +184,12 @@ public:
 	void SetChangeScreen(bool m_ChangeScreen);
 	bool ReturnChangeScreen();
 
+	void SetLevelDifficulty(int LevelDifficulty);
+	void SetLevelNumber(int LevelNumber);
+
+	bool ReturnPlayerDifficultySelection(int difficultyselection);
+
 	void SetShopSelect(int shopSelect);
-	
-	void setDifficulty(int Difficulty);
-	void setLevel(int Level);
 
 	// Highscore States
 	void setHSDifficulty(int theDifficulty);
@@ -215,6 +227,11 @@ public:
 	};
 
 private:
+	int m_maxlevel;
+	int m_maxdiff;
+	vector<AllLevelDetails*> theLevelDetailsHolder;
+
+
 	vector<Button*> theButtonHolder;
 	Button* m_button;
 	//sprite animation

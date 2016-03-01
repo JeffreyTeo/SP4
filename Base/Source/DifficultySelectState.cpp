@@ -92,8 +92,13 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		{
 			Sound.engine->stopAllSounds();
 			Sound.ConfirmSound();
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
+			if (theScene->ReturnPlayerDifficultySelection(Select))
+			{
+				
+				theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
+			timer = 0;
 		}
 
 		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
@@ -103,13 +108,15 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 			Select = -1;
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
-
+			timer = 0;
 		}
 
 	}
 
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
+		if (Select != -1)
+			theScene->SetLevelDifficulty(Select);
 		switch (Select)
 		{
 		case -1:
@@ -119,26 +126,24 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		}
 		case 1:
 		{
-				  theScene->setDifficulty(1);
+				  if (theScene->ReturnPlayerDifficultySelection(Select))
 				  theGSM->ChangeState(CLevelSelectState::Instance());
 				  break;
 		}
 		case 2:
 		{
-				  theScene->setDifficulty(2);
+				  if (theScene->ReturnPlayerDifficultySelection(Select))
 				  theGSM->ChangeState(CLevelSelectState::Instance());
 				  break;
 		}
 		case 3:
 		{
-				  theScene->setDifficulty(3);
-				  if (theScene->GetLevelReferencetoContinue() != 0)
-				  {
+					  if (theScene->ReturnPlayerDifficultySelection(Select))
 					  theGSM->ChangeState(CLevelSelectState::Instance());
-				  }
 				  break;
 		}
 		}
+		
 	}
 	else
 	{

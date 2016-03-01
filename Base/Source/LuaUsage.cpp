@@ -11,7 +11,25 @@ LuaUsage::LuaUsage(void)
 LuaUsage::~LuaUsage(void)
 {
 }
-
+bool LuaUsage::LuaUsageCheckit(string LuaFileName)
+{
+	bool Returned = false;
+	Filename = LuaFileName;
+	LuaState = lua_open();
+	string LuaOpenFilename = "Lua/";
+	LuaOpenFilename = LuaOpenFilename + LuaFileName;
+	LuaOpenFilename = LuaOpenFilename + ".lua";
+	if (luaL_loadfile(LuaState, LuaOpenFilename.c_str()) || lua_pcall(LuaState, 0, 0, 0))
+	{
+		Returned = true;
+		std::cout << "Error: failed to load (" << LuaFileName << ")" << std::endl;
+		LuaState = NULL;
+	}
+	if (LuaState)
+		luaL_openlibs(LuaState);
+	LuaUsageClose();
+	return Returned;
+}
 void LuaUsage::LuaUsageInit(string LuaFileName)
 {
 	Filename = LuaFileName;

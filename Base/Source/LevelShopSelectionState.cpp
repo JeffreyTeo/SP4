@@ -89,16 +89,28 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 				cout << Select << endl;
 			}
 		}
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.ConfirmSound();
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
+			timer = 0;
+			if (Select < 3)
+			{
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
+			else if (theScene->GetLevelReferencetoContinue() != 0 && Select == 3)
+			{
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
 		}
 
-		if (Application::IsKeyPressed(VK_BACK))
+		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
+			timer = 0;
 			Sound.engine->stopAllSounds();
 			Sound.BackSound();
 			Select = -1;
@@ -127,8 +139,11 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		}
 		case 3:
 		{
-				  theScene->SetContinuedLevel();
-				  theGSM->ChangeState(CPlayState::Instance());
+				  if (theScene->GetLevelReferencetoContinue() != 0)
+				  {
+					  theScene->SetContinuedLevel();
+					  theGSM->ChangeState(CPlayState::Instance());
+				  }
 				  break;
 		}
 		}
@@ -136,7 +151,6 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 	else
 	{
 		theScene->SetSelection(Select);
-
 	}
 }
 

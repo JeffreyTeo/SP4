@@ -9,8 +9,8 @@
 --		,PlayerPositionY--
 --		,AmountOfMoves--
 --		,NameOfLevelFile--
---		,Difficulty--
---		,Cleared}--
+--		,Difficulty}--
+
 
 
 Level = {
@@ -44,6 +44,20 @@ Level = {
         },
         
          Level3 = {	
+				PositionXOfGrid = 225,
+				PositionYOfGrid = 225,
+				LengthXOfAGrid = 50,
+				LengthYOfAGrid = 50,
+				NumberOfGridX = 10,
+				NumberOfGridY = 10,
+				PlayerPositionX = 5,
+				PlayerPositionY = 5,
+				AmountOfMoves = 30,
+				NameOfLevelFile = "Levels//EasyLevel3.csv",
+				Difficulty = "Hard"
+        },
+
+	 Level4 = {	
 				PositionXOfGrid = 225,
 				PositionYOfGrid = 225,
 				LengthXOfAGrid = 50,
@@ -99,6 +113,20 @@ Level = {
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//NormalLevel3.csv",
 				Difficulty = "Hard"
+        },
+
+	 Level4 = {	
+				PositionXOfGrid = 225,
+				PositionYOfGrid = 225,
+				LengthXOfAGrid = 50,
+				LengthYOfAGrid = 50,
+				NumberOfGridX = 10,
+				NumberOfGridY = 10,
+				PlayerPositionX = 5,
+				PlayerPositionY = 5,
+				AmountOfMoves = 30,
+				NameOfLevelFile = "Levels//EasyLevel3.csv",
+				Difficulty = "Hard"
         }
 	},
     
@@ -142,6 +170,20 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//HardLevel3.csv",
+				Difficulty = "Hard"
+        },
+
+	 Level4 = {	
+				PositionXOfGrid = 225,
+				PositionYOfGrid = 225,
+				LengthXOfAGrid = 50,
+				LengthYOfAGrid = 50,
+				NumberOfGridX = 10,
+				NumberOfGridY = 10,
+				PlayerPositionX = 5,
+				PlayerPositionY = 5,
+				AmountOfMoves = 30,
+				NameOfLevelFile = "Levels//EasyLevel3.csv",
 				Difficulty = "Hard"
         }
 	}

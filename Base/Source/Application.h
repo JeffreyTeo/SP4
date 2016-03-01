@@ -24,7 +24,7 @@ public:
 	/*static void GetWindowWidth(int&);
 	static void GetWindowHeight(int&);*/
 	
-	
+	void CheckInit();
 
 	void Init();
 	void Run();

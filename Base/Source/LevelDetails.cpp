@@ -1,4 +1,3 @@
-
 #include "LevelDetails.h"
 
 
@@ -55,10 +54,7 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	this->m_Difficulty = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "Difficulty"));
 	theLevelDetailsinfoLua->LuaUsageClose();
 
-	theLevelDetailsinfoLua->LuaUsageInit("LeveltoSave");
-	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
-	this->m_AmountOfMoves = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "CollectedKeys"));
-	theLevelDetailsinfoLua->LuaUsageClose();
+
 }
 
 
@@ -102,10 +98,7 @@ string LevelDetails::GetDifficulty()
 {
 	return m_Difficulty;
 }
-bool LevelDetails::GetCleared()
-{
-	return m_Cleared;
-}
+
 
 void LevelDetails::SetPositionXOfGrid(float m_PositionXOfGrid)
 {
@@ -147,10 +140,6 @@ void LevelDetails::SetDifficulty(string m_Difficulty)
 {
 	this->m_Difficulty = m_Difficulty;
 }
-void LevelDetails::SetCleared(bool m_Cleared)
-{
-	this->m_Cleared = m_Cleared;
-}
 
 void LevelDetails::SetDifficultyReference(int m_DifficultyReference)
 {
@@ -171,12 +160,4 @@ short LevelDetails::GetLevelinDifficultyReference()
 short LevelDetails::GetAmountOfMoves()
 {
 	return this->m_AmountOfMoves;
-}
-void LevelDetails::SetCollectedKeys(int m_CollectedKeys)
-{
-	this->m_CollectedKeys = m_CollectedKeys;
-}
-short LevelDetails::GetCollectedKeys()
-{
-	return this->m_CollectedKeys;
 }

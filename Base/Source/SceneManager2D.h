@@ -17,6 +17,7 @@
 #include "SpriteAnimation.h"
 #include "SoundManager.h"
 #include "LevelDetails.h"
+#include "AllLevelDetails.h"
 
 #include "Highscore.h"
 #include "HighscoreData.h"
@@ -136,13 +137,6 @@ public:
 	void PreInit();
 	void RenderGridSystem();
 
-	// Menu States
-	bool PlaySelect;
-	bool InstructionSelect;
-	bool HighscoreSelect;
-	bool OptionSelect;
-	bool ExitSelect;
-
 	// Option States
 	bool SoundSelect;
 	bool VolumeSelect;
@@ -175,8 +169,11 @@ private:
 	bool m_Quitfrompause;
 
 	int m_WinCondition;
-
-	LuaUsage* m_SpriteAnimationLoad;
+	vector<AllLevelDetails*> theLevelDetailsHolder;
+	
+	int m_maxlevel;
+	int m_maxdiff;
+	LuaUsage* m_Load;
 	Player* m_player;
 	Save* m_save;
 	SpriteAnimation *m_spriteAnimation;

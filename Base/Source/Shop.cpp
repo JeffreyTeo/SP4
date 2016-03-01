@@ -57,9 +57,6 @@ void Shop::ItemInit()
 void Shop::Set(Player* playerinfo)
 {
 	playerinfo->SetAmtOfCurrency(m_playerMoney);
-	playerinfo->SetEasyLevelUnlocked(m_playerEasyModeUnlocked);
-	playerinfo->SetNormalLevelUnlocked(m_playerNormalModeUnlocked);
-	playerinfo->SetHardLevelUnlocked(m_playerHardModeUnlocked);
 }
 int Shop::GetPlayerMoney()
 {
