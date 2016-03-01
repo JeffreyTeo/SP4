@@ -26,8 +26,18 @@ public:
 	void AIGridSetUp(vector<cAI*>);
 	//AI Update
 	void AIGridUpdate();
-	// set correct answer
-	void SetAnswer();
+	
+	// for tetris like blocks falling
+	void GridDropInit();
+	void GridDropUpdate();
+	bool PlayerGridDropUpdate(char key);
+
+	void PlayerGridDropPushPull(char key, bool grab);
+	void PlayerGridDropStateChange(char key);
+
+	//for checking collision between player to specific grid 
+	bool CheckCollisionType(Grid::GridType, int&);
+	//bool CheckCollisionType(Grid::GridType, Grid::GridType, int&);
 
 	// get grid vector to get each grids pos
 	vector<Grid*> GetGridsVec();
@@ -50,5 +60,19 @@ private:
 	float LengthOfGridsY;
 	Vector3 PosOfGrid;
 	
+	//for dropping blocks
+	int PrevMovedBlockIdx;
+	bool movingActive;
+	Grid* MovingBlock;
+	vector<Grid*> FallingBlocks;
+	float timer;
+	bool PlayerJumped;
+	float PlayerJumpedTimer;
+	float PlayerBuffer;
+	bool PlayerPushPull;
+	bool CanPush;
+	bool PushPull;
+	float PushPullTimer;
+
 };
 

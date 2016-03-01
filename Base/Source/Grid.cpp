@@ -6,6 +6,12 @@ Grid::Grid()
 , Status(PASSABLE)
 , keyCollected(true)
 , Win(true)
+, Sign1Touched(true)
+, Sign2Touched(true)
+, Sign3Touched(true)
+, Sign4Touched(true)
+, Sign5Touched(true)
+, direction(0.f)
 {
 }
 
@@ -22,6 +28,16 @@ void Grid::SetType(int newType)
 		keyCollected = false;
 	if (Type == EXIT)
 		Win = false;
+	if (Type == INTROSIGN)
+		Sign1Touched = false;
+	if (Type == MOVESIGN)
+		Sign2Touched = false;
+	if (Type == KEYSIGN)
+		Sign3Touched = false;
+	if (Type == MONSTERSIGN)
+		Sign4Touched = false;
+	if (Type == EXITSIGN)
+		Sign5Touched = false;
 }
 
 int Grid::GetType(void)
@@ -50,7 +66,7 @@ int Grid::GetStatus(void)
 
 void Grid::SetDirection(char newDirection)
 {
-	if ((this->Type == FLOOR || this->Type == KEY) && this->Status == UNPASSABLE)
+
 	switch (newDirection)
 	{
 		case 'w':
@@ -76,6 +92,11 @@ void Grid::SetDirection(char newDirection)
 	}
 		
 	
+}
+
+void Grid::SetDirection(float newDirection)
+{
+	this->direction = newDirection;
 }
 
 float Grid::GetDirection(void)

@@ -9,16 +9,26 @@ CHighscoreState CHighscoreState::theHighscoreState;
 
 void CHighscoreState::Init()
 {
-	theScene = new SceneManagerLevel2DforScreen(800, 600,Highscorescreen);
-	timer = 0.0f;
+	theScene = new SceneManagerLevel2DforScreen(800, 600, Highscorescreen);
 	theScene->Init();
+	Select = 1;
+	SelectLevel = 1;
+	timer = 0.0f;
+	theScene->SetSelection(Select);
+	theScene->setLevelButtonSelection(SelectLevel);
+	theScene->setDifficultyButton(true);
 }
 
 void CHighscoreState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, Highscorescreen);
-	timer = 0.0f;
 	theScene->Init();
+	Select = 1;
+	SelectLevel = 1;
+	timer = 0.0f;
+	theScene->SetSelection(Select);
+	theScene->setLevelButtonSelection(SelectLevel);
+	theScene->setDifficultyButton(true);
 }
 
 void CHighscoreState::Cleanup()
@@ -55,22 +65,236 @@ void CHighscoreState::Update(CGameStateManager* theGSM)
 
 void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
+	bool quit = false;
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
+
+	if (theScene->getDifficultyButton() == true)
 	{
-		timer += m_dElapsedTime;
-		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
+		theScene->SetChangeScreen(false);
+		if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.BackSound();
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
+			timer += m_dElapsedTime;
+			if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
+			{
+				if (Select < 3)
+				{
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
+					Select++;
+					//Sleep(150);
+					timer = 0;
+				}
+			}
+			else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
+			{
+				if (Select > 1)
+				{
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
+					Select--;
+					//Sleep(150);
+					timer = 0;
+				}
+			}
+			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
+			{
+				timer = 0;
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetChangeScreen(true);
+			}
+
+			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
+			{
+				timer = 0;
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
+				Select = -1;
+				if ((theScene->getDifficultyButton() == false))
+					theScene->SetScreenTransition(true);
+
+				theScene->SetChangeScreen(true);
+			}
+		}
+		if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+		{
+			switch (Select)
+			{
+			case -1:
+			{
+					   quit = true;
+					   break;
+			}
+			case 1:
+			{
+					  theScene->setHSDifficulty(1);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(true);
+					  theScene->setHighscoreDisplay(false);
+					  Select = 1;
+					  break;
+			}
+			case 2:
+			{
+					  theScene->setHSDifficulty(2);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(true);
+					  theScene->setHighscoreDisplay(false);
+					  Select = 1;
+					  break;
+			}
+			case 3:
+			{
+					  theScene->setHSDifficulty(3);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(true);
+					  theScene->setHighscoreDisplay(false);
+					  Select = 1;
+					  break;
+			}
+			}
+
+			if (quit == true)
+			{
+				theGSM->ChangeState(CMenuState::Instance());
+			}
+		}
+		else
+		{
+			theScene->SetSelection(Select);
 		}
 	}
-	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+
+	else if (theScene->getLevelButton() == true)
 	{
-		theGSM->ChangeState(CMenuState::Instance());
+		theScene->SetChangeScreen(false);
+		if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
+		{
+			timer += m_dElapsedTime;
+			if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
+			{
+				if (SelectLevel < 4)
+				{
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
+					SelectLevel++;
+					//Sleep(150);
+					timer = 0;
+					cout << SelectLevel << endl;
+				}
+			}
+			else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
+			{
+				if (SelectLevel > 1)
+				{
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
+					SelectLevel--;
+					//Sleep(150);
+					cout << SelectLevel << endl;
+					timer = 0;
+				}
+			}
+			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
+			{
+				timer = 0;
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetChangeScreen(true);
+			}
+
+			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
+			{
+				timer = 0;
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
+				SelectLevel = -1;
+				if ((theScene->getLevelButton() == false))
+					theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
+		}
+		if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+		{
+			switch (SelectLevel)
+			{
+			case -1:
+			{
+					   theScene->setDifficultyButton(true);
+					   theScene->setLevelButton(false);
+					   SelectLevel = 1;
+					   break;
+			}
+			case 1:
+			{
+					  theScene->setHSLevel(1);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(false);
+					  theScene->setHighscoreDisplay(true);
+					  SelectLevel = 1;
+					  break;
+			}
+			case 2:
+			{
+					  theScene->setHSLevel(2);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(false);
+					  theScene->setHighscoreDisplay(true);
+					  SelectLevel = 1;
+					  break;
+			}
+			case 3:
+			{
+					  theScene->setHSLevel(3);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(false);
+					  theScene->setHighscoreDisplay(true);
+					  SelectLevel = 1;
+					  break;
+			}
+			case 4:
+			{
+					  theScene->setHSLevel(4);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(false);
+					  theScene->setHighscoreDisplay(true);
+					  SelectLevel = 1;
+					  break;
+			}
+			}
+		}
+		else
+		{
+			theScene->setLevelButtonSelection(SelectLevel);
+		}
 	}
+
+	else if (theScene->getHighscoreDisplay() == true)
+	{
+		theScene->SetChangeScreen(false);
+		if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
+		{
+			timer += m_dElapsedTime;
+			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
+			{
+				timer = 0;
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
+				if ((theScene->getHighscoreDisplay() == false))
+					theScene->SetScreenTransition(true);
+
+				theScene->SetChangeScreen(true);
+			}
+		}
+
+		if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
+		{
+			theScene->setDifficultyButton(false);
+			theScene->setLevelButton(true);
+			theScene->setHighscoreDisplay(false);
+		}
+	}
+
 }
 
 void CHighscoreState::Draw(CGameStateManager* theGSM)

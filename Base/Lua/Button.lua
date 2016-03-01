@@ -14,6 +14,15 @@ DifficultyEasy = {Position={x = 295,y = 350},TempPosition={x = -100,y = 350},Off
 DifficultyNormal = {Position={x = 295,y = 295},TempPosition={x = 800,y = 295},Offset={x = 100,y = 5},Speed = 1000.0},
 DifficultyHard = {Position={x = 295,y = 240},TempPosition={x = -100,y = 240},Offset={x = 100,y = 5},Speed = 1000.0},
 
+HighscoreEasy = {Position={x = 295,y = 275},TempPosition={x = 800,y = 275},Offset={x = 100,y = 5},Speed = 1000.0},
+HighscoreNormal = {Position={x = 295,y = 220},TempPosition={x = -100,y = 220},Offset={x = 100,y = 5},Speed = 1000.0},
+HighscoreHard = {Position={x = 295,y = 165},TempPosition={x = 800,y = 165},Offset={x = 100,y = 5},Speed = 1000.0},
+    
+HighscoreLevel1 = {Position={x = 295,y = 275},TempPosition={x = 800,y = 275},Offset={x = 100,y = 5},Speed = 1000.0},
+HighscoreLevel2 = {Position={x = 295,y = 220},TempPosition={x = -100,y = 220},Offset={x = 100,y = 5},Speed = 1000.0},
+HighscoreLevel3 = {Position={x = 295,y = 165},TempPosition={x = 800,y = 165},Offset={x = 100,y = 5},Speed = 1000.0},
+HighscoreLevel4 = {Position={x = 295,y = 110},TempPosition={x = -100,y = 110},Offset={x = 100,y = 5},Speed = 1000.0},
+    
 Resume = {Position={x = 295,y = 350},TempPosition={x = -100,y = 350},Offset={x = 100,y = 5},Speed = 1000.0},
 QuitToMenu = {Position={x = 295,y = 295},TempPosition={x = 800,y = 295},Offset={x = 100,y = 5},Speed = 1000.0},
 }

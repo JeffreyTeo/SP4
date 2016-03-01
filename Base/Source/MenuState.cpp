@@ -118,7 +118,7 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		case 4:
 		{
 				  theGSM->ChangeState(COptionState::Instance());
-				  break;
+				  break; 
 		}
 		}
 	}
@@ -136,6 +136,7 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			theGSM->Quit();
 		}
+		timer = 0.0f;
 	}
 
 	

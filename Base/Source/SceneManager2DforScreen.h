@@ -81,31 +81,44 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_WIN,
 		GEO_LEVELSELECT,
 		GEO_DIFFICULTYSELECT,
+
 		//Menu button
 		GEO_MENU_PLAY,
 		GEO_MENU_INSTRUCTION,
 		GEO_MENU_HIGHSCORE,
 		GEO_MENU_OPTION,
 		GEO_MENU_EXIT,
+
 		//LevelShopSelect button
 		GEO_LEVELSHOPSELECT_LEVELSELECT,
 		GEO_LEVELSHOPSELECT_SHOP,
 		GEO_LEVELSHOPSELECT_CONTINUELEVEL,
+
 		//Difficulty button
 		GEO_DIFFICULTY_EASY,
 		GEO_DIFFICULTY_NORMAL,
 		GEO_DIFFICULTY_HARD,
 
 		GEO_LEVELSELECT_LEVEL,
+
 		//Pause button
 		GEO_PAUSE_RESUME,
 		GEO_PAUSE_QUITTOMENU,
 
-		// TEMPO NAME
+		// Options State
 		GEO_VOL_MUTE,
 		GEO_VOL,
 		GEO_SOUND_MUTE,
 		GEO_SOUND,
+
+		//Highscore buttons
+		GEO_HIGHSCORE_EASY,
+		GEO_HIGHSCORE_NORMAL,
+		GEO_HIGHSCORE_HARD,
+		GEO_HIGHSCORE_LEVEL1,
+		GEO_HIGHSCORE_LEVEL2,
+		GEO_HIGHSCORE_LEVEL3,
+		GEO_HIGHSCORE_LEVEL4,
 
 		GEO_TEXT,
 		NUM_GEOMETRY,
@@ -141,7 +154,8 @@ public:
 	void SetContinuedLevel();
 
 	// States Function
-	void SetSelection(short m_select);
+	void SetSelection(short 
+		);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
 	void RenderMainMenu();
@@ -164,6 +178,20 @@ public:
 	
 	void setDifficulty(int Difficulty);
 	void setLevel(int Level);
+
+	// Highscore States
+	void setHSDifficulty(int theDifficulty);
+	int getHSDifficulty();
+	void setHSLevel(int theLevel);
+	int getHSLevel();
+	void setDifficultyButton(bool theDifficultyButton);
+	bool getDifficultyButton();
+	void setLevelButton(bool theLevelButton);
+	bool getLevelButton();
+	void setHighscoreDisplay(bool DisplayHighscore); 
+	bool getHighscoreDisplay();
+	void setLevelButtonSelection(int theLevelButtonSelection);
+	int getLevelButtonSelection();
 
 	// Option States
 	bool SoundSelect;
@@ -211,7 +239,6 @@ private:
 	bool m_ChangeScreen;
 	bool m_ScreenTransition;
 
-
 	Camera3 camera;
 
 	float rotateAngle;
@@ -222,6 +249,13 @@ private:
 
 	float fps;
 
+	// Highscore State
+	int theDifficulty;
+	int theLevel;
+	int theLevelButtonSelection;
+	bool theDifficultyButton;
+	bool theLevelButton;
+	bool DisplayHighscore;
 
 	//window height and width
 	short m_screenvalue;

@@ -25,7 +25,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level1.csv",
+				NameOfLevelFile = "Levels//Tutorial.csv",
 				Difficulty = "Easy"
         },
         
@@ -39,7 +39,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Test.csv",
+				NameOfLevelFile = "Levels//EasyLevel2.csv",
 				Difficulty = "Normal"
         },
         
@@ -53,7 +53,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level2.csv",
+				NameOfLevelFile = "Levels//EasyLevel3.csv",
 				Difficulty = "Hard"
         }
 	},
@@ -69,7 +69,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level1.csv",
+				NameOfLevelFile = "Levels//NormalLevel1.csv",
 				Difficulty = "Easy"
         },
         
@@ -83,7 +83,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Test.csv",
+				NameOfLevelFile = "Levels//NormalLevel2.csv",
 				Difficulty = "Normal"
         },
         
@@ -97,7 +97,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level2.csv",
+				NameOfLevelFile = "Levels//NormalLevel3.csv",
 				Difficulty = "Hard"
         }
 	},
@@ -113,7 +113,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level1.csv",
+				NameOfLevelFile = "Levels//HardLevel1.csv",
 				Difficulty = "Easy"
         },
         
@@ -127,7 +127,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Test.csv",
+				NameOfLevelFile = "Levels//HardLevel2.csv",
 				Difficulty = "Normal"
         },
         
@@ -141,7 +141,7 @@ Level = {
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
-				NameOfLevelFile = "Levels//Level2.csv",
+				NameOfLevelFile = "Levels//HardLevel3.csv",
 				Difficulty = "Hard"
         }
 	}

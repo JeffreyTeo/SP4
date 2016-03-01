@@ -35,5 +35,4 @@ private:
 	SceneManagerLevel2DforScreen* theScene;
 	int Select;
 	double timer;
-	int DifficultySelect;
 };
