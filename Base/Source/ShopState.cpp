@@ -73,7 +73,7 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		timer += m_dElapsedTime;
 		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
-			if (Select < 3) // Max. Number of Options
+			if (Select < 5) // Max. Number of Options
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
@@ -90,6 +90,30 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select--;
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
+		}
+		else if (Application::IsKeyPressed(VK_RIGHT) && timer > 0.1f)
+		{
+			if (Select < 4) // Selection is not the fourth or fifth one.
+			{
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
+				Select = 4;
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
+		}
+		else if (Application::IsKeyPressed(VK_LEFT) && timer > 0.1f)
+		{
+			if (Select > 3) // Selection is the fourth or fifth one.
+			{
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
+				Select = 1;
 				//Sleep(150);
 				timer = 0;
 				cout << Select << endl;

@@ -1094,7 +1094,7 @@ void SceneManagerLevel2DforScreen::RenderOption()
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 
-	for (int i = 0; i < (int)tempsound; i++)
+	for (int i = 0; i < (int)(tempsound * 10); i++)
 	{
 		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
@@ -1166,68 +1166,118 @@ void SceneManagerLevel2DforScreen::RenderShop()
 
 	switch (m_select)
 	{
-	case 1:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 417);
-			  if (!m_shop->GetplayerEasyModeUnlocked())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  modelStack.PopMatrix();
-			  break;
-	}
-	case 2:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 341);
-			  if (!m_shop->GetplayerNormalModeUnlocked())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  modelStack.PopMatrix();
-			  break;
-	}
-	case 3:
-	{
-			  modelStack.PushMatrix();
-			  Render2DMesh(meshList[GEO_SELECT], false, true, 1, 200, 265);
-			  if (!m_shop->GetplayerHardModeUnlocked())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			  {
-				  RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			  }
-			  modelStack.PopMatrix();
-			  break;
-	}
+		case 1:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 70, 401 - m_select * 76);
+			if (!m_shop->GetplayerEasyModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 2:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 70, 401 - m_select * 76);
+			if (!m_shop->GetplayerNormalModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 3:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 70, 401 - m_select * 76);
+			if (!m_shop->GetplayerHardModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 4:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 420, 629 - m_select * 76);
+			if (!m_shop->GetplayerHardModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
+		case 5:
+		{
+			modelStack.PushMatrix();
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 420, 629 - m_select * 76);
+			if (!m_shop->GetplayerHardModeUnlocked())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
+			}
+			modelStack.PopMatrix();
+			break;
+		}
 	}
 
+	RenderTextOnScreen(meshList[GEO_TEXT], "Levels", Color(0, 0, 1), 50, 150, 400, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Items", Color(0, 0, 1), 50, 500, 400, true);
 	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
 	{
-		modelStack.PushMatrix();
-		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
-		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
-		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
-		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
-		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
+		if (i <= 2)
+		{
+			modelStack.PushMatrix();
+			string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
+			RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 150, (330 - i * 75), true);
+			string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
+			RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 150, (310 - i * 75), true);
+			if (m_shop->theItemHolder[i]->GetBought())
+				RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 150, (290 - i * 75), true);
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 150, (290 - i * 75), true);
+			modelStack.PopMatrix();
+		}
 		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
-		modelStack.PopMatrix();
+		{
+			modelStack.PushMatrix();
+			string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
+			RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 500, (555 - i * 75), true);
+			string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
+			RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 500, (535 - i * 75), true);
+			if (m_shop->theItemHolder[i]->GetBought())
+				RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 500, (515 - i * 75), true);
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 500, (515 - i * 75), true);
+			modelStack.PopMatrix();
+		}
 	}
 	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
+	string currentGold = "Gold: " + std::to_string(0);
 	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 
