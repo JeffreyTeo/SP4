@@ -212,10 +212,12 @@ public:
 	bool VolumeSelect;
 	bool muted;
 
+	// Highscore
 	void GetHighscore();
 	HighscoreData theScore;
+	void ReadHighscoreTextFiles();
+
 	CSoundManager Sound;
-	void ReadTheHighscores();
 
 	float tempsound;
 

@@ -152,8 +152,8 @@ public:
 	Highscore PrevScore;
 	void AddHighscore();
 	HighscoreData theScore;
-	void ReadHighscoreFiles();
-	void WriteHighscoreFiles();
+	void ReadHighscoreText();
+	void WriteHighscoreText();
 
 	CSoundManager Sound;
 

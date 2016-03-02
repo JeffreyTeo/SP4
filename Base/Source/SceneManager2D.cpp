@@ -412,8 +412,14 @@ void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
 }
 
-void CSceneManager2D::ReadHighscoreFiles()
+void CSceneManager2D::ReadHighscoreText()
 {
+	// Uncomment tihs for tutorial
+	/*
+	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+	theScore.ReadTextFile("Scores//TutorialHighscore.txt");
+	}*/
 	if (m_player->GetLevelToDifficultyStartAt() == 1)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
@@ -448,9 +454,13 @@ void CSceneManager2D::ReadHighscoreFiles()
 			theScore.ReadTextFile("Scores//HardHighscore4.txt");
 	}
 }
-
-void CSceneManager2D::WriteHighscoreFiles()
+void CSceneManager2D::WriteHighscoreText()
 {
+	//Uncomment this for Tutorial
+	/*if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+	theScore.WriteTextFile("Scores//TutorialHighscore.txt");
+	}*/
 	if (m_player->GetLevelToDifficultyStartAt() == 1)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
@@ -486,14 +496,14 @@ void CSceneManager2D::WriteHighscoreFiles()
 	}
 }
 
+
 void CSceneManager2D::AddHighscore()
 {
 	const int MAX_SCORES = 5;
 
 	for (int i = 0; i < 1; i++)
 	{
-		ReadHighscoreFiles();
-		
+		ReadHighscoreText();
 		PrevScore.addScore(theScore.GetAllHighscores(i)); // Store all the highscores from the text file to PrevScore
 		theScore.setPlayer(PrevScore); // set the previous scores into the player current score
 	}
@@ -515,9 +525,8 @@ void CSceneManager2D::AddHighscore()
 			theScore.UpdateHighscore(PlayerScore); // take in the player score anyway to check if it's bigger than the other variables
 		}
 	}
-	
-	WriteHighscoreFiles();
-	
+
+	WriteHighscoreText();
 }
 
 int CSceneManager2D::GetWinCondition()

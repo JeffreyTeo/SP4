@@ -416,7 +416,7 @@ void SceneManagerLevel2DforScreen::Init()
 		//AddHighscore();
 }
 
-void SceneManagerLevel2DforScreen::ReadTheHighscores()
+void SceneManagerLevel2DforScreen::ReadHighscoreTextFiles()
 {
 	if (getHSDifficulty() == 1)
 	{
@@ -456,12 +456,13 @@ void SceneManagerLevel2DforScreen::ReadTheHighscores()
 			theScore.ReadTextFile("Scores//HardHighscore4.txt");
 	}
 }
+
 void SceneManagerLevel2DforScreen::GetHighscore()
 {
 	const int MAX_SCORES = 5;
 	for (int i = 0; i < MAX_SCORES; i++)
 	{
-		ReadTheHighscores();
+		ReadHighscoreTextFiles();
 	}
 }
 void SceneManagerLevel2DforScreen::CreateButton(string name)
