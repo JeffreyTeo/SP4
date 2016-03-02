@@ -1157,18 +1157,10 @@ void SceneManagerLevel2DforScreen::RenderOption()
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 
-	for (int i = 0; i < (int)tempsound; i++)
+	for (int i = 0; i < (int)(tempsound * 10); i++)
 	{
 		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
-	/*Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 0, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 30, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 60, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 90, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 120, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 150, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 180, 185);*/
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 210, 185);
 	modelStack.PopMatrix();
 }
 
@@ -1276,21 +1268,25 @@ void SceneManagerLevel2DforScreen::RenderShop()
 	}
 	}
 
+	RenderTextOnScreen(meshList[GEO_TEXT], "Levels", Color(0, 0, 1), 50, 200, 400, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Items", Color(0, 0, 1), 50, 500, 400, true);
 	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
 	{
 		modelStack.PushMatrix();
 		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
-		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
+		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 150, (330 - i * 75), true);
 		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
-		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
+		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 150, (310 - i * 75), true);
 		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 150, (290 - i * 75), true);
 		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 150, (290 - i * 75), true);
 		modelStack.PopMatrix();
 	}
 	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
+	string currentGold = "Gold: " + std::to_string(0);
 	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
+	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 

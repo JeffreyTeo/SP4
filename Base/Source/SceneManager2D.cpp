@@ -425,15 +425,6 @@ int CSceneManager2D::GetWinCondition()
 	return m_WinCondition;
 }
 
-void SceneManagerLevel2DforScreen::setDifficulty(int m_Difficulty)
-{
-	this->m_player->SetLevelToDifficultyStartAt(m_Difficulty);
-}
-void SceneManagerLevel2DforScreen::setLevel(int m_Level)
-{
-	this->m_player->SetLevelToStartAt(m_Level);
-}
-
 static float limit = 1.f;
 static float timer = 0.f;
 

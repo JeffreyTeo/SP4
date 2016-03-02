@@ -75,8 +75,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select < 5) // Max. Number of Options
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select++;	// Move the cursor down
 				//Sleep(150);
 				timer = 0;
@@ -87,8 +87,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select--;
 				//Sleep(150);
 				timer = 0;
@@ -145,7 +145,6 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		}
 	}
 
->>>>>>> 623952a8bd5c3f6a3f47851cf1a2bde011a708af
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
 		switch (Select)
@@ -178,8 +177,8 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		if (Select != 5)
 		{
 			timer = 0;
-			Sound.engine->stopAllSounds();
-			Sound.ConfirmSound();
+			theScene->Sound.engine->stopAllSounds();
+			theScene->Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

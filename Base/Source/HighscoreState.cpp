@@ -79,8 +79,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (Select < 3)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.SelectSound();
+					theScene->Sound.engine->stopAllSounds();
+					theScene->Sound.SelectSound();
 					Select++;
 					//Sleep(150);
 					timer = 0;
@@ -90,8 +90,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (Select > 1)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.SelectSound();
+					theScene->Sound.engine->stopAllSounds();
+					theScene->Sound.SelectSound();
 					Select--;
 					//Sleep(150);
 					timer = 0;
@@ -100,16 +100,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 			{
 				timer = 0;
-				Sound.engine->stopAllSounds();
-				Sound.ConfirmSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.ConfirmSound();
 				theScene->SetChangeScreen(true);
 			}
 
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				Sound.engine->stopAllSounds();
-				Sound.BackSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.BackSound();
 				Select = -1;
 				if ((theScene->getDifficultyButton() == false))
 					theScene->SetScreenTransition(true);
@@ -176,8 +176,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (SelectLevel < 4)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.SelectSound();
+					theScene->Sound.engine->stopAllSounds();
+					theScene->Sound.SelectSound();
 					SelectLevel++;
 					//Sleep(150);
 					timer = 0;
@@ -188,8 +188,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (SelectLevel > 1)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.SelectSound();
+					theScene->Sound.engine->stopAllSounds();
+					theScene->Sound.SelectSound();
 					SelectLevel--;
 					//Sleep(150);
 					cout << SelectLevel << endl;
@@ -199,16 +199,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 			{
 				timer = 0;
-				Sound.engine->stopAllSounds();
-				Sound.ConfirmSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.ConfirmSound();
 				theScene->SetChangeScreen(true);
 			}
 
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				Sound.engine->stopAllSounds();
-				Sound.BackSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.BackSound();
 				SelectLevel = -1;
 				if ((theScene->getLevelButton() == false))
 					theScene->SetScreenTransition(true);
@@ -279,8 +279,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				Sound.engine->stopAllSounds();
-				Sound.BackSound();
+				theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.BackSound();
 				if ((theScene->getHighscoreDisplay() == false))
 					theScene->SetScreenTransition(true);
 
