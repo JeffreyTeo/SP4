@@ -14,16 +14,16 @@ class LuaUsage
 public:
 	LuaUsage(void);
 	~LuaUsage(void);
-
+	//LuaUsage Checking for files
 	bool LuaUsageCheckit(string LuaFileName);
-
+	//LuaUsage Init & open files
 	void LuaUsageInit(string LuaFileName);
+	//LuaUsage Close files
 	void LuaUsageClose();
+	//LuaUsage Clean
 	void clean();
 
-	vector<int> getIntVector(const std::string& name);
-	vector<string> getTableKeys(const std::string& name);
-
+	//Lua Get
 	template<typename T>
 	T get(const std::string& variableName) 
 	{
@@ -43,7 +43,7 @@ public:
 		clean();
 		return result;
 	}
-
+	//Lua GetToStack
 	bool lua_gettostack(const std::string& variableName) 
 	{
 		level = 0;
@@ -93,36 +93,40 @@ public:
 		return true;
 	}
 
-	// Generic get
+	//Template Style get
 	template<typename T>
 	T lua_get(const std::string& variableName) 
 	{
 		return 0;
 	}
-
+	//Template Style get(if it is not available)
 	template<typename T>
 	T lua_getdefault() 
 	{
 		return 0;
 	}
 
-
-	
-
+	//Set up ErrorString of what is wrong
 	void Seterrorstring(const string& Variablename, const string& reason);
+	//Set up making of LuaErrorLog
 	void LuaErrorLog();
 private:
+	//LuaState
 	lua_State *LuaState;
+	//ErrorString
 	string Errorstring;
+	//FileName
 	string Filename;
+	//Lua usage to check
 	int level;
 };
+//LuaGet Boolean
 template <>
 inline bool LuaUsage::lua_get<bool>(const std::string& variableName)
 {
 	return (bool)lua_toboolean(LuaState, -1);
 }
-
+//LuaGet Float
 template <>
 inline float LuaUsage::lua_get<float>(const std::string& variableName)
 {
@@ -131,7 +135,7 @@ inline float LuaUsage::lua_get<float>(const std::string& variableName)
 	}
 	return (float)lua_tonumber(LuaState, -1);
 }
-
+//LuaGet Int
 template <>
 inline int LuaUsage::lua_get<int>(const std::string& variableName)
 {
@@ -140,7 +144,7 @@ inline int LuaUsage::lua_get<int>(const std::string& variableName)
 	}
 	return (int)lua_tonumber(LuaState, -1);
 }
-
+//LuaGet String
 template <>
 inline string LuaUsage::lua_get<std::string>(const std::string& variableName) {
 	string s = "null";
@@ -153,7 +157,7 @@ inline string LuaUsage::lua_get<std::string>(const std::string& variableName) {
 	}
 	return s;
 }
-
+//LuaGet Default
 template<>
 inline string LuaUsage::lua_getdefault<std::string>() {
 	return "null";

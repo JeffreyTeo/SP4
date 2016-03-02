@@ -12,7 +12,6 @@
 CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_Load(NULL)
@@ -31,27 +30,12 @@ CSceneManager2D::CSceneManager2D()
 , Sign5Exited(false)
 , player_Health(0)
 , damage_Buffer(5.f)
-/*
-: m_cMinimap(NULL)
-, m_cMap(NULL)
-, tileOffset_x(0)
-, tileOffset_y(0)
-, m_cRearMap(NULL)
-, rearWallOffset_x(0)
-, rearWallOffset_y(0)
-, rearWallTileOffset_x(0)
-, rearWallTileOffset_y(0)
-, rearWallFineOffset_x(0)
-, rearWallFineOffset_y(0)
-, theEnemy(NULL)
-*/
 {
 }
 
 CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_height)
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_Load(NULL)
@@ -324,7 +308,6 @@ void CSceneManager2D::Init()
 	m_LevelDetails = new LevelDetails();
 	m_LevelDetails->LevelDetailsInit(m_player->GetLevelToDifficultyStartAt(), m_player->GetLevelToStartAt(), "Level");
 	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
-	rotateAngle = 0;
 
 	m_Load = new LuaUsage();
 	m_Load->LuaUsageInit("LeveltoSave");
@@ -562,15 +545,9 @@ void CSceneManager2D::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//if (Application::IsKeyPressed('5'))
-		//m_WinCondition = 1;
 
-	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
-
-	//cout << Sound.volume << endl;
 	int TempKeyCollectedCalc = 0;
 	int count = 0;
-
 	if (ShowStart == true || ShowKey == true || ShowMove == true || ShowMonster == true || ShowExit == true)
 	{
 		MoveChar = false;
@@ -1300,13 +1277,6 @@ void CSceneManager2D::Exit()
 	m_save->SaveLevelStuff(theLevelDetailsHolder, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);
 
-
-	
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation->m_anim;
-		m_spriteAnimation->m_anim = NULL;
-	}
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
@@ -1318,112 +1288,3 @@ void CSceneManager2D::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 	
 }
-
-
-/*
-
-void CSceneManager2D::RenderTileMap()
-{
-	int m = 0;
-	for (int i = 0; i < m_cMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = tileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((tileOffset_x + k) >= m_cMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cMap->theScreenMap[i][m] == 1)
-			{
-				Render2DMesh(meshList[GEO_TILEGROUND], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 2)
-			{
-				Render2DMesh(meshList[GEO_TILETREE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 10)
-			{
-				Render2DMesh(meshList[GEO_TILE_KILLZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 11)
-			{
-				Render2DMesh(meshList[GEO_TILE_SAFEZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-		}
-	}
-
-	if (theHero->GetAnimationInvert() == false)
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-	}
-	else
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-	}
-
-	// Render the enemy
-	int theEnemy_x = theEnemy->GetPos_x() - theHero->GetMapFineOffset_x();
-	int theEnemy_y = theEnemy->GetPos_y();
-	if (((theEnemy_x >= 0) && (theEnemy_x<800)) &&
-		((theEnemy_y >= 0) && (theEnemy_y<600)))
-	{
-		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1, theEnemy_x, theEnemy_y);
-	}
-}
-
-
-void CSceneManager2D::RenderRearTileMap()
-{
-	rearWallOffset_x = (int)(theHero->GetMapOffset_x() / 2);
-	rearWallOffset_y = 0;
-	rearWallTileOffset_y = 0;
-	rearWallTileOffset_x = (int)(rearWallOffset_x / m_cRearMap->GetTileSize());
-	if (rearWallTileOffset_x + m_cRearMap->GetNumOfTiles_Width() > m_cRearMap->getNumOfTiles_MapWidth())
-		rearWallTileOffset_x = m_cRearMap->getNumOfTiles_MapWidth() - m_cRearMap->GetNumOfTiles_Width();
-	rearWallFineOffset_x = rearWallOffset_x % m_cRearMap->GetTileSize();
-
-	int m = 0;
-	for (int i = 0; i < m_cRearMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cRearMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = rearWallTileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((rearWallTileOffset_x + k) >= m_cRearMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cRearMap->theScreenMap[i][m] == 3)
-			{
-				Render2DMesh(meshList[GEO_TILESTRUCTURE], false, 1, k*m_cRearMap->GetTileSize() - rearWallFineOffset_x, 575 - i*m_cRearMap->GetTileSize());
-			}
-		}
-	}
-}
-
-
-void CSceneManager2D::RenderGoodies()
-{
-	// Render the goodies
-	for (int i = 0; i<10; i++)
-	{
-		Render2DMesh(theArrayOfGoodies[i]->GetMesh(), false, 1, theArrayOfGoodies[i]->GetPos_x(), theArrayOfGoodies[i]->GetPos_y());
-	}
-}
-*/

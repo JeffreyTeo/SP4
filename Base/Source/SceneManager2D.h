@@ -177,15 +177,26 @@ public:
 private:
 	bool m_Quitfrompause;
 
+	// Win Condition
 	int m_WinCondition;
+	
+	// Vector to Hold all level Details to be saved
 	vector<AllLevelDetails*> theLevelDetailsHolder;
 	
+	// MaxLevel and MaxDifferent
 	int m_maxlevel;
 	int m_maxdiff;
+
+	// Loading
 	LuaUsage* m_Load;
+
+	//Player
 	Player* m_player;
+	
+	//Saving
 	Save* m_save;
-	SpriteAnimation *m_spriteAnimation;
+
+	//LevelDetails
 	LevelDetails* m_LevelDetails;
 
 	unsigned m_vertexArrayID;
@@ -195,13 +206,11 @@ private:
 
 	Camera3 camera;
 
-	float rotateAngle;
-
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
 
-	bool confettiRightside;
+	// Fps
 	float fps;
 
 	// Tutorial
@@ -210,6 +219,7 @@ private:
 	bool ShowKey;		// Sign.3
 	bool ShowMonster;	// Sign.4
 	bool ShowExit;		// Sign.5
+
 	// Checks if player has pressed 'X'
 	bool Sign1Exited;
 	bool Sign2Exited;
@@ -220,21 +230,23 @@ private:
 	int ScoreToGold;
 
 	//time Buffer for continuous key press
-
 	float timeBuffer;
 
 	//grid system and grids
 	GridSystem* Playfield;
 	GridSystem* TestField;
+
 	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
 	float direction;
 	Vector3 offset;
+	
 	//window height and width
 	int m_windowHeight;
 	int m_windowWidth;
 
 	//loaded level;
 	LevelLoader *m_cLevel;
+
 	// vector of AI
 	vector<cAI*> AIList;
 	//player health

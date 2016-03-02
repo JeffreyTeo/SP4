@@ -31,6 +31,6 @@
   HighscoreLevel4 = { Position = { x = 295, y = 110 }, TempPosition = { x = -100, y = 110 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
 
   Resume = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
-  QuitToMenu = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
-  NextLevel = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
+  QuitToMenu = { Position = { x = 295, y = 295 }, TempPosition = { x = 390, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
+  NextLevel = { Position = { x = 295, y = 350 }, TempPosition = { x = -200, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 },
   }

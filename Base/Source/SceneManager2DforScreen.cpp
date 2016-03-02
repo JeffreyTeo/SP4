@@ -340,7 +340,8 @@ void SceneManagerLevel2DforScreen::Init()
 				theLevelDetailsHolder.push_back(m_levelofdetail);
 			}
 		}
-
+		CreateButton("NextLevel");
+		CreateButton("QuitToMenu");
 	}
 	if (m_screenvalue == Menuscreen)
 	{
@@ -385,12 +386,6 @@ void SceneManagerLevel2DforScreen::Init()
 		CreateButton("HighscoreLevel2");
 		CreateButton("HighscoreLevel3");
 		CreateButton("HighscoreLevel4");
-	}
-
-	if (m_screenvalue == Winscreen)
-	{
-		CreateButton("NextLevel");
-		CreateButton("QuitToMenu");
 	}
 
 	m_select = -1;
@@ -527,7 +522,7 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 		{
 		case 1:
 		{
-				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
+				  if ((this->m_player->GetLevelToStartAt()) < (m_maxlevel+1))
 				  {
 					  return true;
 				  }
@@ -537,6 +532,10 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 				  }
 				  else if ((this->m_player->GetNormalLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
 				  {
+					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 0]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 1]->GetCleared()&&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 2]->GetCleared()&&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 3]->GetCleared())
 					  this->m_player->SetNormalLevelUnlocked(true);
 					  return false;
 				  }
@@ -544,7 +543,7 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 		}
 		case 2:
 		{
-				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
+				  if ((this->m_player->GetLevelToStartAt()) < (m_maxlevel + 1))
 				  {
 					  return true;
 				  }
@@ -554,6 +553,10 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 				  }
 				  else if ((this->m_player->GetHardLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
 				  {
+					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 0]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 1]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 2]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 3]->GetCleared())
 					  this->m_player->SetHardLevelUnlocked(true);
 					  return false;
 				  }
@@ -635,15 +638,15 @@ void SceneManagerLevel2DforScreen::SetParticleStyle(Particle *ParticleVector, in
 {
 
 	if (ParticleStyle == PARTICLE_STYLE::DROPDOWN)
-		ParticleVector->ParticleInit(20, 0, m_windowHeight, PARTICLE_STYLE::DROPDOWN);
+		ParticleVector->ParticleInit(10, 0, m_windowHeight, PARTICLE_STYLE::DROPDOWN);
 	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside == false)
 	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.125, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
+		ParticleVector->ParticleInit(10, m_windowWidth * 0.125, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
 		confettiRightside = true;
 	}
 	else if (ParticleStyle == PARTICLE_STYLE::CONFETTI && confettiRightside)
 	{
-		ParticleVector->ParticleInit(20, m_windowWidth * 0.875, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
+		ParticleVector->ParticleInit(10, m_windowWidth * 0.875, m_windowHeight* 0.5, PARTICLE_STYLE::CONFETTI);
 		ParticleVector->SetConfettiRightSide(confettiRightside);
 	}
 
@@ -741,11 +744,6 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 	if (Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	if (Application::IsKeyPressed('5'))
-		m_alpha += 0.05f;
-	if (Application::IsKeyPressed('6'))
-		m_alpha -= 0.05f;
-
 	for (int i = 0; i < theButtonHolder.size(); ++i)
 	{
 		theButtonHolder[i]->update(dt);
@@ -761,9 +759,7 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 	{
 		m_alpha -= 0.04f;
 		if (m_alpha < 0)
-		{
 			m_ScreenTransition = false;
-		}
 	}
 	else if (m_ScreenTransition)
 	{
