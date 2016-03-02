@@ -17,6 +17,7 @@
 #include "SpriteAnimation.h"
 #include "SoundManager.h"
 #include "LevelDetails.h"
+#include "AllLevelDetails.h"
 
 #include "Highscore.h"
 #include "HighscoreData.h"
@@ -89,9 +90,17 @@ class CSceneManager2D : public Scene
 		GEO_KEY,
 		GEO_EXIT,
 
+		// Tutorial
+		GEO_SIGN,
+		GEO_SIGN1,
+		GEO_SIGN2,
+		GEO_SIGN3,
+		GEO_SIGN4,
+		GEO_SIGN5,
+
 		GEO_KEYSCOLLECTED,
 		GEO_MOVESLEFT,
-		//show movement
+		// Show Movement
 		GEO_FEET,
 
 		GEO_TEXT,
@@ -128,13 +137,6 @@ public:
 	void PreInit();
 	void RenderGridSystem();
 
-	// Menu States
-	bool PlaySelect;
-	bool InstructionSelect;
-	bool HighscoreSelect;
-	bool OptionSelect;
-	bool ExitSelect;
-
 	// Option States
 	bool SoundSelect;
 	bool VolumeSelect;
@@ -144,6 +146,8 @@ public:
 	int KeysCollected;
 	int NoOfMoves;
 	bool MoveChar;
+
+	
 
 	void AddHighscore();
 	HighscoreData theScore[5];
@@ -165,8 +169,11 @@ private:
 	bool m_Quitfrompause;
 
 	int m_WinCondition;
-
-	LuaUsage* m_SpriteAnimationLoad;
+	vector<AllLevelDetails*> theLevelDetailsHolder;
+	
+	int m_maxlevel;
+	int m_maxdiff;
+	LuaUsage* m_Load;
 	Player* m_player;
 	Save* m_save;
 	SpriteAnimation *m_spriteAnimation;
@@ -188,12 +195,26 @@ private:
 	bool confettiRightside;
 	float fps;
 
+	// Tutorial
+	bool ShowStart;		// Sign.1
+	bool ShowMove;		// Sign.2
+	bool ShowKey;		// Sign.3
+	bool ShowMonster;	// Sign.4
+	bool ShowExit;		// Sign.5
+	// Checks if player has pressed 'X'
+	bool Sign1Exited;
+	bool Sign2Exited;
+	bool Sign3Exited;
+	bool Sign4Exited;
+	bool Sign5Exited;
+
 	//time Buffer for continuous key press
 
 	float timeBuffer;
 
 	//grid system and grids
 	GridSystem* Playfield;
+	GridSystem* TestField;
 	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
 	float direction;
 	Vector3 offset;

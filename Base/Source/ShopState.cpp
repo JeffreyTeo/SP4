@@ -12,6 +12,7 @@ void CShopState::Init()
 {
 	theScene = new SceneManagerLevel2DforScreen(800, 600,Shopscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 	pressed = false;
@@ -24,6 +25,7 @@ void CShopState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, Shopscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 	pressed = false;
@@ -66,49 +68,35 @@ void CShopState::Update(CGameStateManager* theGSM)
 void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
+	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_DOWN))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
 			if (Select < 3) // Max. Number of Options
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select++;	// Move the cursor down
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
-		else if (Application::IsKeyPressed(VK_UP))
+		else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select--;
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
 
-		switch (Select)
-		{
-			case 1:
-			{
-				theScene->SetSelection(Select);
-				break;
-			}
-			case 2:
-			{
-				theScene->SetSelection(Select);
-				break;
-			}
-			case 3:
-			{
-				theScene->SetSelection(Select);
-				break;
-			}
-		}
+		theScene->SetSelection(Select);
 
 		switch (Select)
 		{

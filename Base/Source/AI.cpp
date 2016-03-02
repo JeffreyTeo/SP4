@@ -57,7 +57,7 @@ void cAI::update(Vector3 PlayerPos, bool &playermoved)
 		case STATE_IDLE:
 			if (Application::IsKeyPressed(VK_RETURN))
 			{
-				FSM = STATE_MOVE;
+				//FSM = STATE_MOVE;
 			}
 			if (DetectPlayer(PlayerPos))
 			{

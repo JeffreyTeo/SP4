@@ -34,5 +34,5 @@ private:
 	static CDifficultySelectState theDifficultySelectState;
 	SceneManagerLevel2DforScreen* theScene;
 	int Select;
-	int DifficultySelect;
+	double timer;
 };

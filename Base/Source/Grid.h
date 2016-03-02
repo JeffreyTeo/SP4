@@ -12,6 +12,11 @@ public:
 		TRAP,
 		ROCK,
 		EXIT,
+		INTROSIGN,
+		MOVESIGN,
+		KEYSIGN,
+		MONSTERSIGN,
+		EXITSIGN,
 		TOTAL_TYPE,
 	};
 
@@ -35,6 +40,7 @@ public:
 	int GetStatus(void);
 
 	void SetDirection(char);
+	void SetDirection(float);
 	float GetDirection(void);
 
 	void SetPos(float, float);
@@ -42,6 +48,11 @@ public:
 
 	bool keyCollected;
 	bool Win;
+	bool Sign1Touched;
+	bool Sign2Touched;
+	bool Sign3Touched;
+	bool Sign4Touched;
+	bool Sign5Touched;
 
 private:
 	GridType Type;

@@ -33,6 +33,7 @@
 #include "GridSystem.h"
 
 #include "Shop.h"
+#include "Button.h"
 
 class SceneManagerLevel2DforScreen : public Scene
 {
@@ -68,6 +69,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_TILE_TREASURECHEST,
 		GEO_SPRITE_ANIMATION,
 		GEO_OBJECT,
+		GEO_VOL_BAR,
 
 		GEO_MENU,
 		GEO_SELECT,
@@ -79,11 +81,51 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_WIN,
 		GEO_LEVELSELECT,
 		GEO_DIFFICULTYSELECT,
+
+		//Menu button
+		GEO_MENU_PLAY,
+		GEO_MENU_INSTRUCTION,
+		GEO_MENU_HIGHSCORE,
+		GEO_MENU_OPTION,
+		GEO_MENU_EXIT,
+
+		//LevelShopSelect button
+		GEO_LEVELSHOPSELECT_LEVELSELECT,
+		GEO_LEVELSHOPSELECT_SHOP,
+		GEO_LEVELSHOPSELECT_CONTINUELEVEL,
+
+		//Difficulty button
+		GEO_DIFFICULTY_EASY,
+		GEO_DIFFICULTY_NORMAL,
+		GEO_DIFFICULTY_HARD,
+
+		GEO_LEVELSELECT_LEVEL,
+
+		//Pause button
+		GEO_PAUSE_RESUME,
+		GEO_PAUSE_QUITTOMENU,
+
+		GEO_WIN_NEXTLEVEL,
+
+		GEO_LEVELSELECT_LEVEL1,
+		GEO_LEVELSELECT_LEVEL2,
+		GEO_LEVELSELECT_LEVEL3,
+		GEO_LEVELSELECT_LEVEL4,
+
 		// TEMPO NAME
 		GEO_VOL_MUTE,
 		GEO_VOL,
 		GEO_SOUND_MUTE,
 		GEO_SOUND,
+
+		//Highscore buttons
+		GEO_HIGHSCORE_EASY,
+		GEO_HIGHSCORE_NORMAL,
+		GEO_HIGHSCORE_HARD,
+		GEO_HIGHSCORE_LEVEL1,
+		GEO_HIGHSCORE_LEVEL2,
+		GEO_HIGHSCORE_LEVEL3,
+		GEO_HIGHSCORE_LEVEL4,
 
 		GEO_TEXT,
 		NUM_GEOMETRY,
@@ -109,12 +151,20 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+	void CreateButton(string name);
+
 	void SetSpriteAnimation(Particle *ParticleVector, int SAIndex);
 	void SetParticleStyle(Particle *ParticleVector, int ParticleStyle);
 
 	int GetLevelReferencetoContinue();
 
+	void SetContinuedLevel();
+
 	// States Function
+	//void SetSelection(short);
+	bool CheckEligibleForNextLevel();
+	void NextLevel();
+	void ResetPlayer();
 	void SetSelection(short m_select);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
@@ -128,16 +178,32 @@ public:
 	void RenderLevelShopSelect();
 	void RenderLevelSelect();
 	void RenderDifficulty();
-	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
+	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const float size = 1, const int x = 0, const int y = 0, const bool rotate = false, const bool flip = false);
 	void SetScreenTransition(bool m_ScreenTransition);
 	bool ReturnScreenTransition();
 	void SetChangeScreen(bool m_ChangeScreen);
 	bool ReturnChangeScreen();
 
+	void SetLevelDifficulty(int LevelDifficulty);
+	void SetLevelNumber(int LevelNumber);
+
+	bool ReturnPlayerDifficultySelection(int difficultyselection);
+
 	void SetShopSelect(int shopSelect);
-	
-	void setDifficulty(int Difficulty);
-	void setLevel(int Level);
+
+	// Highscore States
+	void setHSDifficulty(int theDifficulty);
+	int getHSDifficulty();
+	void setHSLevel(int theLevel);
+	int getHSLevel();
+	void setDifficultyButton(bool theDifficultyButton);
+	bool getDifficultyButton();
+	void setLevelButton(bool theLevelButton);
+	bool getLevelButton();
+	void setHighscoreDisplay(bool DisplayHighscore); 
+	bool getHighscoreDisplay();
+	void setLevelButtonSelection(int theLevelButtonSelection);
+	int getLevelButtonSelection();
 
 	// Option States
 	bool SoundSelect;
@@ -161,6 +227,13 @@ public:
 	};
 
 private:
+	int m_maxlevel;
+	int m_maxdiff;
+	vector<AllLevelDetails*> theLevelDetailsHolder;
+
+
+	vector<Button*> theButtonHolder;
+	Button* m_button;
 	//sprite animation
 	LuaUsage* m_SpriteAnimationLoad;
 	SpriteAnimation *m_spriteAnimation;
@@ -183,7 +256,6 @@ private:
 	bool m_ChangeScreen;
 	bool m_ScreenTransition;
 
-
 	Camera3 camera;
 
 	float rotateAngle;
@@ -194,6 +266,13 @@ private:
 
 	float fps;
 
+	// Highscore State
+	int theDifficulty;
+	int theLevel;
+	int theLevelButtonSelection;
+	bool theDifficultyButton;
+	bool theLevelButton;
+	bool DisplayHighscore;
 
 	//window height and width
 	short m_screenvalue;

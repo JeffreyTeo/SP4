@@ -13,6 +13,7 @@ void CLevelSelectState::Init()
 {
 	theScene = new SceneManagerLevel2DforScreen(800, 600, LevelSelectscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 }
@@ -21,6 +22,7 @@ void CLevelSelectState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, LevelSelectscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 }
@@ -59,49 +61,53 @@ void CLevelSelectState::Update(CGameStateManager* theGSM)
 void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
+	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_DOWN))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_DOWN)&& timer > 0.1f)
 		{
-			if (Select < 3)
+			if (Select < 4)
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select++;
-				Sleep(150);
+				timer = 0;
+				//Sleep(150);
 			}
 		}
-		else if (Application::IsKeyPressed(VK_UP))
+		else if (Application::IsKeyPressed(VK_UP)&& timer > 0.1f)
 		{
 			if (Select > 1)
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select--;
-				Sleep(150);
+				timer = 0;
+				//Sleep(150);
 			}
 		}
-
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
 			Sound.engine->stopAllSounds();
 			Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
-
-		if (Application::IsKeyPressed(VK_BACK))
+		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
 			Sound.engine->stopAllSounds();
 			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 			Select = -1;
-		}	
+		}
+		theScene->SetSelection(Select);
 	}
 
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
+		if (Select != -1)
+			theScene->SetLevelNumber(Select);
 		switch (Select)
 		{
 		case -1:
@@ -111,44 +117,26 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 		}
 		case 1:
 		{
-				  theScene->setLevel(1);
 				  theGSM->ChangeState(CPlayState::Instance());
 				  break;
 		}
 		case 2:
 		{
-				  theScene->setLevel(2);
 				  theGSM->ChangeState(CPlayState::Instance());
 				  break;
 		}
 		case 3:
 		{
-				  theScene->setLevel(3);
+				  theGSM->ChangeState(CPlayState::Instance());
+				  break;
+		}
+		case 4:
+		{
 				  theGSM->ChangeState(CPlayState::Instance());
 				  break;
 		}
 		}
-	}
-	else
-	{
-		switch (Select)
-		{
-		case 1:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		case 2:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		case 3:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		}
+		
 	}
 }
 

@@ -11,12 +11,18 @@ void CWinState::Init()
 {
 	theScene = new SceneManagerLevel2DforScreen(800, 600, Winscreen);
 	theScene->Init();
+	Select = 1;
+	timer = 0.0f;
+	theScene->SetSelection(Select);
 }
 
 void CWinState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, Winscreen);
 	theScene->Init();
+	Select = 1;
+	timer = 0.0f;
+	theScene->SetSelection(Select);
 }
 
 void CWinState::Cleanup()
@@ -53,17 +59,64 @@ void CWinState::Update(CGameStateManager* theGSM)
 void CWinState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
+	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_BACK))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
+			if (Select < 2) // Max. Number of Options
+			{
+				Select++;	// Move the cursor down
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
 		}
+		else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
+		{
+			if (Select > 1) // Selection is not the first one.
+			{
+				Select--;
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
+		}
+		theScene->SetSelection(Select);
 	}
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
-		theGSM->ChangeState(CMenuState::Instance());
+		switch (Select)
+		{
+		case 1:
+		{
+				  //check if eligible for next level
+				  if (theScene->CheckEligibleForNextLevel())
+				  {
+					  theScene->NextLevel();
+					  theGSM->ChangeState(CPlayState::Instance());
+				  }
+				  else
+				  {
+					  theScene->ResetPlayer();
+					  theGSM->ChangeState(CMenuState::Instance());
+				  }
+				  break;
+		}
+		case 2:
+		{
+				  theScene->ResetPlayer();
+				  theGSM->ChangeState(CMenuState::Instance());
+				  break;
+		}
+		}
+	}
+
+	if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
+	{
+			timer = 0;
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
 	}
 }
 

@@ -12,7 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AI.cpp" />
+    <ClCompile Include="Source\AllLevelDetails.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Camera3.cpp" />
     <ClCompile Include="Source\DifficultySelectState.cpp" />
@@ -64,7 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AI.h" />
+    <ClInclude Include="Source\AllLevelDetails.h" />
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\Button.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Camera3.h" />
     <ClInclude Include="Source\DifficultySelectState.h" />

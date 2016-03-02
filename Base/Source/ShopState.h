@@ -35,6 +35,7 @@ private:
 	static CShopState theShopState;
 	SceneManagerLevel2DforScreen* theScene;
 	int Select;
+	double timer;
 	bool pressed;
 	bool boughtOne;
 	bool boughtTwo;

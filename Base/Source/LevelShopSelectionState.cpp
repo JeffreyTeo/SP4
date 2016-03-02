@@ -14,6 +14,7 @@ void CLevelShopSelectionState::Init()
 {
 	theScene = new SceneManagerLevel2DforScreen(800, 600, LevelShopSelectionscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 }
@@ -22,6 +23,7 @@ void CLevelShopSelectionState::Init(const int width, const int height)
 {
 	theScene = new SceneManagerLevel2DforScreen(width, height, LevelShopSelectionscreen);
 	theScene->Init();
+	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
 }
@@ -60,40 +62,55 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM)
 void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 {
 	theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
+	if (theScene->ReturnChangeScreen() == false && theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_DOWN))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
 			if (Select < 3) // Max. Number of Options
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select++;	// Move the cursor down
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
-		else if (Application::IsKeyPressed(VK_UP))
+		else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select--;
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.ConfirmSound();
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
+			timer = 0;
+			if (Select < 3)
+			{
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
+			else if (theScene->GetLevelReferencetoContinue() != 0 && Select == 3)
+			{
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
+				theScene->SetScreenTransition(true);
+				theScene->SetChangeScreen(true);
+			}
 		}
 
-		if (Application::IsKeyPressed(VK_BACK))
+		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
+			timer = 0;
 			Sound.engine->stopAllSounds();
 			Sound.BackSound();
 			Select = -1;
@@ -122,31 +139,18 @@ void CLevelShopSelectionState::Update(CGameStateManager* theGSM, const double m_
 		}
 		case 3:
 		{
-				  theGSM->ChangeState(CPlayState::Instance());
+				  if (theScene->GetLevelReferencetoContinue() != 0)
+				  {
+					  theScene->SetContinuedLevel();
+					  theGSM->ChangeState(CPlayState::Instance());
+				  }
 				  break;
 		}
 		}
 	}
 	else
 	{
-		switch (Select)
-		{
-		case 1:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		case 2:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		case 3:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		}
+		theScene->SetSelection(Select);
 	}
 }
 

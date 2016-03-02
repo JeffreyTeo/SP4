@@ -107,7 +107,7 @@ void COptionState::Update(CGameStateManager* theGSM, const double m_dElapsedTime
 		Sound.adjustVol();
 	}
 
-	theScene->tempsound = Sound.volume;
+	theScene->tempsound = Sound.volume * 10;
 	if (theScene->tempsound == 0)
 	{
 		theScene->muted = true;

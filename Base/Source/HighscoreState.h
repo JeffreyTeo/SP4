@@ -33,4 +33,7 @@ protected:
 private:
 	static CHighscoreState theHighscoreState;
 	SceneManagerLevel2DforScreen* theScene;
+	int Select;
+	int SelectLevel;
+	double timer;
 };

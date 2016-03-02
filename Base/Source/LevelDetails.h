@@ -25,7 +25,6 @@ public:
 	int GetPlayerPositionY();
 	string GetNameOfLevelFile();
 	string GetDifficulty();
-	bool GetCleared();
 
 	void SetPositionXOfGrid(float m_PositionXOfGrid);
 	void SetPositionYOfGrid(float m_PositionYOfGrid);
@@ -37,14 +36,13 @@ public:
 	void SetPlayerPositionY(int m_PlayerPositionY);
 	void SetNameOfLevelFile(string m_NameOfLevelFile);
 	void SetDifficulty(string m_Difficulty);
-	void SetCleared(bool m_Cleared);
 
 	void SetDifficultyReference(int m_DifficultyReference);
 	void SetLevelinDifficultyReference(int m_LevelinDifficultyReference);
 	short GetDifficultyReference();
 	short GetLevelinDifficultyReference();
 
-
+	short GetAmountOfMoves();
 
 private:
 	float m_PositionXOfGrid;
@@ -55,11 +53,11 @@ private:
 	int m_NumberOfGridY;
 	int m_PlayerPositionX;
 	int m_PlayerPositionY;
+	
 	string m_NameOfLevelFile;
 	string m_Difficulty;
-	bool m_Cleared;
 
-
+	short m_AmountOfMoves;
 	short m_DifficultyReference; 
 	short m_LevelinDifficultyReference;
 	LuaUsage* theLevelDetailsinfoLua;

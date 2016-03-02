@@ -12,6 +12,7 @@ void CPauseState::Init()
 	theScene = new SceneManagerLevel2DforScreen(800, 600,Pausescreen);
 	theScene->Init();
 	Select = 1;
+	timer = 0.0f;
 	theScene->SetSelection(Select);
 }
 
@@ -20,6 +21,7 @@ void CPauseState::Init(const int width, const int height)
 	theScene = new SceneManagerLevel2DforScreen(width, height, Pausescreen);
 	theScene->Init();
 	Select = 1;
+	timer = 0.0f;
 	theScene->SetSelection(Select);
 }
 
@@ -59,29 +61,32 @@ void CPauseState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	theScene->Update(m_dElapsedTime);
 	if (theScene->ReturnScreenTransition() == false)
 	{
-		if (Application::IsKeyPressed(VK_DOWN))
+		timer += m_dElapsedTime;
+		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
 			if (Select < 2) // Max. Number of Options
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select++;	// Move the cursor down
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
-		else if (Application::IsKeyPressed(VK_UP))
+		else if (Application::IsKeyPressed(VK_UP) && timer > 0.1f)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
 				Sound.engine->stopAllSounds();
 				Sound.SelectSound();
 				Select--;
-				Sleep(150);
+				//Sleep(150);
+				timer = 0;
 				cout << Select << endl;
 			}
 		}
-		if (Application::IsKeyPressed(VK_RETURN))
+		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
 			Sound.engine->stopAllSounds();
 			Sound.ConfirmSound();
@@ -107,35 +112,8 @@ void CPauseState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	}
 	else
 	{
-		switch (Select)
-		{
-		case 1:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		case 2:
-		{
-				  theScene->SetSelection(Select);
-				  break;
-		}
-		}
+			theScene->SetSelection(Select);
 	}
-
-
-	/*theScene->Update(m_dElapsedTime);
-	if (theScene->ReturnScreenTransition() == false)
-	{
-		if (Application::IsKeyPressed(VK_BACK))
-		{
-			theScene->SetScreenTransition(true);
-			theScene->SetChangeScreen(true);
-		}
-	}
-	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
-	{
-		theGSM->PopState(true);
-	}*/
 }
 
 void CPauseState::Draw(CGameStateManager* theGSM)

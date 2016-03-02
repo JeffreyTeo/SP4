@@ -31,4 +31,6 @@ protected:
 private:
 	static CWinState theWinState;
 	SceneManagerLevel2DforScreen* theScene;
+	double timer;
+	int Select;
 };

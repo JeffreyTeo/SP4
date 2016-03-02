@@ -1,4 +1,3 @@
-
 #include "LevelDetails.h"
 
 
@@ -42,6 +41,7 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	}
 	}
 	GetLevelDetails = GetLevelDetails + ".Level" + std::to_string(this->m_LevelinDifficultyReference) + ".";
+	this->m_AmountOfMoves = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "AmountOfMoves"));
 	this->m_PositionXOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails+"PositionXOfGrid"));
 	this->m_PositionYOfGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "PositionYOfGrid"));
 	this->m_LengthXOfAGrid = theLevelDetailsinfoLua->get<float>((GetLevelDetails + "LengthXOfAGrid"));
@@ -52,8 +52,9 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	this->m_PlayerPositionY = theLevelDetailsinfoLua->get<int>((GetLevelDetails + "PlayerPositionY"));
 	this->m_NameOfLevelFile = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "NameOfLevelFile"));
 	this->m_Difficulty = theLevelDetailsinfoLua->get<string>((GetLevelDetails + "Difficulty"));
-	this->m_Cleared = theLevelDetailsinfoLua->get<bool>((GetLevelDetails + "Cleared"));
 	theLevelDetailsinfoLua->LuaUsageClose();
+
+
 }
 
 
@@ -97,10 +98,7 @@ string LevelDetails::GetDifficulty()
 {
 	return m_Difficulty;
 }
-bool LevelDetails::GetCleared()
-{
-	return m_Cleared;
-}
+
 
 void LevelDetails::SetPositionXOfGrid(float m_PositionXOfGrid)
 {
@@ -142,10 +140,6 @@ void LevelDetails::SetDifficulty(string m_Difficulty)
 {
 	this->m_Difficulty = m_Difficulty;
 }
-void LevelDetails::SetCleared(bool m_Cleared)
-{
-	this->m_Cleared = m_Cleared;
-}
 
 void LevelDetails::SetDifficultyReference(int m_DifficultyReference)
 {
@@ -162,4 +156,8 @@ short LevelDetails::GetDifficultyReference()
 short LevelDetails::GetLevelinDifficultyReference()
 {
 	return this->m_LevelinDifficultyReference;
+}
+short LevelDetails::GetAmountOfMoves()
+{
+	return this->m_AmountOfMoves;
 }
