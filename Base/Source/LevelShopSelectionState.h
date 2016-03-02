@@ -25,6 +25,8 @@ public:
 		return &theLevelShopSelectionState;
 	}
 
+	CSoundManager Sound;
+
 protected:
 	CLevelShopSelectionState() { }
 

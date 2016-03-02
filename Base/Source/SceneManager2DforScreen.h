@@ -95,6 +95,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_LEVELSHOPSELECT_CONTINUELEVEL,
 
 		//Difficulty button
+		GEO_DIFFICULTY_TUTORIAL,
 		GEO_DIFFICULTY_EASY,
 		GEO_DIFFICULTY_NORMAL,
 		GEO_DIFFICULTY_HARD,
@@ -119,6 +120,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_SOUND,
 
 		//Highscore buttons
+		GEO_HIGHSCORE_TUTORIAL,
 		GEO_HIGHSCORE_EASY,
 		GEO_HIGHSCORE_NORMAL,
 		GEO_HIGHSCORE_HARD,
@@ -210,9 +212,10 @@ public:
 	bool VolumeSelect;
 	bool muted;
 
-	void AddHighscore();
-	HighscoreData theScore[5];
+	void GetHighscore();
+	HighscoreData theScore;
 	CSoundManager Sound;
+	void ReadTheHighscores();
 
 	float tempsound;
 

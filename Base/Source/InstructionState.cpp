@@ -19,7 +19,6 @@ void CInstructionState::Init(const int width, const int height)
 	theScene = new SceneManagerLevel2DforScreen(width, height, Instructionscreen);
 	timer = 0.0f;
 	theScene->Init();
-	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CInstructionState::Cleanup()
@@ -61,8 +60,8 @@ void CInstructionState::Update(CGameStateManager* theGSM, const double m_dElapse
 		timer += m_dElapsedTime;
 		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
-			theScene->Sound.engine->stopAllSounds();
-			theScene->Sound.BackSound();
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

@@ -141,15 +141,6 @@ short Player::GetAmtOfCurrency()
 	return this->AmtOfCurrency;
 }
 
-void Player::SetAmtOfGold(short AmtOfGold)
-{
-	this->AmtOfGold = AmtOfGold;
-}
-short Player::GetAmtOfGold()
-{
-	return this->AmtOfGold;
-}
-
 void Player::SetLevelStopAt(short LevelStopAt, short LevelDifficultyStopAt)
 {
 	this->LevelStopAt = LevelStopAt;

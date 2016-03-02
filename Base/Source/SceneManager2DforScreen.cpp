@@ -252,6 +252,8 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_DIFFICULTY_HARD] = MeshBuilder::Generate2DMesh("GEO_DIFFICULTY_HARD", Color(1, 1, 1), 0, 0, 98, 34);
 	meshList[GEO_DIFFICULTY_HARD]->textureID = LoadTGA("Image//ButtonMesh/Hardbutton.tga");
 
+	meshList[GEO_HIGHSCORE_TUTORIAL] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_TUTORIAL", Color(1, 1, 1), 0, 0, 95, 34);
+	meshList[GEO_HIGHSCORE_TUTORIAL]->textureID = LoadTGA("Image//ButtonMesh/Easybutton.tga");
 	meshList[GEO_HIGHSCORE_EASY] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_EASY", Color(1, 1, 1), 0, 0, 95, 34);
 	meshList[GEO_HIGHSCORE_EASY]->textureID = LoadTGA("Image//ButtonMesh/Easybutton.tga");
 	meshList[GEO_HIGHSCORE_NORMAL] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_NORMAL", Color(1, 1, 1), 0, 0, 147, 34);
@@ -259,14 +261,14 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_HIGHSCORE_HARD] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_HARD", Color(1, 1, 1), 0, 0, 98, 34);
 	meshList[GEO_HIGHSCORE_HARD]->textureID = LoadTGA("Image//ButtonMesh/Hardbutton.tga");
 
-	meshList[GEO_HIGHSCORE_LEVEL1] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL1", Color(1, 1, 1), 0, 0, 95, 34);
-	meshList[GEO_HIGHSCORE_LEVEL1]->textureID = LoadTGA("Image//ButtonMesh/Playbutton.tga");
-	meshList[GEO_HIGHSCORE_LEVEL2] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL2", Color(1, 1, 1), 0, 0, 265, 34);
-	meshList[GEO_HIGHSCORE_LEVEL2]->textureID = LoadTGA("Image//ButtonMesh/Instructionbutton.tga");
-	meshList[GEO_HIGHSCORE_LEVEL3] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL3", Color(1, 1, 1), 0, 0, 202, 34);
-	meshList[GEO_HIGHSCORE_LEVEL3]->textureID = LoadTGA("Image//ButtonMesh/Highscorebutton.tga");
-	meshList[GEO_HIGHSCORE_LEVEL4] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL4", Color(1, 1, 1), 0, 0, 157, 34);
-	meshList[GEO_HIGHSCORE_LEVEL4]->textureID = LoadTGA("Image//ButtonMesh/Optionbutton.tga");
+	meshList[GEO_HIGHSCORE_LEVEL1] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL1", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_HIGHSCORE_LEVEL1]->textureID = LoadTGA("Image//ButtonMesh/Level1button.tga");
+	meshList[GEO_HIGHSCORE_LEVEL2] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL2", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_HIGHSCORE_LEVEL2]->textureID = LoadTGA("Image//ButtonMesh/Level2button.tga");
+	meshList[GEO_HIGHSCORE_LEVEL3] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL3", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_HIGHSCORE_LEVEL3]->textureID = LoadTGA("Image//ButtonMesh/Level3button.tga");
+	meshList[GEO_HIGHSCORE_LEVEL4] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_LEVEL4", Color(1, 1, 1), 0, 0, 140, 34);
+	meshList[GEO_HIGHSCORE_LEVEL4]->textureID = LoadTGA("Image//ButtonMesh/Level4button.tga");
 
 	meshList[GEO_PAUSE_RESUME] = MeshBuilder::Generate2DMesh("GEO_PAUSE_RESUME", Color(1, 1, 1), 0, 0, 138, 34);
 	meshList[GEO_PAUSE_RESUME]->textureID = LoadTGA("Image//ButtonMesh/Resumebutton.tga");
@@ -351,6 +353,7 @@ void SceneManagerLevel2DforScreen::Init()
 	}
 	if (m_screenvalue == DifficultySelectscreen)
 	{
+		//CreateButton("DifficultyTutorial");
 		CreateButton("DifficultyEasy");
 		CreateButton("DifficultyNormal");
 		CreateButton("DifficultyHard");
@@ -369,6 +372,7 @@ void SceneManagerLevel2DforScreen::Init()
 	}
 	if (m_screenvalue == Highscorescreen)
 	{
+		CreateButton("HighscoreTutorial");
 		CreateButton("HighscoreEasy");
 		CreateButton("HighscoreNormal");
 		CreateButton("HighscoreHard");
@@ -412,45 +416,52 @@ void SceneManagerLevel2DforScreen::Init()
 		//AddHighscore();
 }
 
-void SceneManagerLevel2DforScreen::AddHighscore()
+void SceneManagerLevel2DforScreen::ReadTheHighscores()
+{
+	if (getHSDifficulty() == 1)
+	{
+		theScore.ReadTextFile("Scores//TutorialHighscore.txt");
+	}
+	if (getHSDifficulty() == 2)
+	{
+		if (getHSLevel() == 1)
+			theScore.ReadTextFile("Scores//EasyHighscore1.txt");
+		if (getHSLevel() == 2)
+			theScore.ReadTextFile("Scores//EasyHighscore2.txt");
+		if (getHSLevel() == 3)
+			theScore.ReadTextFile("Scores//EasyHighscore3.txt");
+		if (getHSLevel() == 4)
+			theScore.ReadTextFile("Scores//EasyHighscore4.txt");
+	}
+	if (getHSDifficulty() == 3)
+	{
+		if (getHSLevel() == 1)
+			theScore.ReadTextFile("Scores//NormalHighscore1.txt");
+		if (getHSLevel() == 2)
+			theScore.ReadTextFile("Scores//NormalHighscore2.txt");
+		if (getHSLevel() == 3)
+			theScore.ReadTextFile("Scores//NormalHighscore3.txt");
+		if (getHSLevel() == 4)
+			theScore.ReadTextFile("Scores//NormalHighscore4.txt");
+	}
+	if (getHSDifficulty() == 4)
+	{
+		if (getHSLevel() == 1)
+			theScore.ReadTextFile("Scores//HardHighscore1.txt");
+		if (getHSLevel() == 2)
+			theScore.ReadTextFile("Scores//HardHighscore2.txt");
+		if (getHSLevel() == 3)
+			theScore.ReadTextFile("Scores//HardHighscore3.txt");
+		if (getHSLevel() == 4)
+			theScore.ReadTextFile("Scores//HardHighscore4.txt");
+	}
+}
+void SceneManagerLevel2DforScreen::GetHighscore()
 {
 	const int MAX_SCORES = 5;
-	string values[MAX_SCORES];
 	for (int i = 0; i < MAX_SCORES; i++)
 	{
-		if (getHSDifficulty() == 1)
-		{
-			if (getHSLevel() == 1)
-				theScore[i].ReadTextFile("Scores//EasyHighscore1.txt");
-			if (getHSLevel() == 2)
-				theScore[i].ReadTextFile("Scores//EasyHighscore2.txt");
-			if (getHSLevel() == 3)
-				theScore[i].ReadTextFile("Scores//EasyHighscore3.txt");
-			if (getHSLevel() == 4)
-				theScore[i].ReadTextFile("Scores//EasyHighscore4.txt");
-		}
-		if (getHSDifficulty() == 2)
-		{
-			if (getHSLevel() == 1)
-				theScore[i].ReadTextFile("Scores//NormalHighscore1.txt");
-			if (getHSLevel() == 2)
-				theScore[i].ReadTextFile("Scores//NormalHighscore2.txt");
-			if (getHSLevel() == 3)
-				theScore[i].ReadTextFile("Scores//NormalHighscore3.txt");
-			if (getHSLevel() == 4)
-				theScore[i].ReadTextFile("Scores//NormalHighscore4.txt");
-		}
-		if (getHSDifficulty() == 3)
-		{
-			if (getHSLevel() == 1)
-				theScore[i].ReadTextFile("Scores//HardHighscore1.txt");
-			if (getHSLevel() == 2)
-				theScore[i].ReadTextFile("Scores//HardHighscore2.txt");
-			if (getHSLevel() == 3)
-				theScore[i].ReadTextFile("Scores//HardHighscore3.txt");
-			if (getHSLevel() == 4)
-				theScore[i].ReadTextFile("Scores//HardHighscore4.txt");
-		}
+		ReadTheHighscores();
 	}
 }
 void SceneManagerLevel2DforScreen::CreateButton(string name)
@@ -773,6 +784,7 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 	theHero->HeroUpdate(m_cMap);
 	*/
 
+
 	fps = (float)(1.f / dt);
 }
 
@@ -1014,113 +1026,37 @@ void SceneManagerLevel2DforScreen::RenderHighscore()
 	Render2DMesh(meshList[GEO_HIGHSCORE], false, true);
 	if (getDifficultyButton() == true)
 	{
-		Render2DMesh(meshList[GEO_HIGHSCORE_EASY], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);		// Easy Select
-		Render2DMesh(meshList[GEO_HIGHSCORE_NORMAL], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);	// Normal Select
-		Render2DMesh(meshList[GEO_HIGHSCORE_HARD], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);		// Hard Select
+		Render2DMesh(meshList[GEO_HIGHSCORE_TUTORIAL], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);		// Tutorial Select
+		Render2DMesh(meshList[GEO_HIGHSCORE_EASY], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);		// Easy Select
+		Render2DMesh(meshList[GEO_HIGHSCORE_NORMAL], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);		// Normal Select
+		Render2DMesh(meshList[GEO_HIGHSCORE_HARD], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);		// Hard Select
+
 		if (m_select >= 0)
 			Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
 	}
 	else if (getLevelButton() == true)
 	{
-		//Render2DMesh(meshList[GEO_DIFFICULTY_EASY], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);		// Level1
-		//Render2DMesh(meshList[GEO_DIFFICULTY_NORMAL], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);		// Level2
-		//Render2DMesh(meshList[GEO_DIFFICULTY_HARD], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);		// Level3
-		//Tempo for showing
-		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL1], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);
-		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL2], false, true, 1, theButtonHolder[4]->getTempPosition().x, theButtonHolder[4]->getTempPosition().y);
-		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL3], false, true, 1, theButtonHolder[5]->getTempPosition().x, theButtonHolder[5]->getTempPosition().y);
-		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL4], false, true, 1, theButtonHolder[6]->getTempPosition().x, theButtonHolder[6]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL1], false, true, 1, theButtonHolder[4]->getTempPosition().x, theButtonHolder[4]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL2], false, true, 1, theButtonHolder[5]->getTempPosition().x, theButtonHolder[5]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL3], false, true, 1, theButtonHolder[6]->getTempPosition().x, theButtonHolder[6]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_HIGHSCORE_LEVEL4], false, true, 1, theButtonHolder[7]->getTempPosition().x, theButtonHolder[7]->getTempPosition().y);
 
 		if (theLevelButtonSelection >= 0)
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[theLevelButtonSelection + 2]->getPosition().x - theButtonHolder[theLevelButtonSelection + 2]->getOffset().x, theButtonHolder[theLevelButtonSelection + 2]->getPosition().y - theButtonHolder[theLevelButtonSelection + 2]->getOffset().y);
+			Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[theLevelButtonSelection + 3]->getPosition().x - theButtonHolder[theLevelButtonSelection + 3]->getOffset().x, theButtonHolder[theLevelButtonSelection + 3]->getPosition().y - theButtonHolder[theLevelButtonSelection + 3]->getOffset().y);
 	}
 	else if (getHighscoreDisplay() == true)
 	{
-		AddHighscore();
+		GetHighscore();
 		std::ostringstream ss;
 		const int size = 5;
 		for (int i = 0; i < size; i++)
 		{
 		ss.str(std::string());
-		ss << i + 1 << ". " << theScore[i].GetAllHighscores(i);
+		ss << i + 1 << ". " << theScore.GetAllHighscores(i);
 		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 0, 1, m_alpha), 60, 300, 300 - (i * 40), true);
 		}
 	}
 	modelStack.PopMatrix();
-
-
-	string notUnlocked = "Level is still locked";
-	string Insufficient = "Insufficient Funds to purchase level";
-
-	switch (m_select)
-	{
-		case 1:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 417);
-			if (!m_shop->GetplayerEasyModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-		case 2:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 341);
-			if (!m_shop->GetplayerNormalModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-		case 3:
-		{
-			modelStack.PushMatrix();
-			Render2DMesh(meshList[GEO_SELECT], false, true, 1.5, 200, 265);
-			if (!m_shop->GetplayerHardModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			modelStack.PopMatrix();
-			break;
-		}
-	}
-
-	RenderTextOnScreen(meshList[GEO_TEXT], "Levels", Color(0, 0, 1), 50, 200, 400, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "Items", Color(0, 0, 1), 50, 500, 400, true);
-	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
-	{
-		modelStack.PushMatrix();
-		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
-		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 150, (330 - i * 75), true);
-		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
-		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 150, (310 - i * 75), true);
-		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 150, (290 - i * 75), true);
-		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 150, (290 - i * 75), true);
-		modelStack.PopMatrix();
-	}
-	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
-	string currentGold = "Gold: " + std::to_string(0);
-	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
-
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	
 }
@@ -1157,10 +1093,18 @@ void SceneManagerLevel2DforScreen::RenderOption()
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 
-	for (int i = 0; i < (int)(tempsound * 10); i++)
+	for (int i = 0; i < (int)tempsound; i++)
 	{
 		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
+	/*Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 0, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 30, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 60, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 90, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 120, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 150, 185);
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 180, 185);*/
+	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 210, 185);
 	modelStack.PopMatrix();
 }
 
@@ -1268,25 +1212,21 @@ void SceneManagerLevel2DforScreen::RenderShop()
 	}
 	}
 
-	RenderTextOnScreen(meshList[GEO_TEXT], "Levels", Color(0, 0, 1), 50, 200, 400, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], "Items", Color(0, 0, 1), 50, 500, 400, true);
 	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
 	{
 		modelStack.PushMatrix();
 		string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
-		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 150, (330 - i * 75), true);
+		RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 1), 30, 300, (430 - i * 75), true);
 		string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
-		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 150, (310 - i * 75), true);
+		RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 1), 30, 300, (410 - i * 75), true);
 		if (m_shop->theItemHolder[i]->GetBought())
-			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 150, (290 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 300, (390 - i * 75), true);
 		else
-			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 150, (290 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 300, (390 - i * 75), true);
 		modelStack.PopMatrix();
 	}
 	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
-	string currentGold = "Gold: " + std::to_string(0);
 	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
-	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 

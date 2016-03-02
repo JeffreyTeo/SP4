@@ -23,7 +23,7 @@ void CSoundManager::adjustVol()
 	{
 		volume -= 0.1f;
 		pressedLeft = true;
-		if (volume <= 0.1)
+		if (volume <= 0)
 		{
 			volume = 0;
 		}
@@ -97,7 +97,7 @@ void CSoundManager::ConfirmSound()
 	ISound* music = engine->play2D("../irrklang/media/confirm.wav",
 		false, false, true);
 
-	adjustVol();
+	engine->setSoundVolume(10.f);
 }
 
 void CSoundManager::SelectSound()
@@ -106,7 +106,7 @@ void CSoundManager::SelectSound()
 	ISound* music = engine->play2D("../irrklang/media/select.wav",
 		false, false, true);
 
-	adjustVol();
+	engine->setSoundVolume(10.f);
 }
 
 void CSoundManager::BackSound()
@@ -115,7 +115,7 @@ void CSoundManager::BackSound()
 	ISound* music = engine->play2D("../irrklang/media/back.mp3",
 		false, false, true);
 
-	adjustVol();
+	engine->setSoundVolume(10.f);
 }
 
 void CSoundManager::level1BGM()

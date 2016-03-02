@@ -29,7 +29,6 @@ void CHighscoreState::Init(const int width, const int height)
 	theScene->SetSelection(Select);
 	theScene->setLevelButtonSelection(SelectLevel);
 	theScene->setDifficultyButton(true);
-	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CHighscoreState::Cleanup()
@@ -77,10 +76,10 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			timer += m_dElapsedTime;
 			if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 			{
-				if (Select < 3)
+				if (Select < 4)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.SelectSound();
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
 					Select++;
 					//Sleep(150);
 					timer = 0;
@@ -90,8 +89,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (Select > 1)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.SelectSound();
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
 					Select--;
 					//Sleep(150);
 					timer = 0;
@@ -100,16 +99,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 			{
 				timer = 0;
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.ConfirmSound();
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
 				theScene->SetChangeScreen(true);
 			}
 
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.BackSound();
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
 				Select = -1;
 				if ((theScene->getDifficultyButton() == false))
 					theScene->SetScreenTransition(true);
@@ -128,16 +127,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 1:
 			{
-					  theScene->setHSDifficulty(1);
+					  theScene->setHSDifficulty(Select);
 					  theScene->setDifficultyButton(false);
-					  theScene->setLevelButton(true);
-					  theScene->setHighscoreDisplay(false);
+					  theScene->setLevelButton(false);
+					  theScene->setHighscoreDisplay(true);
 					  Select = 1;
 					  break;
 			}
 			case 2:
 			{
-					  theScene->setHSDifficulty(2);
+					  theScene->setHSDifficulty(Select);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(true);
 					  theScene->setHighscoreDisplay(false);
@@ -146,7 +145,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 3:
 			{
-					  theScene->setHSDifficulty(3);
+					  theScene->setHSDifficulty(Select);
+					  theScene->setDifficultyButton(false);
+					  theScene->setLevelButton(true);
+					  theScene->setHighscoreDisplay(false);
+					  Select = 1;
+					  break;
+			}
+			case 4:
+			{
+					  theScene->setHSDifficulty(Select);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(true);
 					  theScene->setHighscoreDisplay(false);
@@ -176,8 +184,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (SelectLevel < 4)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.SelectSound();
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
 					SelectLevel++;
 					//Sleep(150);
 					timer = 0;
@@ -188,8 +196,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			{
 				if (SelectLevel > 1)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.SelectSound();
+					Sound.engine->stopAllSounds();
+					Sound.SelectSound();
 					SelectLevel--;
 					//Sleep(150);
 					cout << SelectLevel << endl;
@@ -199,16 +207,16 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 			{
 				timer = 0;
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.ConfirmSound();
+				Sound.engine->stopAllSounds();
+				Sound.ConfirmSound();
 				theScene->SetChangeScreen(true);
 			}
 
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.BackSound();
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
 				SelectLevel = -1;
 				if ((theScene->getLevelButton() == false))
 					theScene->SetScreenTransition(true);
@@ -228,7 +236,7 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 1:
 			{
-					  theScene->setHSLevel(1);
+					  theScene->setHSLevel(SelectLevel);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(false);
 					  theScene->setHighscoreDisplay(true);
@@ -237,7 +245,7 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 2:
 			{
-					  theScene->setHSLevel(2);
+					  theScene->setHSLevel(SelectLevel);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(false);
 					  theScene->setHighscoreDisplay(true);
@@ -246,7 +254,7 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 3:
 			{
-					  theScene->setHSLevel(3);
+					  theScene->setHSLevel(SelectLevel);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(false);
 					  theScene->setHighscoreDisplay(true);
@@ -255,7 +263,7 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			}
 			case 4:
 			{
-					  theScene->setHSLevel(4);
+					  theScene->setHSLevel(SelectLevel);
 					  theScene->setDifficultyButton(false);
 					  theScene->setLevelButton(false);
 					  theScene->setHighscoreDisplay(true);
@@ -279,8 +287,8 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 			if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 			{
 				timer = 0;
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.BackSound();
+				Sound.engine->stopAllSounds();
+				Sound.BackSound();
 				if ((theScene->getHighscoreDisplay() == false))
 					theScene->SetScreenTransition(true);
 
@@ -290,12 +298,20 @@ void CHighscoreState::Update(CGameStateManager* theGSM, const double m_dElapsedT
 
 		if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 		{
-			theScene->setDifficultyButton(false);
-			theScene->setLevelButton(true);
-			theScene->setHighscoreDisplay(false);
+			if (theScene->getHSDifficulty() > 1)
+			{
+				theScene->setDifficultyButton(false);
+				theScene->setLevelButton(true);
+				theScene->setHighscoreDisplay(false);
+			}
+			else
+			{
+				theScene->setDifficultyButton(true);
+				theScene->setLevelButton(false);
+				theScene->setHighscoreDisplay(false);
+			}
 		}
 	}
-
 }
 
 void CHighscoreState::Draw(CGameStateManager* theGSM)

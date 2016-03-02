@@ -1,10 +1,10 @@
 --Player Save File--
 LevelAmt = 3
-Currency = 0
-LevelToStartAt = 4
-LevelDifficultyToStartAt = 1
-LevelStopAt = 4
-LevelDifficultyStopAt = 1
+Currency = 1
+LevelToStartAt = 0
+LevelDifficultyToStartAt = 0
+LevelStopAt = 0
+LevelDifficultyStopAt = 0
 Player = {
 EASYLEVEL = {
 LevelCleared = 0,LevelUnlocked = true

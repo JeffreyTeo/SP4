@@ -29,7 +29,6 @@ CSceneManager2D::CSceneManager2D()
 , Sign3Exited(false)
 , Sign4Exited(false)
 , Sign5Exited(false)
-, aiPos(0)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -90,6 +89,12 @@ CSceneManager2D::~CSceneManager2D()
 	{
 		delete Playfield;
 		Playfield = NULL;
+	}
+
+	if (TestField)
+	{
+		delete TestField;
+		TestField = NULL;
 	}
 
 	if (m_Load)
@@ -242,7 +247,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
-	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//ghostEnemy.tga");
+	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
@@ -319,8 +324,6 @@ void CSceneManager2D::Init()
 	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
 	rotateAngle = 0;
 
-playerHealth = 3;
-	
 	m_Load = new LuaUsage();
 	m_Load->LuaUsageInit("LeveltoSave");
 	m_maxlevel = m_Load->get<int>("AmountOfLevel");
@@ -378,7 +381,6 @@ playerHealth = 3;
 	AI->setWaypoint(3, 3);
 	AI->setWaypoint(8, 3);
 	AI->setWaypoint(8, 8);
-	AI->setDifficulty(m_player->GetLevelToStartAt());
 	AIList.push_back(AI);
 
 	Playfield->AIGridSetUp(AIList);
@@ -410,24 +412,118 @@ void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
 }
 
+void CSceneManager2D::ReadHighscoreFiles()
+{
+	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//EasyHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//EasyHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//EasyHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//EasyHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//NormalHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//NormalHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//NormalHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//NormalHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//HardHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//HardHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//HardHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//HardHighscore4.txt");
+	}
+}
+
+void CSceneManager2D::WriteHighscoreFiles()
+{
+	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//EasyHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//EasyHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//EasyHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//EasyHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//NormalHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//NormalHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//NormalHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//NormalHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//HardHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//HardHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//HardHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//HardHighscore4.txt");
+	}
+}
+
 void CSceneManager2D::AddHighscore()
 {
 	const int MAX_SCORES = 5;
-	string values[MAX_SCORES];
+
+	for (int i = 0; i < 1; i++)
+	{
+		ReadHighscoreFiles();
+		
+		PrevScore.addScore(theScore.GetAllHighscores(i)); // Store all the highscores from the text file to PrevScore
+		theScore.setPlayer(PrevScore); // set the previous scores into the player current score
+	}
+
 	for (int i = 0; i < MAX_SCORES; i++)
 	{
-		theScore[i].ReadTextFile("highscore.txt");
+		if (PrevScore.getScore() < PlayerScore.getScore()) // if the scores stored in the prev score is less than the player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score
+		}
+
+		if (PrevScore.getScore() > PlayerScore.getScore()) // if the scores stored in prev score is more than player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score anyway to check if it's bigger than the other variables
+		}	
+
+		if (PrevScore.getScore() == PlayerScore.getScore()) // if the scores stored in prev score is more than player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score anyway to check if it's bigger than the other variables
+		}
 	}
+	
+	WriteHighscoreFiles();
+	
 }
 
 int CSceneManager2D::GetWinCondition()
 {
 	return m_WinCondition;
 }
-
-static float limit = 1.f;
-static float timer = 0.f;
-
 
 void CSceneManager2D::Update(double dt)
 {
@@ -553,6 +649,12 @@ void CSceneManager2D::Update(double dt)
 			Sign5Exited = true;
 			ShowExit = false;
 		}
+	}
+
+	if (m_WinCondition == 1)
+	{
+		PlayerScore.addScore(100);
+		AddHighscore();
 	}
 
 	/*if (Application::IsKeyPressed('X'))
@@ -725,23 +827,6 @@ void CSceneManager2D::Update(double dt)
 	theEnemy->SetDestination( theHero->GetPos_x(), theHero->GetPos_y() );
 	theEnemy->Update( m_cMap );
 	*/
-
-	//aiPos = Playfield->GetAIGrids();
-	timer += 0.1f;
-	for (int a = 0; a < Playfield->GetAIGrids().size(); a++)		//check number of ai on the grid
-	{
-		if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a] && timer >= limit)
-		{
-			playerHealth--;
-			timer = 0;
-			if (playerHealth == 0)
-			{
-				m_WinCondition = 1;
-			}
-		}
-	}
-
-	cout << playerHealth << endl;
 
 	fps = (float)(1.f / dt);
 }

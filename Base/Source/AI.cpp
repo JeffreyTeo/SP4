@@ -1,7 +1,6 @@
 #include "AI.h"
 #include "Application.h"
 
-
 using namespace std;
 
 cAI::cAI()
@@ -24,22 +23,11 @@ void cAI::init()
 {
 	FSM = STATE_IDLE;
 	waypointIndex = 0;
-	speedMultiplier = getDifficulty();
 }
 
 cAI::FSM_ENEMY cAI::getState()
 {
 	return FSM;
-}
-
-void cAI::setDifficulty(short difficulty)
-{
-	this->difficulty = difficulty;
-}
-
-short cAI::getDifficulty()
-{
-	return this->difficulty;
 }
 
 void cAI::setPos(int posX, int posY)
@@ -57,9 +45,6 @@ Vector3 cAI::getPos()
 {
 	return position;
 }
-
-static float limit = 1.f;
-static float timer = 0.f;
 
 void cAI::update(Vector3 PlayerPos, bool &playermoved)
 {
@@ -82,16 +67,13 @@ void cAI::update(Vector3 PlayerPos, bool &playermoved)
 			break;
 
 		case STATE_ATTACK:
-
 			
-			timer += (0.09);
-
-			if (playermoved && timer >= limit)
+			if (playermoved)
 			{
 				UpdateWaypoint();
 				*nextPosition = PlayerPos;
-				timer = 0;
-				//playermoved = false;
+				
+				playermoved = false;
 			}
 			
 			break;
@@ -159,7 +141,7 @@ bool cAI::DetectPlayer(Vector3 PlayerPos)
 		YDiff = -YDiff;
 	}
 
-	if (XDiff + YDiff <= 50)
+	if (XDiff + YDiff <= 2)
 	{
 		return true;
 	}

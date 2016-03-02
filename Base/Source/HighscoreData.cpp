@@ -2,10 +2,14 @@
 
 
 HighscoreData::HighscoreData()
-	: MAX_SCORES(5)
-	, newScore(-1)
-	, counter(0)
+: MAX_SCORES(6)
+, currentSize(0)
+, value(-1)
 {
+	for (int i = 0; i < MAX_SCORES; i++)
+		this->scores[i] = Highscore::Highscore();
+
+	this->Player.addScore(value);
 }
 
 HighscoreData::~HighscoreData()
@@ -24,11 +28,11 @@ int HighscoreData::ReadTextFile(string filename)
 			int temp; // make a temporary variable
 			is >> temp; // write the value into this temporary value.
 			this->scores[i].addScore(temp); // add the temp value into the highscore database
-			
+
 			i++; // increment the i
-			counter++; // increment the counter
+			currentSize++;
 		}
-		is.close();
+		//is.close();
 	}
 	return i;
 }
@@ -39,15 +43,15 @@ int HighscoreData::WriteTextFile(string filename)
 	int i = 0;
 	if (of.is_open()) // if the file is open
 	{
-		while (i < MAX_SCORES - 1) 
+		while (i < MAX_SCORES - 1)
 		{
 			of << this->scores[i].getScore(); // write the score into the text file
-			if (i < MAX_SCORES - 1)
+			if (i < MAX_SCORES - 2)
 			{
 				of << endl;
 			}
 			i++; // increment the i
-			counter--; // decrement the counter
+			currentSize--;
 		}
 	}
 	return i;
@@ -55,45 +59,27 @@ int HighscoreData::WriteTextFile(string filename)
 
 void HighscoreData::AddScores(Highscore theHighscore)
 {
-	if (counter < MAX_SCORES) // if the counter is not at it's limit
+	if (currentSize < MAX_SCORES)
 	{
-		this->scores[counter] = theHighscore;
-		counter++; // increment counter
-		MergeSortHighscore(this->scores, 0, counter - 1); // sort
+		this->scores[currentSize] = theHighscore;
+		currentSize++;
+		MergeSortHighscore(this->scores, 0, currentSize - 1); // sort
 	}
 	else
 	{
 		this->scores[MAX_SCORES - 1] = theHighscore;
-		MergeSortHighscore(this->scores, 0, counter - 1); // sort
+		MergeSortHighscore(this->scores, 0, currentSize - 1); // sort
 	}
 }
 
-
-void HighscoreData::MergeHighscore(Highscore list[], int first, int middle, int last)
+void HighscoreData::UpdateHighscore(Highscore PlayerScore)
 {
-	Highscore* temp = new Highscore[middle - first + 1];
-	int i, j, k; // i - temp array, j - 2nd list, k - combine list
-
-	for (j = first, i = 0; j <= middle; i++, j++)
+	if (this->Player.getScore() != PlayerScore.getScore()) // if my highscore is not player score
 	{
-		temp[i] = list[j]; // duplicate the first list(list[]).
+		this->Player.addScore(PlayerScore.getScore()); // add the score
+		AddScores(this->Player);
+		MergeSortHighscore(this->scores, 0, MAX_SCORES - 1);
 	}
-
-	i = 0;
-	k = first;
-	while (k < j && j <= last)
-	{
-		if (temp[i].getScore() >= list[j].getScore()) // if the score in i is bigger than the score in j
-			list[k++] = temp[i++]; // put i into k
-		else // if the score in i is smaller than the score in j
-			list[k++] = temp[j++]; // put j into k
-	}
-	while (k < j)
-	{
-		list[k++] = temp[i++];
-	}
-
-	delete[] temp; // remove the temp array
 }
 
 void HighscoreData::MergeSortHighscore(Highscore list[], int first, int last)
@@ -107,7 +93,54 @@ void HighscoreData::MergeSortHighscore(Highscore list[], int first, int last)
 	}
 }
 
+void HighscoreData::MergeHighscore(Highscore list[], int first, int middle, int last)
+{
+	//temp array to hold 1st list
+	Highscore *temp = new Highscore[middle - first + 1];
+	//i is index for temp array, 
+	//j is index for 2nd list, 
+	//k is index for combine list
+	int i, j, k;
+	for (j = first, i = 0; j <= middle; i++, j++)
+	{
+		temp[i] = list[j]; //duplicate 1st list
+	}
+	i = 0; k = first;
+	while (k < j && j <= last)
+	{
+		//if element from 1st list > 2nd list 
+		if (temp[i].getScore() >= list[j].getScore())
+		{
+			list[k++] = temp[i++]; //copy from 1st list 
+		}
+		else
+		{
+			list[k++] = list[j++]; //copy from 2nd list 
+		}
+	}
+	while (k < j) //copy remaining elements in temp, if any 
+	{
+		list[k++] = temp[i++];
+	}
+	delete[] temp; //remove temp array 
+}
+
 int HighscoreData::GetAllHighscores(int index)
 {
 	return scores[index].getScore();
+}
+
+int HighscoreData::GetCurrentSize()
+{
+	return this->currentSize;
+}
+
+void HighscoreData::setPlayer(Highscore theHighscore)
+{
+	this->Player = theHighscore;
+}
+
+Highscore HighscoreData::GetPlayer()
+{
+	return this->Player;
 }

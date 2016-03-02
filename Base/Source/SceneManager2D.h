@@ -147,15 +147,15 @@ public:
 	int NoOfMoves;
 	bool MoveChar;
 
-	
-
+	// Highscore
+	Highscore PlayerScore;
+	Highscore PrevScore;
 	void AddHighscore();
-	HighscoreData theScore[5];
+	HighscoreData theScore;
+	void ReadHighscoreFiles();
+	void WriteHighscoreFiles();
+
 	CSoundManager Sound;
-
-	int playerHealth;
-
-	Grid* aiPos;
 
 	float tempsound;
 

@@ -32,7 +32,6 @@ void CShopState::Init(const int width, const int height)
 	boughtOne = false;
 	boughtTwo = false;
 	boughtThree = false;
-	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CShopState::Cleanup()
@@ -76,8 +75,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select < 3) // Max. Number of Options
 			{
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.SelectSound();
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select++;	// Move the cursor down
 				//Sleep(150);
 				timer = 0;
@@ -88,8 +87,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
-				theScene->Sound.engine->stopAllSounds();
-				theScene->Sound.SelectSound();
+				Sound.engine->stopAllSounds();
+				Sound.SelectSound();
 				Select--;
 				//Sleep(150);
 				timer = 0;
@@ -105,8 +104,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtOne == false)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.ConfirmSound();
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtOne = true;
@@ -121,8 +120,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtTwo == false)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.ConfirmSound();
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtTwo = true;
@@ -137,8 +136,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtThree == false)
 				{
-					theScene->Sound.engine->stopAllSounds();
-					theScene->Sound.ConfirmSound();
+					Sound.engine->stopAllSounds();
+					Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtThree = true;
@@ -153,8 +152,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{
-			theScene->Sound.engine->stopAllSounds();
-			theScene->Sound.BackSound();
+			Sound.engine->stopAllSounds();
+			Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
