@@ -17,8 +17,10 @@ public:
 	void PlayerInit(Player* playerinfo);
 	void ItemInit();
 	void Buy(int selected);
+	void BuyItem(int selected);
 	void Set(Player* playerinfo);
 	int GetPlayerMoney();
+	int GetPlayerGold();
 	bool GetplayerEasyModeUnlocked();
 	bool GetplayerNormalModeUnlocked();
 	bool GetplayerHardModeUnlocked();
@@ -27,6 +29,7 @@ private:
 	Item* itemholder;
 	LuaUsage* ShopItem;
 	int m_playerMoney;
+	int m_playerGold;
 	bool m_playerEasyModeUnlocked;
 	bool m_playerNormalModeUnlocked;
 	bool m_playerHardModeUnlocked;

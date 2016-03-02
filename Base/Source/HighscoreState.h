@@ -25,8 +25,6 @@ public:
 		return &theHighscoreState;
 	}
 
-	CSoundManager Sound;
-
 protected:
 	CHighscoreState() { }
 

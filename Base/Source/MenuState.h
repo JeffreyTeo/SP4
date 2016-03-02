@@ -27,8 +27,6 @@ public:
 		return &theMenuState;
 	}
 
-	CSoundManager Sound;
-
 protected:
 	CMenuState() { }
 

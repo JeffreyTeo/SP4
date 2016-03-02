@@ -3,7 +3,7 @@
 
 
 GridSystem::GridSystem()
-	:PlayerMoved(false)
+	:PlayerMoved(true)
 	, PrevMovedBlockIdx(0)
 	, movingActive(false)
 	, MovingBlock(NULL)

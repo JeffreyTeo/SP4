@@ -28,6 +28,7 @@ void CMenuState::Init(const int width, const int height)
 	Select = 1;
 	timer = 0.0f;
 	theScene->SetSelection(Select);
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CMenuState::Cleanup()
@@ -96,6 +97,55 @@ void CMenuState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		}
 		theScene->SetSelection(Select);
 	}
+
+	switch (Select)
+	{
+	case 1:
+	{
+			  theScene->SetSelection(Select);
+			  break;
+	}
+	case 2:
+	{
+			  theScene->SetSelection(Select);
+			  break;
+	}
+	case 3:
+	{
+			  theScene->SetSelection(Select);
+			  break;
+	}
+	case 4:
+	{
+			  theScene->SetSelection(Select);
+			  break;
+
+	}
+	case 5:
+	{
+			  theScene->SetSelection(Select);
+			  break;
+	}
+	}
+
+
+
+	if (Application::IsKeyPressed(VK_RETURN))
+	{
+		if (Select != 5)
+		{
+			theScene->Sound.engine->stopAllSounds();
+			theScene->Sound.ConfirmSound();
+			theScene->SetScreenTransition(true);
+			theScene->SetChangeScreen(true);
+		}
+		if (Select == 5)
+		{
+			theGSM->Quit();
+		}
+	}
+
+>>>>>>> 623952a8bd5c3f6a3f47851cf1a2bde011a708af
 	if (theScene->ReturnChangeScreen() && theScene->ReturnScreenTransition() == false)
 	{
 		switch (Select)

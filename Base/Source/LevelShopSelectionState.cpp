@@ -26,6 +26,7 @@ void CLevelShopSelectionState::Init(const int width, const int height)
 	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CLevelShopSelectionState::Cleanup()

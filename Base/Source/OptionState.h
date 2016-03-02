@@ -26,7 +26,7 @@ public:
 		return &theOptionState;
 	}
 
-	CSoundManager Sound;
+	//CSoundManager Sound;
 
 protected:
 	COptionState() { }

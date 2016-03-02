@@ -153,6 +153,10 @@ public:
 	HighscoreData theScore[5];
 	CSoundManager Sound;
 
+	int playerHealth;
+
+	Grid* aiPos;
+
 	float tempsound;
 
 	enum WEAPON_ACTION

@@ -29,6 +29,7 @@ void CHighscoreState::Init(const int width, const int height)
 	theScene->SetSelection(Select);
 	theScene->setLevelButtonSelection(SelectLevel);
 	theScene->setDifficultyButton(true);
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CHighscoreState::Cleanup()

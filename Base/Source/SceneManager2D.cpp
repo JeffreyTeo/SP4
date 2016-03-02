@@ -29,6 +29,7 @@ CSceneManager2D::CSceneManager2D()
 , Sign3Exited(false)
 , Sign4Exited(false)
 , Sign5Exited(false)
+, aiPos(0)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -241,7 +242,7 @@ void CSceneManager2D::Init()
 	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
-	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
+	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//ghostEnemy.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
@@ -318,6 +319,8 @@ void CSceneManager2D::Init()
 	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
 	rotateAngle = 0;
 
+playerHealth = 3;
+	
 	m_Load = new LuaUsage();
 	m_Load->LuaUsageInit("LeveltoSave");
 	m_maxlevel = m_Load->get<int>("AmountOfLevel");
@@ -375,6 +378,7 @@ void CSceneManager2D::Init()
 	AI->setWaypoint(3, 3);
 	AI->setWaypoint(8, 3);
 	AI->setWaypoint(8, 8);
+	AI->setDifficulty(m_player->GetLevelToStartAt());
 	AIList.push_back(AI);
 
 	Playfield->AIGridSetUp(AIList);
@@ -420,6 +424,19 @@ int CSceneManager2D::GetWinCondition()
 {
 	return m_WinCondition;
 }
+
+void SceneManagerLevel2DforScreen::setDifficulty(int m_Difficulty)
+{
+	this->m_player->SetLevelToDifficultyStartAt(m_Difficulty);
+}
+void SceneManagerLevel2DforScreen::setLevel(int m_Level)
+{
+	this->m_player->SetLevelToStartAt(m_Level);
+}
+
+static float limit = 1.f;
+static float timer = 0.f;
+
 
 void CSceneManager2D::Update(double dt)
 {
@@ -717,6 +734,23 @@ void CSceneManager2D::Update(double dt)
 	theEnemy->SetDestination( theHero->GetPos_x(), theHero->GetPos_y() );
 	theEnemy->Update( m_cMap );
 	*/
+
+	//aiPos = Playfield->GetAIGrids();
+	timer += 0.1f;
+	for (int a = 0; a < Playfield->GetAIGrids().size(); a++)		//check number of ai on the grid
+	{
+		if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a] && timer >= limit)
+		{
+			playerHealth--;
+			timer = 0;
+			if (playerHealth == 0)
+			{
+				m_WinCondition = 1;
+			}
+		}
+	}
+
+	cout << playerHealth << endl;
 
 	fps = (float)(1.f / dt);
 }

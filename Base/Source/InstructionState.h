@@ -25,8 +25,6 @@ public:
 		return &theInstructionState;
 	}
 
-	CSoundManager Sound;
-
 protected:
 	CInstructionState() { }
 

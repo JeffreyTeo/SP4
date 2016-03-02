@@ -5,7 +5,6 @@
 #include <vector>
 #include "Vector3.h"
 
-
 class cAI
 {
 public:
@@ -34,11 +33,16 @@ public:
 	FSM_ENEMY getState();
 	//void setState(FSM_ENEMY state);
 
+	void setDifficulty(short difficulty);
+	short getDifficulty();
+
 private:
 	int waypointIndex;
 	FSM_ENEMY FSM;
 	std::vector<Vector3*> WayPoints;
 	Vector3 position;
 	Vector3* nextPosition;
+	short difficulty;
+	short speedMultiplier;
 };
 #endif
