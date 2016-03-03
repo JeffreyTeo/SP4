@@ -95,6 +95,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_LEVELSHOPSELECT_CONTINUELEVEL,
 
 		//Difficulty button
+		GEO_DIFFICULTY_TUTORIAL,
 		GEO_DIFFICULTY_EASY,
 		GEO_DIFFICULTY_NORMAL,
 		GEO_DIFFICULTY_HARD,
@@ -104,6 +105,8 @@ class SceneManagerLevel2DforScreen : public Scene
 		//Pause button
 		GEO_PAUSE_RESUME,
 		GEO_PAUSE_QUITTOMENU,
+
+		GEO_BACKTOEXIT,
 
 		GEO_WIN_NEXTLEVEL,
 
@@ -119,6 +122,7 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_SOUND,
 
 		//Highscore buttons
+		GEO_HIGHSCORE_TUTORIAL,
 		GEO_HIGHSCORE_EASY,
 		GEO_HIGHSCORE_NORMAL,
 		GEO_HIGHSCORE_HARD,
@@ -126,6 +130,10 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_HIGHSCORE_LEVEL2,
 		GEO_HIGHSCORE_LEVEL3,
 		GEO_HIGHSCORE_LEVEL4,
+
+		//Items
+		GEO_BOMB,
+		GEO_BRIDGE,
 
 		GEO_TEXT,
 		NUM_GEOMETRY,
@@ -190,6 +198,7 @@ public:
 	bool ReturnPlayerDifficultySelection(int difficultyselection);
 
 	void SetShopSelect(int shopSelect);
+	void SetShopSelectItem(int shopSelectItem);
 
 	// Highscore States
 	void setHSDifficulty(int theDifficulty);
@@ -210,8 +219,13 @@ public:
 	bool VolumeSelect;
 	bool muted;
 
-	void AddHighscore();
-	HighscoreData theScore[5];
+	// Highscore
+	void GetHighscore();
+	HighscoreData theScore;
+	void ReadHighscoreTextFiles();
+
+
+
 	CSoundManager Sound;
 
 	float tempsound;
@@ -229,6 +243,7 @@ public:
 private:
 	int m_maxlevel;
 	int m_maxdiff;
+	int m_maxleveltutorial;
 	vector<AllLevelDetails*> theLevelDetailsHolder;
 
 

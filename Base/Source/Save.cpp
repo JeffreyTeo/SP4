@@ -47,13 +47,15 @@ void Save::SaveEveryThing(int FileNumber)
 				  SaveFile << "  LevelSelect = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  Shop = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  ContinueLevel = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  DifficultyTutorial = { Position = { x = 295, y = 405 }, TempPosition = { x = 800, y = 405 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  DifficultyEasy = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  DifficultyNormal = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  DifficultyHard = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  Level1 = { Position = { x = 295, y = 350 }, TempPosition = { x = -100, y = 350 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  Level2 = { Position = { x = 295, y = 295 }, TempPosition = { x = 800, y = 295 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  Level3 = { Position = { x = 295, y = 240 }, TempPosition = { x = -100, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
-				  SaveFile << "  Level4 = { Position = { x = 295, y = 185 }, TempPosition = { x = 800, y = 240 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  Level4 = { Position = { x = 295, y = 185 }, TempPosition = { x = 800, y = 185 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
+				  SaveFile << "  HighscoreTutorial = { Position = { x = 295, y = 330 }, TempPosition = { x = -100, y = 330 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  HighscoreEasy = { Position = { x = 295, y = 275 }, TempPosition = { x = 800, y = 275 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  HighscoreNormal = { Position = { x = 295, y = 220 }, TempPosition = { x = -100, y = 220 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
 				  SaveFile << "  HighscoreHard = { Position = { x = 295, y = 165 }, TempPosition = { x = 800, y = 165 }, Offset = { x = 100, y = 5 }, Speed = 1000.0 }," << endl;
@@ -75,11 +77,13 @@ void Save::SaveEveryThing(int FileNumber)
 			  if (SaveFile.is_open())
 			  {
 				  SaveFile << "--Item Save File--" << endl;
-				  SaveFile << "Amount = 3" << endl;
+				  SaveFile << "Amount = 5" << endl;
 				  SaveFile << "Item = {" << endl;
-				  SaveFile << "Number1 = { Name = \"EasyLevel\", Bought = true, Price = 2 }," << endl;
+				  SaveFile << "Number1 = { Name = \"EasyLevel\", Bought = false, Price = 2 }," << endl;
 				  SaveFile << "Number2 = { Name = \"NormalLevel\", Bought = false, Price = 12 }," << endl;
-				  SaveFile << "Number3 = { Name = \"HardLevel\", Bought = false, Price = 15 }" << endl;
+				  SaveFile << "Number3 = { Name = \"HardLevel\", Bought = false, Price = 15 }," << endl;
+				  SaveFile << "Number4 = { Name = \"Bomb\", Bought = false, Price = 100}," << endl; 
+				  SaveFile << "Number5 = { Name = \"Ladder\", Bought = false, Price = 50}" << endl;
 				  SaveFile << "}" << endl;
 			  }
 	}
@@ -97,8 +101,9 @@ void Save::SaveEveryThing(int FileNumber)
 			  ofstream SaveFile("Lua/LeveltoSave.lua");
 			  if (SaveFile.is_open())
 			  {
-				  SaveFile << "--Level Template--\n--LevelNumber = { Key }--\nAmountOfLevel = 4\nAmountOfDiff = 3" << endl;
+				  SaveFile << "--Level Template--\n--LevelNumber = { Key }--\nAmountOfLevel = 4\nAmountOfDiff = 4\nAmountOfTutorialDiff = 1" << endl;
 				  SaveFile << "Level = {" << endl;
+				  SaveFile << "Tutorial = {\nLevel1 = { Cleared = false, CollectedKeys = 0 }\n }," << endl;
 				  SaveFile << "Easy = { \nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }, \nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n }, " << endl;
 				  SaveFile << "Normal = {\nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n}," << endl;
 				  SaveFile << "Hard = {\nLevel1 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel2 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel3 = { Cleared = false, CollectedKeys = 0, Highscore = 0 },\nLevel4 = { Cleared = false, CollectedKeys = 0, Highscore = 0 }\n }" << endl;
@@ -112,7 +117,7 @@ void Save::SaveEveryThing(int FileNumber)
 			  ofstream SaveFile("Lua/Player.lua");
 			  if (SaveFile.is_open())
 			  {
-				  SaveFile << "--Player Save File--\nLevelAmt = 3\nCurrency = 0\nLevelToStartAt = 0\nLevelDifficultyToStartAt = 0\nLevelStopAt = 0\nLevelDifficultyStopAt = 0\nPlayer = {\nEASYLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n },\nNORMALLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n },\nHARDLEVEL = {\nLevelCleared = 0, LevelUnlocked = false\n }\n }";
+				  SaveFile << "--Player Save File--\nLevelAmt = 3\nCurrency = 0\nGoldCurrency = 0\nBombAmt = 0\nBridgeAmt = 0\nLevelToStartAt = 0\nLevelDifficultyToStartAt = 0\nLevelStopAt = 0\nLevelDifficultyStopAt = 0\nPlayer = { \nEASYLEVEL = { \nLevelCleared = 0, LevelUnlocked = false\n }, \nNORMALLEVEL = { \nLevelCleared = 0, LevelUnlocked = false\n }, \nHARDLEVEL = { \nLevelCleared = 0, LevelUnlocked = false\n }\n }";
 			  }
 	}
 
@@ -137,7 +142,7 @@ void Save::SaveEveryThing(int FileNumber)
 	}
 }
 
-void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int maxlevel, int maxdifficulty)
+void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder,int maxleveltutorial, int maxlevel, int maxdifficulty)
 {
 	ofstream SaveFile("Lua/LeveltoSave.lua");
 	if (SaveFile.is_open())
@@ -146,6 +151,7 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 		SaveFile << "--LevelNumber = { Key }--" << endl;
 		SaveFile << "AmountOfLevel = " << maxlevel << endl;
 		SaveFile << "AmountOfDiff = " << maxdifficulty << endl;
+		SaveFile << "AmountOfTutorialDiff = " << maxleveltutorial << endl;
 		SaveFile << "Level = {" << endl;
 		for (int j = 0; j < maxdifficulty; ++j)
 		{
@@ -153,13 +159,13 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			{
 			case 0:
 			{
-					  SaveFile << "Easy = {" << endl;
-					  for (int i = 0; i < maxlevel; ++i)
+					  SaveFile << "Tutorial = {" << endl;
+					  for (int i = 0; i < maxleveltutorial; ++i)
 					  {
 						  string itemnumber = "Level";
 						  itemnumber = itemnumber + to_string(i + 1);
-						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
-						  if (i == (maxlevel - 1))
+						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys());
+						  if (i == (maxleveltutorial - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
 							  SaveFile << CloseTable() << endl;
@@ -169,11 +175,12 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			}
 			case 1:
 			{
-					  SaveFile << "Normal = {" << endl;
+					  SaveFile << "Easy = {" << endl;
 					  for (int i = 0; i < maxlevel; ++i)
 					  {
 						  string itemnumber = "Level";
-						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
+						  itemnumber = itemnumber + to_string(i + 1);
+						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
 						  if (i == (maxlevel - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
@@ -184,11 +191,26 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			}
 			case 2:
 			{
+					  SaveFile << "Normal = {" << endl;
+					  for (int i = 0; i < maxlevel; ++i)
+					  {
+						  string itemnumber = "Level";
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
+						  if (i == (maxlevel - 1))
+							  SaveFile << CloseTable(true) << endl;
+						  else
+							  SaveFile << CloseTable() << endl;
+					  }
+					  SaveFile << "}," << endl;
+					  break;
+			}
+			case 3:
+			{
 					  SaveFile << "Hard = {" << endl;
 					  for (int i = 0; i < maxlevel; ++i)
 					  {
 						  string itemnumber = "Level";
-						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys()) << "," << SaveTableIndiv("Highscore", theLevelDetailsHolder[((j * 4) + i)]->GetHighscore());
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
 						  if (i == (maxlevel - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
@@ -244,6 +266,9 @@ void Save::SavePlayer(Player* playerinfo)
 		SaveFile << "--Player Save File--" << endl;
 		SaveFile << "LevelAmt = " << playerinfo->GetAmtOfLevelDiff() << endl;
 		SaveFile << "Currency = " << playerinfo->GetAmtOfCurrency() << endl;
+		SaveFile << "GoldCurrency = " << playerinfo->GetAmtOfGold() << endl;
+		SaveFile << "BombAmt = " << playerinfo->GetAmtOfBomb() << endl;
+		SaveFile << "BridgeAmt = " << playerinfo->GetAmtOfBridge() << endl;
 		SaveFile << "LevelToStartAt = " << playerinfo->GetLevelToStartAt() << endl;
 		SaveFile << "LevelDifficultyToStartAt = " << playerinfo->GetLevelToDifficultyStartAt() << endl;
 		SaveFile << "LevelStopAt = " << playerinfo->GetLevelStopAt() << endl;

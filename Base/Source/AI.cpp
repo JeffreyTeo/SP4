@@ -23,11 +23,22 @@ void cAI::init()
 {
 	FSM = STATE_IDLE;
 	waypointIndex = 0;
+	speedMultiplier = 0;
 }
 
 cAI::FSM_ENEMY cAI::getState()
 {
 	return FSM;
+}
+
+void cAI::setDifficulty(short difficulty)
+{
+	this->difficulty = difficulty;
+}
+
+short cAI::getDifficulty()
+{
+	return this->difficulty;
 }
 
 void cAI::setPos(int posX, int posY)
@@ -45,6 +56,9 @@ Vector3 cAI::getPos()
 {
 	return position;
 }
+
+static float limit = 1.f;
+static float timer = 0.f;
 
 void cAI::update(Vector3 PlayerPos, bool &playermoved)
 {
@@ -67,15 +81,18 @@ void cAI::update(Vector3 PlayerPos, bool &playermoved)
 			break;
 
 		case STATE_ATTACK:
-			
-			if (playermoved)
+
+			speedMultiplier = getDifficulty();
+			timer += (0.07 * speedMultiplier);
+
+			if (playermoved && timer >= limit)
 			{
 				UpdateWaypoint();
 				*nextPosition = PlayerPos;
 				
-				playermoved = false;
+				timer = 0;
 			}
-			
+			cout << "speed: " << speedMultiplier << endl;
 			break;
 
 		default:
@@ -141,7 +158,7 @@ bool cAI::DetectPlayer(Vector3 PlayerPos)
 		YDiff = -YDiff;
 	}
 
-	if (XDiff + YDiff <= 2)
+	if (XDiff + YDiff <= 50)
 	{
 		return true;
 	}

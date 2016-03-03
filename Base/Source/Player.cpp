@@ -32,7 +32,9 @@ void Player::PlayerInit(string PlayerFileName)
 	thePlayerinfoLua->LuaUsageInit(PlayerFileName);
 	AmtOfCurrency = thePlayerinfoLua->get<int>("Currency");
 	AmtOfLevelDiff = thePlayerinfoLua->get<int>("LevelAmt");
-
+	AmtOfGold = thePlayerinfoLua->get<int>("GoldCurrency");
+	AmtOfBomb = thePlayerinfoLua->get<int>("BombAmt");
+	AmtOfBridge = thePlayerinfoLua->get<int>("BridgeAmt");
 	LevelToStartAt = thePlayerinfoLua->get<int>("LevelToStartAt");
 	LevelToDifficultyStartAt = thePlayerinfoLua->get<int>("LevelDifficultyToStartAt");
 	LevelStopAt = thePlayerinfoLua->get<int>("LevelStopAt");
@@ -141,6 +143,15 @@ short Player::GetAmtOfCurrency()
 	return this->AmtOfCurrency;
 }
 
+void Player::SetAmtOfGold(short AmtOfGold)
+{
+	this->AmtOfGold = AmtOfGold;
+}
+short Player::GetAmtOfGold()
+{
+	return this->AmtOfGold;
+}
+
 void Player::SetLevelStopAt(short LevelStopAt, short LevelDifficultyStopAt)
 {
 	this->LevelStopAt = LevelStopAt;
@@ -172,4 +183,21 @@ void Player::SetLevelToStartAt(short LevelToStartAt)
 void Player::SetLevelToDifficultyStartAt(short LevelToDifficultyStartAt)
 {
 	this->LevelToDifficultyStartAt = LevelToDifficultyStartAt;
+}
+
+void Player::SetAmtOfBomb(short AmtOfBomb)
+{
+	this->AmtOfBomb = AmtOfBomb;
+}
+short Player::GetAmtOfBomb()
+{
+	return AmtOfBomb;
+}
+void Player::SetAmtOfBridge(short AmtOfBridge)
+{
+	this->AmtOfBridge = AmtOfBridge;
+}
+short Player::GetAmtOfBridge()
+{
+	return AmtOfBridge;
 }

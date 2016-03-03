@@ -32,6 +32,7 @@ void CShopState::Init(const int width, const int height)
 	boughtOne = false;
 	boughtTwo = false;
 	boughtThree = false;
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CShopState::Cleanup()
@@ -73,10 +74,10 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		timer += m_dElapsedTime;
 		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
-			if (Select < 3) // Max. Number of Options
+			if (Select < 5) // Max. Number of Options
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select++;	// Move the cursor down
 				//Sleep(150);
 				timer = 0;
@@ -87,9 +88,33 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		{
 			if (Select > 1) // Selection is not the first one.
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select--;
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
+		}
+		else if (Application::IsKeyPressed(VK_RIGHT) && timer > 0.1f)
+		{
+			if (Select < 4) // Selection is not the fourth or fifth one.
+			{
+				//theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
+				Select = 4;
+				//Sleep(150);
+				timer = 0;
+				cout << Select << endl;
+			}
+		}
+		else if (Application::IsKeyPressed(VK_LEFT) && timer > 0.1f)
+		{
+			if (Select > 3) // Selection is the fourth or fifth one.
+			{
+				//theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
+				Select = 1;
 				//Sleep(150);
 				timer = 0;
 				cout << Select << endl;
@@ -104,8 +129,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtOne == false)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.ConfirmSound();
+					//Sound.engine->stopAllSounds();
+					theScene->Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtOne = true;
@@ -120,8 +145,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtTwo == false)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.ConfirmSound();
+					//Sound.engine->stopAllSounds();
+					theScene->Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtTwo = true;
@@ -136,11 +161,41 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 			{
 				if (Application::IsKeyPressed(VK_RETURN) && pressed == false && boughtThree == false)
 				{
-					Sound.engine->stopAllSounds();
-					Sound.ConfirmSound();
+					//Sound.engine->stopAllSounds();
+					theScene->Sound.ConfirmSound();
 					theScene->SetShopSelect((Select - 1));
 					pressed = true;
 					boughtThree = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			}
+			case 4:
+			{
+				if (Application::IsKeyPressed(VK_RETURN) && pressed == false)
+				{
+					//Sound.engine->stopAllSounds();
+					theScene->Sound.ConfirmSound();
+					theScene->SetShopSelectItem((Select - 1));
+					pressed = true;
+				}
+				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
+				{
+					pressed = false;
+				}
+				break;
+			}
+			case 5:
+			{
+				if (Application::IsKeyPressed(VK_RETURN) && pressed == false)
+				{
+					//Sound.engine->stopAllSounds();
+					theScene->Sound.ConfirmSound();
+					theScene->SetShopSelectItem((Select - 1));
+					pressed = true;
 				}
 				else if (!Application::IsKeyPressed(VK_RETURN) && pressed == true)
 				{
@@ -152,8 +207,8 @@ void CShopState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 
 		if (Application::IsKeyPressed(VK_BACK))
 		{
-			Sound.engine->stopAllSounds();
-			Sound.BackSound();
+			//Sound.engine->stopAllSounds();
+			theScene->Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}

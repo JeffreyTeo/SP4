@@ -1,6 +1,5 @@
 #include "Button.h"
 
-
 Button::Button()
 : TempPosition(NULL)
 , Position(NULL)
@@ -52,11 +51,11 @@ void Button::update(double dt)
 	if (TempPosition.x != Position.x || TempPosition.y != Position.y)
 	{
 		TempPosition -= Direction.Normalize() * dt * speed;
-		if (TempPosition.x >= Position.x - 10 && TempPosition.x <= Position.x + 10)
+		if (TempPosition.x >= (Position.x - 30) && TempPosition.x <= (Position.x + 30))
 		{
 			TempPosition.x = Position.x;
 		}
-		if (TempPosition.y >= Position.y - 10 && TempPosition.y <= Position.y + 10)
+		if (TempPosition.y >= (Position.y - 30) && TempPosition.y <= (Position.y + 30))
 		{
 			TempPosition.y = Position.y;
 		}

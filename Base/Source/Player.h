@@ -44,6 +44,8 @@ public:
 
 	void SetAmtOfCurrency(short AmtOfCurrency);
 	short GetAmtOfCurrency();
+	void SetAmtOfGold(short AmtOfGold);
+	short GetAmtOfGold();
 
 	void SetLevelStopAt(short LevelStopAt, short LevelDifficultyStopAt);
 	short GetLevelStopAt();
@@ -55,10 +57,19 @@ public:
 	short GetLevelToStartAt();
 	short GetLevelToDifficultyStartAt();
 
+	void SetAmtOfBomb(short AmtOfBomb);
+	short GetAmtOfBomb();
+	void SetAmtOfBridge(short AmtOfBridge);
+	short GetAmtOfBridge();
 
 private:
 	short AmtOfCurrency;
+	short AmtOfGold;
 	short AmtOfLevelDiff;
+
+	short AmtOfBomb;
+	short AmtOfBridge;
+
 	short LevelToStartAt;
 	short LevelToDifficultyStartAt;
 	short LevelStopAt;

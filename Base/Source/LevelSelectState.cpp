@@ -25,6 +25,7 @@ void CLevelSelectState::Init(const int width, const int height)
 	timer = 0.0f;
 	Select = 1;
 	theScene->SetSelection(Select);
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CLevelSelectState::Cleanup()
@@ -68,8 +69,8 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 		{
 			if (Select < 4)
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select++;
 				timer = 0;
 				//Sleep(150);
@@ -79,8 +80,8 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 		{
 			if (Select > 1)
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select--;
 				timer = 0;
 				//Sleep(150);
@@ -88,15 +89,15 @@ void CLevelSelectState::Update(CGameStateManager* theGSM, const double m_dElapse
 		}
 		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.ConfirmSound();
+			//Sound.engine->stopAllSounds();
+			theScene->Sound.ConfirmSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 		}
 		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.BackSound();
+			//Sound.engine->stopAllSounds();
+			theScene->Sound.BackSound();
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
 			Select = -1;

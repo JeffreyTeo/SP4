@@ -13,7 +13,8 @@ class Item
 public:
 	Item();
 	~Item();
-	void Init(string m_Name, bool m_Bought, int m_Price);
+	void Init(string m_Name, bool 
+		, int m_Price);
 
 	int GetPrice();
 	void SetPrice(int m_Price);

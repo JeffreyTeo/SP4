@@ -90,6 +90,9 @@ class CSceneManager2D : public Scene
 		GEO_KEY,
 		GEO_EXIT,
 
+		GEO_MOVELOSESIGN,
+		GEO_HEALTHLOSESIGN,
+
 		// Tutorial
 		GEO_SIGN,
 		GEO_SIGN1,
@@ -97,9 +100,15 @@ class CSceneManager2D : public Scene
 		GEO_SIGN3,
 		GEO_SIGN4,
 		GEO_SIGN5,
+		GEO_SIGN6,
 
+		// UI
 		GEO_KEYSCOLLECTED,
 		GEO_MOVESLEFT,
+		GEO_BOMBSLEFT,
+		GEO_BRIDGESLEFT,
+		GEO_HEALTHLEFT,
+
 		// Show Movement
 		GEO_FEET,
 
@@ -128,6 +137,8 @@ public:
 
 
 	int GetWinCondition();
+	bool GetLoseCondition();
+
 	void SetQuitfrompause(bool m_Quitfrompause);
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
@@ -145,12 +156,22 @@ public:
 	// UI
 	int KeysCollected;
 	int NoOfMoves;
+	int NoOfBombs;
+	int NoOfBridges;
 	bool MoveChar;
 
-	
-
+	// Highscore
+	Highscore PlayerScore;
+	Highscore PrevScore;
 	void AddHighscore();
-	HighscoreData theScore[5];
+	HighscoreData theScore;
+	void ReadHighscoreText();
+	void WriteHighscoreText();
+
+	// Score to Gold
+	void SetScoreToGold(int ScoreToGold); // This is used to set the finalized score for each level
+	int GetScoreToGold(); // This is used to get the score
+
 	CSoundManager Sound;
 
 	float tempsound;
@@ -167,16 +188,28 @@ public:
 
 private:
 	bool m_Quitfrompause;
+	bool m_losed;
 
+	// Win Condition
 	int m_WinCondition;
+	
+	// Vector to Hold all level Details to be saved
 	vector<AllLevelDetails*> theLevelDetailsHolder;
 	
+	// MaxLevel and MaxDifferent
 	int m_maxlevel;
 	int m_maxdiff;
+	int m_maxleveltutorial;
+	// Loading
 	LuaUsage* m_Load;
+
+	//Player
 	Player* m_player;
+	
+	//Saving
 	Save* m_save;
-	SpriteAnimation *m_spriteAnimation;
+
+	//LevelDetails
 	LevelDetails* m_LevelDetails;
 
 	unsigned m_vertexArrayID;
@@ -186,13 +219,11 @@ private:
 
 	Camera3 camera;
 
-	float rotateAngle;
-
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
 
-	bool confettiRightside;
+	// Fps
 	float fps;
 
 	// Tutorial
@@ -201,6 +232,7 @@ private:
 	bool ShowKey;		// Sign.3
 	bool ShowMonster;	// Sign.4
 	bool ShowExit;		// Sign.5
+
 	// Checks if player has pressed 'X'
 	bool Sign1Exited;
 	bool Sign2Exited;
@@ -208,24 +240,32 @@ private:
 	bool Sign4Exited;
 	bool Sign5Exited;
 
-	//time Buffer for continuous key press
+	// Score to Gold Conversion
+	int ScoreToGold;
 
+	//time Buffer for continuous key press
 	float timeBuffer;
 
 	//grid system and grids
 	GridSystem* Playfield;
 	GridSystem* TestField;
+
 	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
 	float direction;
 	Vector3 offset;
+	
 	//window height and width
 	int m_windowHeight;
 	int m_windowWidth;
 
 	//loaded level;
 	LevelLoader *m_cLevel;
+
 	// vector of AI
 	vector<cAI*> AIList;
+	//player health
+	int player_Health;
+	float damage_Buffer;
 };
 
 #endif

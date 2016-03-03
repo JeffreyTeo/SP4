@@ -6,6 +6,7 @@ using namespace std;
 #include "playstate.h"
 #include "pausestate.h"
 #include "WinState.h"
+#include "LevelSelectState.h"
 
 CPlayState CPlayState::thePlayState;
 
@@ -183,6 +184,10 @@ void CPlayState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 	if (scene->GetWinCondition() == 1)
 	{
 		theGSM->ChangeState(CWinState::Instance());
+	}
+	else if (scene->GetWinCondition() == -1 && scene->GetLoseCondition())
+	{
+		theGSM->ChangeState(CLevelSelectState::Instance());
 	}
 	if (this->Resumez)
 	{

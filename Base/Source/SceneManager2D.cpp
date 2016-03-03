@@ -12,7 +12,6 @@
 CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_Load(NULL)
@@ -29,27 +28,14 @@ CSceneManager2D::CSceneManager2D()
 , Sign3Exited(false)
 , Sign4Exited(false)
 , Sign5Exited(false)
-/*
-: m_cMinimap(NULL)
-, m_cMap(NULL)
-, tileOffset_x(0)
-, tileOffset_y(0)
-, m_cRearMap(NULL)
-, rearWallOffset_x(0)
-, rearWallOffset_y(0)
-, rearWallTileOffset_x(0)
-, rearWallTileOffset_y(0)
-, rearWallFineOffset_x(0)
-, rearWallFineOffset_y(0)
-, theEnemy(NULL)
-*/
+, player_Health(0)
+, damage_Buffer(5.f)
 {
 }
 
 CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_height)
 : m_player(NULL)
 , m_save(NULL)
-, m_spriteAnimation(NULL)
 , Playfield(NULL)
 , tempsound(0.5)
 , m_Load(NULL)
@@ -91,6 +77,12 @@ CSceneManager2D::~CSceneManager2D()
 		Playfield = NULL;
 	}
 
+	if (TestField)
+	{
+		delete TestField;
+		TestField = NULL;
+	}
+
 	if (m_Load)
 	{
 		delete m_Load;
@@ -125,37 +117,6 @@ CSceneManager2D::~CSceneManager2D()
 			leveldetails = NULL;
 		}
 	}
-	/*
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation;
-		m_spriteAnimation = NULL;
-	}*/
-	/*
-	for (int i=0; i<10; i++)
-	{
-	delete theArrayOfGoodies[i];
-	}
-	delete theArrayOfGoodies;
-
-	if (theEnemy)
-	{
-	delete theEnemy;
-	theEnemy = NULL;
-	}
-
-	if (m_cMap)
-	{
-	delete m_cMap;
-	m_cMap = NULL;
-	}
-
-	if (m_cMinimap)
-	{
-	delete m_cMinimap;
-	m_cMinimap = NULL;
-	}
-	*/
 }
 
 void CSceneManager2D::PreInit()
@@ -216,32 +177,11 @@ void CSceneManager2D::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
-	// Load the ground mesh and texture
-	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
-	meshList[GEO_TILEGROUND] = MeshBuilder::Generate2DMesh("GEO_TILEGROUND", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEGROUND]->textureID = LoadTGA("Image//tile1_ground.tga");
-	meshList[GEO_TILEHERO] = MeshBuilder::Generate2DMesh("GEO_TILEHERO", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO]->textureID = LoadTGA("Image//tile2_hero.tga");
-	meshList[GEO_TILETREE] = MeshBuilder::Generate2DMesh("GEO_TILETREE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILETREE]->textureID = LoadTGA("Image//tile3_tree.tga");
-	meshList[GEO_TILESTRUCTURE] = MeshBuilder::Generate2DMesh("GEO_TILESTRUCTURE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILESTRUCTURE]->textureID = LoadTGA("Image//tile3_structure.tga");
-	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//tile2_hero_frame_0.tga");
-	meshList[GEO_TILEHERO_FRAME1] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME1", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME1]->textureID = LoadTGA("Image//tile2_hero_frame_1.tga");
-	meshList[GEO_TILEHERO_FRAME2] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME2", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME2]->textureID = LoadTGA("Image//tile2_hero_frame_2.tga");
-	meshList[GEO_TILEHERO_FRAME3] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME3", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME3]->textureID = LoadTGA("Image//tile2_hero_frame_3.tga");
-
-	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
-	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
+
+	meshList[GEO_BACKGROUND]= MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//Background.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
@@ -265,6 +205,17 @@ void CSceneManager2D::Init()
 	meshList[GEO_KEYSCOLLECTED]->textureID = LoadTGA("Image//KeysCollected.tga");
 	meshList[GEO_MOVESLEFT] = MeshBuilder::Generate2DMesh("GEO_MOVESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
 	meshList[GEO_MOVESLEFT]->textureID = LoadTGA("Image//MovesLeft.tga");
+	meshList[GEO_BOMBSLEFT] = MeshBuilder::Generate2DMesh("GEO_BOMBSLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_BOMBSLEFT]->textureID = LoadTGA("Image//BombsLeft.tga");
+	meshList[GEO_BRIDGESLEFT] = MeshBuilder::Generate2DMesh("GEO_BRIDGESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_BRIDGESLEFT]->textureID = LoadTGA("Image//BridgesLeft.tga");
+	meshList[GEO_HEALTHLEFT] = MeshBuilder::Generate2DMesh("GEO_HEALTHLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_HEALTHLEFT]->textureID = LoadTGA("Image//HealthLeft.tga");
+
+	meshList[GEO_MOVELOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
+	meshList[GEO_MOVELOSESIGN]->textureID = LoadTGA("Image//MovesLoseSign.tga");
+	meshList[GEO_HEALTHLOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
+	meshList[GEO_HEALTHLOSESIGN]->textureID = LoadTGA("Image//HealthLoseSign.tga");
 
 	meshList[GEO_CHARACTER] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_CHARACTER]->textureID = LoadTGA("Image//Temp.tga");
@@ -289,7 +240,6 @@ void CSceneManager2D::Init()
 
 	meshList[GEO_SIGN] = MeshBuilder::Generate2DMesh("GEO_SIGN", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_SIGN]->textureID = LoadTGA("Image//Sign.tga");
-
 	meshList[GEO_SIGN1] = MeshBuilder::Generate2DMesh("GEO_SIGN1", Color(1, 1, 1), 0, 0, 260, 230);
 	meshList[GEO_SIGN1]->textureID = LoadTGA("Image//Sign1.tga");
 	meshList[GEO_SIGN2] = MeshBuilder::Generate2DMesh("GEO_SIGN2", Color(1, 1, 1), 0, 0, 260, 230);
@@ -300,6 +250,9 @@ void CSceneManager2D::Init()
 	meshList[GEO_SIGN4]->textureID = LoadTGA("Image//Sign4.tga");
 	meshList[GEO_SIGN5] = MeshBuilder::Generate2DMesh("GEO_SIGN5", Color(1, 1, 1), 0, 0, 260, 230);
 	meshList[GEO_SIGN5]->textureID = LoadTGA("Image//Sign5.tga");
+	meshList[GEO_SIGN6] = MeshBuilder::Generate2DMesh("GEO_SIGN6", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN6]->textureID = LoadTGA("Image//Sign6.tga");
+
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -316,12 +269,12 @@ void CSceneManager2D::Init()
 	m_LevelDetails = new LevelDetails();
 	m_LevelDetails->LevelDetailsInit(m_player->GetLevelToDifficultyStartAt(), m_player->GetLevelToStartAt(), "Level");
 	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
-	rotateAngle = 0;
 
 	m_Load = new LuaUsage();
 	m_Load->LuaUsageInit("LeveltoSave");
 	m_maxlevel = m_Load->get<int>("AmountOfLevel");
 	m_maxdiff = m_Load->get<int>("AmountOfDiff");
+	m_maxleveltutorial = m_Load->get<int>("AmountOfTutorialDiff");
 	m_Load->LuaUsageClose();
 	string Start = "Level.";
 	for (int i = 0; i < m_maxdiff; ++i)
@@ -331,26 +284,41 @@ void CSceneManager2D::Init()
 		{
 		case 0:
 		{
-				  Diff = Start + "Easy.";
+				  Diff = Start + "Tutorial.";
+				  for (int j = 0; j < m_maxleveltutorial; ++j)
+				  {
+					  string Level = Diff + "Level" + to_string((j + 1)) + ".";
+					  AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+					  m_levelofdetail->AllLevelDetailsInit(Level);
+					  theLevelDetailsHolder.push_back(m_levelofdetail);
+				  }
 				  break;
 		}
 		case 1:
 		{
-				  Diff = Start + "Normal.";
+				  Diff = Start + "Easy.";
 				  break;
 		}
 		case 2:
+		{
+				  Diff = Start + "Normal.";
+				  break;
+		}
+		case 3:
 		{
 				  Diff = Start + "Hard.";
 				  break;
 		}
 		}
-		for (int j = 0; j < m_maxlevel; ++j)
+		if (i > 0)
 		{
-			string Level = Diff + "Level" + to_string((j + 1)) + ".";
-			AllLevelDetails* m_levelofdetail = new AllLevelDetails();
-			m_levelofdetail->AllLevelDetailsInit(Level);
-			theLevelDetailsHolder.push_back(m_levelofdetail);
+			for (int j = 0; j < m_maxlevel; ++j)
+			{
+				string Level = Diff + "Level" + to_string((j + 1)) + ".";
+				AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+				m_levelofdetail->AllLevelDetailsInit(Level);
+				theLevelDetailsHolder.push_back(m_levelofdetail);
+			}
 		}
 	}
 
@@ -371,6 +339,7 @@ void CSceneManager2D::Init()
 	cAI * AI = new cAI();
 	AI->init();
 	AI->setPos(8, 1);
+	AI->setDifficulty(m_player->GetLevelToDifficultyStartAt());
 	AI->setWaypoint(3, 8);
 	AI->setWaypoint(3, 3);
 	AI->setWaypoint(8, 3);
@@ -397,6 +366,9 @@ void CSceneManager2D::Init()
 	TestField->GridDropInit();
 	TestField->PlayerGridSetUp(4, 10);
 
+	player_Health = 3;
+	m_losed = false;
+
 }
 
 void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
@@ -406,19 +378,141 @@ void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
 }
 
-void CSceneManager2D::AddHighscore()
+void CSceneManager2D::ReadHighscoreText()
 {
-	const int MAX_SCORES = 5;
-	string values[MAX_SCORES];
-	for (int i = 0; i < MAX_SCORES; i++)
+	// Uncomment tihs for tutorial
+	
+	if (m_player->GetLevelToDifficultyStartAt() == 1)
 	{
-		theScore[i].ReadTextFile("highscore.txt");
+	theScore.ReadTextFile("Scores//TutorialHighscore.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//EasyHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//EasyHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//EasyHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//EasyHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//NormalHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//NormalHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//NormalHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//NormalHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 4)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.ReadTextFile("Scores//HardHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.ReadTextFile("Scores//HardHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.ReadTextFile("Scores//HardHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.ReadTextFile("Scores//HardHighscore4.txt");
 	}
 }
 
+void CSceneManager2D::WriteHighscoreText()
+{
+	//Uncomment this for Tutorial
+	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+		theScore.WriteTextFile("Scores//TutorialHighscore.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//EasyHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//EasyHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//EasyHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//EasyHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//NormalHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//NormalHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//NormalHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//NormalHighscore4.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 4)
+	{
+		if (m_player->GetLevelToStartAt() == 1)
+			theScore.WriteTextFile("Scores//HardHighscore1.txt");
+		if (m_player->GetLevelToStartAt() == 2)
+			theScore.WriteTextFile("Scores//HardHighscore2.txt");
+		if (m_player->GetLevelToStartAt() == 3)
+			theScore.WriteTextFile("Scores//HardHighscore3.txt");
+		if (m_player->GetLevelToStartAt() == 4)
+			theScore.WriteTextFile("Scores//HardHighscore4.txt");
+	}
+}
+
+void CSceneManager2D::AddHighscore()
+{
+	const int MAX_SCORES = 5;
+
+	for (int i = 0; i < 1; i++)
+	{
+		ReadHighscoreText();
+		PrevScore.addScore(theScore.GetAllHighscores(i)); // Store all the highscores from the text file to PrevScore
+		theScore.setPlayer(PrevScore); // set the previous scores into the player current score
+	}
+
+	for (int i = 0; i < MAX_SCORES; i++)
+	{
+		if (PrevScore.getScore() < PlayerScore.getScore()) // if the scores stored in the prev score is less than the player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score
+		}
+
+		if (PrevScore.getScore() > PlayerScore.getScore()) // if the scores stored in prev score is more than player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score anyway to check if it's bigger than the other variables
+		}	
+
+		if (PrevScore.getScore() == PlayerScore.getScore()) // if the scores stored in prev score is more than player's newscore
+		{
+			theScore.UpdateHighscore(PlayerScore); // take in the player score anyway to check if it's bigger than the other variables
+		}
+	}
+
+	WriteHighscoreText();
+}
+
+void CSceneManager2D::SetScoreToGold(int ScoreToGold)
+{
+	this->ScoreToGold = ScoreToGold; // let the variable be the inputed score
+	this->ScoreToGold = this->ScoreToGold * NoOfMoves; // multiply that inputed score with the no of moves
+	this->ScoreToGold = this->ScoreToGold + (KeysCollected * 10); // add the no of key collected and multiply each key with 10
+}
+
+int CSceneManager2D::GetScoreToGold()
+{
+	return this->ScoreToGold;
+}
+bool CSceneManager2D::GetLoseCondition()
+{
+	return this->m_losed;
+}
 int CSceneManager2D::GetWinCondition()
 {
-	return m_WinCondition;
+	return this->m_WinCondition;
 }
 
 void CSceneManager2D::Update(double dt)
@@ -431,121 +525,194 @@ void CSceneManager2D::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//if (Application::IsKeyPressed('5'))
-		//m_WinCondition = 1;
 
-	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
-
-	//cout << Sound.volume << endl;
 	int TempKeyCollectedCalc = 0;
 	int count = 0;
-
 	if (ShowStart == true || ShowKey == true || ShowMove == true || ShowMonster == true || ShowExit == true)
 	{
 		MoveChar = false;
 	}
 
-	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	if (player_Health <= 0 || NoOfMoves <= 0)
 	{
-		
-		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		m_WinCondition = -1;
+		if (Application::IsKeyPressed(VK_RETURN))
 		{
-			if (Playfield->GetGridsVec()[a]->keyCollected == true)
+			m_losed = true;
+		}
+	}
+
+	if (m_WinCondition != 1)
+	{
+		if (player_Health <= 0 || NoOfMoves <= 0)
+		{
+			m_WinCondition = -1;
+			if (Application::IsKeyPressed(VK_RETURN))
 			{
-				TempKeyCollectedCalc++;
+				m_losed = true;
 			}
 		}
-		this->KeysCollected = TempKeyCollectedCalc;
+	}
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+	if (m_WinCondition != -1)
+	{
+		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
 		{
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+			{
+				if (Playfield->GetGridsVec()[a]->keyCollected == true)
+				{
+					TempKeyCollectedCalc++;
+				}
+			}
+			this->KeysCollected = TempKeyCollectedCalc;
+
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+			{
 			if (Playfield->GetGridsVec()[a]->Win == true)
 			{
-				TempWin = 1;
+			TempWin = 1;
 			}
-		}*/
-		this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
+			}*/
+			this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign1Exited == true)
 			{
-				Sign1Touch = true;
-				}
-				}*/
-		if (Sign1Exited == false)
-			this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
-		
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
-		{
+			Sign1Touch = true;
+			}
+			}*/
+			if (Sign1Exited == false)
+				this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
+
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
 			{
-				Sign2Touch = true;
+			Sign2Touch = true;
 			}
-		}*/
-		if (Sign2Exited == false)
-			this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
+			}*/
+			if (Sign2Exited == false)
+				this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
 			{
-				Sign3Touch = true;
+			Sign3Touch = true;
 			}
-		}*/
-		if (Sign3Exited == false)
-			this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
+			}*/
+			if (Sign3Exited == false)
+				this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
 			{
-				Sign4Touch = true;
+			Sign4Touch = true;
 			}
-		}*/
-		if (Sign4Exited == false)
-			this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
+			}*/
+			if (Sign4Exited == false)
+				this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
 			{
-				Sign5Touch = true;
+			Sign5Touch = true;
 			}
-		}*/
-		if (Sign5Exited == false)
-			this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
+			}*/
+			if (Sign5Exited == false)
+				this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
+		}
+		
+		if (Application::IsKeyPressed('X'))
+		{
+			MoveChar = true;
+			if (ShowStart == true)
+			{
+				Sign1Exited = true;
+				ShowStart = false;
+			}
+			if (ShowMove == true)
+			{
+				Sign2Exited = true;
+				ShowMove = false;
+			}
+			if (ShowKey == true)
+			{
+				Sign3Exited = true;
+				ShowKey = false;
+			}
+			if (ShowMonster == true)
+			{
+				Sign4Exited = true;
+				ShowMonster = false;
+			}
+			if (ShowExit == true)
+			{
+				Sign5Exited = true;
+				ShowExit = false;
+			}
+		}
+		if (damage_Buffer <= 0.f)
+		{
+			for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+			{
+				if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
+				{
+					player_Health--;
+					damage_Buffer = 5.0f;
+					cout << "player health" << player_Health << endl;
+				}
+			}
+		}
+		else
+			damage_Buffer -= 0.1f;
 	}
 
-	if (Application::IsKeyPressed('X'))
+	if (m_WinCondition == 1)
 	{
-		MoveChar = true;
-		if (ShowStart == true)
+		if (m_player->GetLevelToDifficultyStartAt() == 1)
 		{
-			Sign1Exited = true;
-			ShowStart = false;
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(10);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(20);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(30);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(40);
 		}
-		if (ShowMove == true)
+		if (m_player->GetLevelToDifficultyStartAt() == 2)
 		{
-			Sign2Exited = true;
-			ShowMove = false;
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(50);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(60);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(70);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(80);
 		}
-		if (ShowKey == true)
+		if (m_player->GetLevelToDifficultyStartAt() == 3)
 		{
-			Sign3Exited = true;
-			ShowKey = false;
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(90);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(100);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(110);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(120);
 		}
-		if (ShowMonster == true)
-		{
-			Sign4Exited = true;
-			ShowMonster = false;
-		}
-		if (ShowExit == true)
-		{
-			Sign5Exited = true;
-			ShowExit = false;
-		}
+		PlayerScore.addScore(GetScoreToGold());
+		AddHighscore();
 	}
+
+
 
 	/*if (Application::IsKeyPressed('X'))
 	{
@@ -999,6 +1166,28 @@ void CSceneManager2D::RenderUI()
 	RenderTextOnScreen(meshList[GEO_TEXT], Keys.str(), Color(0, 0, 0), 40, 300, 520, true);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_BOMBSLEFT], false, false, 1, 550, 200);
+	std::ostringstream Bombs;
+	Bombs << "x " << m_player->GetAmtOfBomb();
+	RenderTextOnScreen(meshList[GEO_TEXT], Bombs.str(), Color(0, 0, 0), 40, 650, 220, true);
+	modelStack.PopMatrix();
+
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_BRIDGESLEFT], false, false, 1, 550, 100);
+	std::ostringstream Bridges;
+	Bridges << "x " << m_player->GetAmtOfBridge();
+	RenderTextOnScreen(meshList[GEO_TEXT], Bridges.str(), Color(0, 0, 0), 40, 650, 120, true);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_HEALTHLEFT], false, false, 1, 400, 500);
+	std::ostringstream Health;
+	Health << "x " << player_Health;
+	RenderTextOnScreen(meshList[GEO_TEXT], Health.str(), Color(0, 0, 0), 40, 500, 520, true);
+	modelStack.PopMatrix();
+
 	if (ShowStart)
 	{
 		modelStack.PushMatrix();
@@ -1053,41 +1242,23 @@ void CSceneManager2D::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	/*
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
-	modelStack.PopMatrix();*/
-	
 	// Render the background image
 	RenderBackground();
-	/*// Render the rear tile map
-	RenderRearTileMap();
-	// Render the tile map
-	RenderTileMap();
-	// Render the goodies
-	RenderGoodies();
-	*/
 
 	RenderUI();
 
 	//render the grid system and the corresponding image for the each grid
 	RenderGridSystem();
 
-	//On screen text
-	/*
-	std::ostringstream ss;
-	ss.precision(5);
-	ss << "theEnemy: " << theEnemy->GetPos_x() << ", " << theEnemy->GetPos_y();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6);
-	std::ostringstream sss;
-	sss.precision(5);
-	sss << "mapOffset_x: "<<theHero->GetMapOffset_x();
-	RenderTextOnScreen(meshList[GEO_TEXT], sss.str(), Color(0, 1, 0), 30, 0, 30);
-	*/
+	if (m_losed != true && m_WinCondition == -1 && NoOfMoves <= 0)
+	Render2DMesh(meshList[GEO_MOVELOSESIGN], false, false, 1, m_windowWidth*0.5, m_windowHeight*0.5);
+
+	else if (m_losed != true && m_WinCondition == -1 && player_Health <= 0)
+	Render2DMesh(meshList[GEO_HEALTHLOSESIGN], false, false, 1, m_windowWidth*0.5, m_windowHeight*0.5);
 	
 	std::ostringstream ss;
 	ss.precision(5);
-	ss << "test text: " << " 9999999 ";
+	ss << fps << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0, 0.5f), 30, 0, 6, true);
 }
 
@@ -1096,31 +1267,32 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
-	if (!m_Quitfrompause)
+	if (!m_Quitfrompause && m_WinCondition != -1)
 	{
-		int i = m_player->GetLevelToDifficultyStartAt()- 1;
+		int i = m_player->GetLevelToDifficultyStartAt() - 2;
 		int j = i * m_maxlevel;
-		int k = m_player->GetLevelToStartAt();
-		theLevelDetailsHolder[((j + k)-1)]->SetCleared(true);
-		if (theLevelDetailsHolder[((j + k)-1)]->GetCollectedKeys() < KeysCollected)
+		int k = j + 1;
+		int l = k;
+		if (m_player->GetLevelToDifficultyStartAt() == 1)
 		{
-			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys()));
-			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(KeysCollected);
+			l = 0;
+		}
+		
+		theLevelDetailsHolder[l]->SetCleared(true);
+		if (theLevelDetailsHolder[l]->GetCollectedKeys() < KeysCollected)
+		{
+			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[l]->GetCollectedKeys()));
+			theLevelDetailsHolder[l]->SetCollectedKeys(KeysCollected);
 		}
 			
-		if (theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys() == 3)
-			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(3);	
+		if (theLevelDetailsHolder[l]->GetCollectedKeys() == 3)
+			theLevelDetailsHolder[l]->SetCollectedKeys(3);	
+
+		m_player->SetAmtOfGold(m_player->GetAmtOfGold() + GetScoreToGold());
 	}
-	m_save->SaveLevelStuff(theLevelDetailsHolder, m_maxlevel, m_maxdiff);
+	m_save->SaveLevelStuff(theLevelDetailsHolder,m_maxleveltutorial, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);
 
-
-	
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation->m_anim;
-		m_spriteAnimation->m_anim = NULL;
-	}
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
@@ -1132,112 +1304,3 @@ void CSceneManager2D::Exit()
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 	
 }
-
-
-/*
-
-void CSceneManager2D::RenderTileMap()
-{
-	int m = 0;
-	for (int i = 0; i < m_cMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = tileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((tileOffset_x + k) >= m_cMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cMap->theScreenMap[i][m] == 1)
-			{
-				Render2DMesh(meshList[GEO_TILEGROUND], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 2)
-			{
-				Render2DMesh(meshList[GEO_TILETREE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 10)
-			{
-				Render2DMesh(meshList[GEO_TILE_KILLZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-			else if (m_cMap->theScreenMap[i][m] == 11)
-			{
-				Render2DMesh(meshList[GEO_TILE_SAFEZONE], false, 1, k*m_cMap->GetTileSize() - theHero->GetMapFineOffset_x(), 575 - i*m_cMap->GetTileSize());
-			}
-		}
-	}
-
-	if (theHero->GetAnimationInvert() == false)
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y());
-	}
-	else
-	{
-		if (theHero->GetAnimationCounter() == 0)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 1)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME1], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 2)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME2], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else if (theHero->GetAnimationCounter() == 3)
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME3], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-		else
-			Render2DMesh(meshList[GEO_TILEHERO_FRAME0], false, 1, theHero->GetPos_x(), theHero->GetPos_y(), false, true);
-	}
-
-	// Render the enemy
-	int theEnemy_x = theEnemy->GetPos_x() - theHero->GetMapFineOffset_x();
-	int theEnemy_y = theEnemy->GetPos_y();
-	if (((theEnemy_x >= 0) && (theEnemy_x<800)) &&
-		((theEnemy_y >= 0) && (theEnemy_y<600)))
-	{
-		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, 1, theEnemy_x, theEnemy_y);
-	}
-}
-
-
-void CSceneManager2D::RenderRearTileMap()
-{
-	rearWallOffset_x = (int)(theHero->GetMapOffset_x() / 2);
-	rearWallOffset_y = 0;
-	rearWallTileOffset_y = 0;
-	rearWallTileOffset_x = (int)(rearWallOffset_x / m_cRearMap->GetTileSize());
-	if (rearWallTileOffset_x + m_cRearMap->GetNumOfTiles_Width() > m_cRearMap->getNumOfTiles_MapWidth())
-		rearWallTileOffset_x = m_cRearMap->getNumOfTiles_MapWidth() - m_cRearMap->GetNumOfTiles_Width();
-	rearWallFineOffset_x = rearWallOffset_x % m_cRearMap->GetTileSize();
-
-	int m = 0;
-	for (int i = 0; i < m_cRearMap->GetNumOfTiles_Height(); i++)
-	{
-		for (int k = 0; k < m_cRearMap->GetNumOfTiles_Width() + 1; k++)
-		{
-			m = rearWallTileOffset_x + k;
-			// If we have reached the right side of the Map, then do not display the extra column of tiles.
-			if ((rearWallTileOffset_x + k) >= m_cRearMap->getNumOfTiles_MapWidth())
-				break;
-			if (m_cRearMap->theScreenMap[i][m] == 3)
-			{
-				Render2DMesh(meshList[GEO_TILESTRUCTURE], false, 1, k*m_cRearMap->GetTileSize() - rearWallFineOffset_x, 575 - i*m_cRearMap->GetTileSize());
-			}
-		}
-	}
-}
-
-
-void CSceneManager2D::RenderGoodies()
-{
-	// Render the goodies
-	for (int i = 0; i<10; i++)
-	{
-		Render2DMesh(theArrayOfGoodies[i]->GetMesh(), false, 1, theArrayOfGoodies[i]->GetPos_x(), theArrayOfGoodies[i]->GetPos_y());
-	}
-}
-*/

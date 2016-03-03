@@ -25,8 +25,6 @@ public:
 		return &theLevelSelectState;
 	}
 
-	CSoundManager Sound;
-
 protected:
 	CLevelSelectState() { }
 

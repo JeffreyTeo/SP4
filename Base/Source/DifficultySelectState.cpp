@@ -26,6 +26,7 @@ void CDifficultySelectState::Init(const int width, const int height)
 	Select = 1;
 	timer = 0.0f;
 	theScene->SetSelection(Select);
+	theScene->Sound.volume = theScene->tempsound;
 }
 
 void CDifficultySelectState::Cleanup()
@@ -67,10 +68,10 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		timer += m_dElapsedTime;
 		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
-			if (Select < 3)
+			if (Select < 4)
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select++;
 				//Sleep(150);
 				timer = 0;
@@ -80,8 +81,8 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		{
 			if (Select > 1)
 			{
-				Sound.engine->stopAllSounds();
-				Sound.SelectSound();
+				//theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.SelectSound();
 				Select--;
 				//Sleep(150);
 				timer = 0;
@@ -90,11 +91,10 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 
 		if (Application::IsKeyPressed(VK_RETURN) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.ConfirmSound();
 			if (theScene->ReturnPlayerDifficultySelection(Select))
 			{
-				
+				//theScene->Sound.engine->stopAllSounds();
+				theScene->Sound.ConfirmSound();
 				theScene->SetScreenTransition(true);
 				theScene->SetChangeScreen(true);
 			}
@@ -103,8 +103,8 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 
 		if (Application::IsKeyPressed(VK_BACK) && timer > 0.1f)
 		{
-			Sound.engine->stopAllSounds();
-			Sound.BackSound();
+			//theScene->Sound.engine->stopAllSounds();
+			theScene->Sound.BackSound();
 			Select = -1;
 			theScene->SetScreenTransition(true);
 			theScene->SetChangeScreen(true);
@@ -139,6 +139,12 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		case 3:
 		{
 					  if (theScene->ReturnPlayerDifficultySelection(Select))
+					  theGSM->ChangeState(CLevelSelectState::Instance());
+				  break;
+		}
+		case 4:
+		{
+				  if (theScene->ReturnPlayerDifficultySelection(Select))
 					  theGSM->ChangeState(CLevelSelectState::Instance());
 				  break;
 		}
