@@ -241,6 +241,7 @@ public:
 private:
 	int m_maxlevel;
 	int m_maxdiff;
+	int m_maxleveltutorial;
 	vector<AllLevelDetails*> theLevelDetailsHolder;
 
 

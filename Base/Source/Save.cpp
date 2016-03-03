@@ -137,7 +137,7 @@ void Save::SaveEveryThing(int FileNumber)
 	}
 }
 
-void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int maxlevel, int maxdifficulty)
+void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder,int maxleveltutorial, int maxlevel, int maxdifficulty)
 {
 	ofstream SaveFile("Lua/LeveltoSave.lua");
 	if (SaveFile.is_open())
@@ -146,6 +146,7 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 		SaveFile << "--LevelNumber = { Key }--" << endl;
 		SaveFile << "AmountOfLevel = " << maxlevel << endl;
 		SaveFile << "AmountOfDiff = " << maxdifficulty << endl;
+		SaveFile << "AmountOfTutorialDiff = " << maxleveltutorial << endl;
 		SaveFile << "Level = {" << endl;
 		for (int j = 0; j < maxdifficulty; ++j)
 		{
@@ -153,13 +154,13 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			{
 			case 0:
 			{
-					  SaveFile << "Easy = {" << endl;
-					  for (int i = 0; i < maxlevel; ++i)
+					  SaveFile << "Tutorial = {" << endl;
+					  for (int i = 0; i < maxleveltutorial; ++i)
 					  {
 						  string itemnumber = "Level";
 						  itemnumber = itemnumber + to_string(i + 1);
 						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys());
-						  if (i == (maxlevel - 1))
+						  if (i == (maxleveltutorial - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
 							  SaveFile << CloseTable() << endl;
@@ -169,11 +170,12 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			}
 			case 1:
 			{
-					  SaveFile << "Normal = {" << endl;
+					  SaveFile << "Easy = {" << endl;
 					  for (int i = 0; i < maxlevel; ++i)
 					  {
 						  string itemnumber = "Level";
-						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys());
+						  itemnumber = itemnumber + to_string(i + 1);
+						  SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
 						  if (i == (maxlevel - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
@@ -184,11 +186,26 @@ void Save::SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int ma
 			}
 			case 2:
 			{
+					  SaveFile << "Normal = {" << endl;
+					  for (int i = 0; i < maxlevel; ++i)
+					  {
+						  string itemnumber = "Level";
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
+						  if (i == (maxlevel - 1))
+							  SaveFile << CloseTable(true) << endl;
+						  else
+							  SaveFile << CloseTable() << endl;
+					  }
+					  SaveFile << "}," << endl;
+					  break;
+			}
+			case 3:
+			{
 					  SaveFile << "Hard = {" << endl;
 					  for (int i = 0; i < maxlevel; ++i)
 					  {
 						  string itemnumber = "Level";
-						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j * 4) + i)]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j * 4) + i)]->GetCollectedKeys());
+						  itemnumber = itemnumber + to_string(i + 1); SaveFile << OpenTable(itemnumber) << SaveTableIndiv("Cleared", 0, BoolToStringConversion(theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCleared()), "") << "," << SaveTableIndiv("CollectedKeys", theLevelDetailsHolder[((j - 1) * 4 + (i + 1))]->GetCollectedKeys());
 						  if (i == (maxlevel - 1))
 							  SaveFile << CloseTable(true) << endl;
 						  else
@@ -244,6 +261,7 @@ void Save::SavePlayer(Player* playerinfo)
 		SaveFile << "--Player Save File--" << endl;
 		SaveFile << "LevelAmt = " << playerinfo->GetAmtOfLevelDiff() << endl;
 		SaveFile << "Currency = " << playerinfo->GetAmtOfCurrency() << endl;
+		SaveFile << "GoldCurrency = " << playerinfo->GetAmtOfGold() << endl;
 		SaveFile << "LevelToStartAt = " << playerinfo->GetLevelToStartAt() << endl;
 		SaveFile << "LevelDifficultyToStartAt = " << playerinfo->GetLevelToDifficultyStartAt() << endl;
 		SaveFile << "LevelStopAt = " << playerinfo->GetLevelStopAt() << endl;

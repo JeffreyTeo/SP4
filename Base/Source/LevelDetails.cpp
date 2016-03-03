@@ -26,15 +26,20 @@ void LevelDetails::LevelDetailsInit(int Difficulty, int LevelinDifficulty, strin
 	{
 	case 1:
 	{
-			  GetLevelDetails = GetLevelDetails + ".Easy";
+			  GetLevelDetails = GetLevelDetails + ".Tutorial";
 			  break;
 	}
 	case 2:
 	{
-			  GetLevelDetails = GetLevelDetails + ".Normal";
+			  GetLevelDetails = GetLevelDetails + ".Easy";
 			  break;
 	}
 	case 3:
+	{
+			  GetLevelDetails = GetLevelDetails + ".Normal";
+			  break;
+	}
+	case 4:
 	{
 			  GetLevelDetails = GetLevelDetails + ".Hard";
 			  break;

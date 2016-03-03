@@ -32,7 +32,7 @@ void Player::PlayerInit(string PlayerFileName)
 	thePlayerinfoLua->LuaUsageInit(PlayerFileName);
 	AmtOfCurrency = thePlayerinfoLua->get<int>("Currency");
 	AmtOfLevelDiff = thePlayerinfoLua->get<int>("LevelAmt");
-
+	AmtOfGold = thePlayerinfoLua->get<int>("GoldCurrency");
 	LevelToStartAt = thePlayerinfoLua->get<int>("LevelToStartAt");
 	LevelToDifficultyStartAt = thePlayerinfoLua->get<int>("LevelDifficultyToStartAt");
 	LevelStopAt = thePlayerinfoLua->get<int>("LevelStopAt");

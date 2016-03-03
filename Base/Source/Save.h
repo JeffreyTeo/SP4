@@ -22,7 +22,7 @@ public:
 	//Boolean String Conversion
 	string BoolToStringConversion(bool convert);
 	//Save AllLevelDetails
-	void SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder,int maxlevel,int maxdifficulty);
+	void SaveLevelStuff(vector<AllLevelDetails*> theLevelDetailsHolder, int maxleveltutorial, int maxlevel, int maxdifficulty);
 	//Save Playerinfo
 	void SavePlayer(Player* playerinfo);
 	//Save Music

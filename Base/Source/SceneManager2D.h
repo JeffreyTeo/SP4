@@ -90,6 +90,9 @@ class CSceneManager2D : public Scene
 		GEO_KEY,
 		GEO_EXIT,
 
+		GEO_MOVELOSESIGN,
+		GEO_HEALTHLOSESIGN,
+
 		// Tutorial
 		GEO_SIGN,
 		GEO_SIGN1,
@@ -129,6 +132,8 @@ public:
 
 
 	int GetWinCondition();
+	bool GetLoseCondition();
+
 	void SetQuitfrompause(bool m_Quitfrompause);
 
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
@@ -176,6 +181,7 @@ public:
 
 private:
 	bool m_Quitfrompause;
+	bool m_losed;
 
 	// Win Condition
 	int m_WinCondition;
@@ -186,7 +192,7 @@ private:
 	// MaxLevel and MaxDifferent
 	int m_maxlevel;
 	int m_maxdiff;
-
+	int m_maxleveltutorial;
 	// Loading
 	LuaUsage* m_Load;
 

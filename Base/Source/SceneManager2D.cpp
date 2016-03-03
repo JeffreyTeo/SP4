@@ -258,6 +258,11 @@ void CSceneManager2D::Init()
 	meshList[GEO_MOVESLEFT] = MeshBuilder::Generate2DMesh("GEO_MOVESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
 	meshList[GEO_MOVESLEFT]->textureID = LoadTGA("Image//MovesLeft.tga");
 
+	meshList[GEO_MOVELOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
+	meshList[GEO_MOVELOSESIGN]->textureID = LoadTGA("Image//MovesLoseSign.tga");
+	meshList[GEO_HEALTHLOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
+	meshList[GEO_HEALTHLOSESIGN]->textureID = LoadTGA("Image//HealthLoseSign.tga");
+
 	meshList[GEO_CHARACTER] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_CHARACTER]->textureID = LoadTGA("Image//Temp.tga");
 	meshList[GEO_FLOORING] = MeshBuilder::Generate2DMesh("GEO_FLOORING", Color(1, 1, 1), 0, 0, 50, 50);
@@ -313,6 +318,7 @@ void CSceneManager2D::Init()
 	m_Load->LuaUsageInit("LeveltoSave");
 	m_maxlevel = m_Load->get<int>("AmountOfLevel");
 	m_maxdiff = m_Load->get<int>("AmountOfDiff");
+	m_maxleveltutorial = m_Load->get<int>("AmountOfTutorialDiff");
 	m_Load->LuaUsageClose();
 	string Start = "Level.";
 	for (int i = 0; i < m_maxdiff; ++i)
@@ -322,26 +328,41 @@ void CSceneManager2D::Init()
 		{
 		case 0:
 		{
-				  Diff = Start + "Easy.";
+				  Diff = Start + "Tutorial.";
+				  for (int j = 0; j < m_maxleveltutorial; ++j)
+				  {
+					  string Level = Diff + "Level" + to_string((j + 1)) + ".";
+					  AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+					  m_levelofdetail->AllLevelDetailsInit(Level);
+					  theLevelDetailsHolder.push_back(m_levelofdetail);
+				  }
 				  break;
 		}
 		case 1:
 		{
-				  Diff = Start + "Normal.";
+				  Diff = Start + "Easy.";
 				  break;
 		}
 		case 2:
+		{
+				  Diff = Start + "Normal.";
+				  break;
+		}
+		case 3:
 		{
 				  Diff = Start + "Hard.";
 				  break;
 		}
 		}
-		for (int j = 0; j < m_maxlevel; ++j)
+		if (i > 0)
 		{
-			string Level = Diff + "Level" + to_string((j + 1)) + ".";
-			AllLevelDetails* m_levelofdetail = new AllLevelDetails();
-			m_levelofdetail->AllLevelDetailsInit(Level);
-			theLevelDetailsHolder.push_back(m_levelofdetail);
+			for (int j = 0; j < m_maxlevel; ++j)
+			{
+				string Level = Diff + "Level" + to_string((j + 1)) + ".";
+				AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+				m_levelofdetail->AllLevelDetailsInit(Level);
+				theLevelDetailsHolder.push_back(m_levelofdetail);
+			}
 		}
 	}
 
@@ -390,7 +411,7 @@ void CSceneManager2D::Init()
 	TestField->PlayerGridSetUp(4, 10);
 
 	player_Health = 3;
-
+	m_losed = false;
 
 }
 
@@ -529,10 +550,13 @@ int CSceneManager2D::GetScoreToGold()
 {
 	return this->ScoreToGold;
 }
-
+bool CSceneManager2D::GetLoseCondition()
+{
+	return this->m_losed;
+}
 int CSceneManager2D::GetWinCondition()
 {
-	return m_WinCondition;
+	return this->m_WinCondition;
 }
 
 void CSceneManager2D::Update(double dt)
@@ -553,121 +577,137 @@ void CSceneManager2D::Update(double dt)
 		MoveChar = false;
 	}
 
-	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	if (player_Health <= 0 || NoOfMoves <= 0)
 	{
-		
-		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		m_WinCondition = -1;
+		if (Application::IsKeyPressed(VK_RETURN))
 		{
-			if (Playfield->GetGridsVec()[a]->keyCollected == true)
-			{
-				TempKeyCollectedCalc++;
-			}
+			m_losed = true;
 		}
-		this->KeysCollected = TempKeyCollectedCalc;
+	}
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+	
+	if (m_WinCondition != -1)
+	{
+		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
 		{
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+			{
+				if (Playfield->GetGridsVec()[a]->keyCollected == true)
+				{
+					TempKeyCollectedCalc++;
+				}
+			}
+			this->KeysCollected = TempKeyCollectedCalc;
+
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+			{
 			if (Playfield->GetGridsVec()[a]->Win == true)
 			{
-				TempWin = 1;
+			TempWin = 1;
 			}
-		}*/
-		this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
+			}*/
+			this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign1Exited == true)
 			{
-				Sign1Touch = true;
-				}
-				}*/
-		if (Sign1Exited == false)
-			this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
-		
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
-		{
+			Sign1Touch = true;
+			}
+			}*/
+			if (Sign1Exited == false)
+				this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
+
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
 			{
-				Sign2Touch = true;
+			Sign2Touch = true;
 			}
-		}*/
-		if (Sign2Exited == false)
-			this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
+			}*/
+			if (Sign2Exited == false)
+				this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
 			{
-				Sign3Touch = true;
+			Sign3Touch = true;
 			}
-		}*/
-		if (Sign3Exited == false)
-			this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
+			}*/
+			if (Sign3Exited == false)
+				this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
 			{
-				Sign4Touch = true;
+			Sign4Touch = true;
 			}
-		}*/
-		if (Sign4Exited == false)
-			this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
+			}*/
+			if (Sign4Exited == false)
+				this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
 
-		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
-		{
+			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+			{
 			if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
 			{
-				Sign5Touch = true;
+			Sign5Touch = true;
 			}
-		}*/
-		if (Sign5Exited == false)
-			this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
-	}
-
-	if (Application::IsKeyPressed('X'))
-	{
-		MoveChar = true;
-		if (ShowStart == true)
-		{
-			Sign1Exited = true;
-			ShowStart = false;
+			}*/
+			if (Sign5Exited == false)
+				this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
 		}
-		if (ShowMove == true)
+		if (Application::IsKeyPressed('X'))
 		{
-			Sign2Exited = true;
-			ShowMove = false;
-		}
-		if (ShowKey == true)
-		{
-			Sign3Exited = true;
-			ShowKey = false;
-		}
-		if (ShowMonster == true)
-		{
-			Sign4Exited = true;
-			ShowMonster = false;
-		}
-		if (ShowExit == true)
-		{
-			Sign5Exited = true;
-			ShowExit = false;
-		}
-	}
-
-	if (damage_Buffer <= 0.f)
-	{
-		for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
-		{
-			if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
+			MoveChar = true;
+			if (ShowStart == true)
 			{
-				player_Health--;
-				cout << "player health" << player_Health << endl;
+				Sign1Exited = true;
+				ShowStart = false;
+			}
+			if (ShowMove == true)
+			{
+				Sign2Exited = true;
+				ShowMove = false;
+			}
+			if (ShowKey == true)
+			{
+				Sign3Exited = true;
+				ShowKey = false;
+			}
+			if (ShowMonster == true)
+			{
+				Sign4Exited = true;
+				ShowMonster = false;
+			}
+			if (ShowExit == true)
+			{
+				Sign5Exited = true;
+				ShowExit = false;
 			}
 		}
+		if (damage_Buffer <= 0.f)
+		{
+			for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+			{
+				if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
+				{
+					player_Health--;
+					cout << "player health" << player_Health << endl;
+				}
+			}
+		}
+		else
+			damage_Buffer -= 0.1f;
 	}
-	else
-		damage_Buffer -= 0.1f;
+	
+
+	
+
+	
 
 	if (m_WinCondition == 1)
 	{
@@ -1247,6 +1287,11 @@ void CSceneManager2D::Render()
 	sss << "mapOffset_x: "<<theHero->GetMapOffset_x();
 	RenderTextOnScreen(meshList[GEO_TEXT], sss.str(), Color(0, 1, 0), 30, 0, 30);
 	*/
+	if (m_losed != true && m_WinCondition == -1 && NoOfMoves <= 0)
+	Render2DMesh(meshList[GEO_MOVELOSESIGN], false, false, 1, m_windowWidth*0.5, m_windowHeight*0.5);
+
+	else if (m_losed != true && m_WinCondition == -1 && player_Health <= 0)
+	Render2DMesh(meshList[GEO_HEALTHLOSESIGN], false, false, 1, m_windowWidth*0.5, m_windowHeight*0.5);
 	
 	std::ostringstream ss;
 	ss.precision(5);
@@ -1261,20 +1306,26 @@ void CSceneManager2D::Exit()
 {
 	if (!m_Quitfrompause)
 	{
-		int i = m_player->GetLevelToDifficultyStartAt()- 1;
+		int i = m_player->GetLevelToDifficultyStartAt() - 2;
 		int j = i * m_maxlevel;
-		int k = m_player->GetLevelToStartAt();
-		theLevelDetailsHolder[((j + k)-1)]->SetCleared(true);
-		if (theLevelDetailsHolder[((j + k)-1)]->GetCollectedKeys() < KeysCollected)
+		int k = j + 1;
+		int l = k;
+		if (m_player->GetLevelToDifficultyStartAt() == 1)
 		{
-			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys()));
-			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(KeysCollected);
+			l = 0;
+		}
+		
+		theLevelDetailsHolder[l]->SetCleared(true);
+		if (theLevelDetailsHolder[l]->GetCollectedKeys() < KeysCollected)
+		{
+			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[l]->GetCollectedKeys()));
+			theLevelDetailsHolder[l]->SetCollectedKeys(KeysCollected);
 		}
 			
-		if (theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys() == 3)
-			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(3);	
+		if (theLevelDetailsHolder[l]->GetCollectedKeys() == 3)
+			theLevelDetailsHolder[l]->SetCollectedKeys(3);	
 	}
-	m_save->SaveLevelStuff(theLevelDetailsHolder, m_maxlevel, m_maxdiff);
+	m_save->SaveLevelStuff(theLevelDetailsHolder,m_maxleveltutorial, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);
 
 	// Cleanup VBO

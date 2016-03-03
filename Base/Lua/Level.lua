@@ -14,7 +14,7 @@
 
 
 Level = {
-      Easy = {
+	Tutorial = {
         Level1 = {	
 				PositionXOfGrid = 225,
 				PositionYOfGrid = 225,
@@ -26,6 +26,22 @@ Level = {
 				PlayerPositionY = 5,
 				AmountOfMoves = 30,
 				NameOfLevelFile = "Levels//Tutorial.csv",
+				Difficulty = "Easy"
+        }
+	},
+
+      Easy = {
+        Level1 = {	
+				PositionXOfGrid = 225,
+				PositionYOfGrid = 225,
+				LengthXOfAGrid = 50,
+				LengthYOfAGrid = 50,
+				NumberOfGridX = 10,
+				NumberOfGridY = 10,
+				PlayerPositionX = 5,
+				PlayerPositionY = 5,
+				AmountOfMoves = 30,
+				NameOfLevelFile = "Levels//EasyLevel1.csv",
 				Difficulty = "Easy"
         },
         

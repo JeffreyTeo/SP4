@@ -308,6 +308,7 @@ void SceneManagerLevel2DforScreen::Init()
 		m_SpriteAnimationLoad->LuaUsageInit("LeveltoSave");
 		m_maxlevel = m_SpriteAnimationLoad->get<int>("AmountOfLevel");
 		m_maxdiff = m_SpriteAnimationLoad->get<int>("AmountOfDiff");
+		m_maxleveltutorial = m_SpriteAnimationLoad->get<int>("AmountOfTutorialDiff");
 		m_SpriteAnimationLoad->LuaUsageClose();
 
 		string Start = "Level.";
@@ -318,26 +319,41 @@ void SceneManagerLevel2DforScreen::Init()
 			{
 			case 0:
 			{
-					  Diff = Start + "Easy.";
+					  Diff = Start + "Tutorial.";
+					  for (int j = 0; j < m_maxleveltutorial; ++j)
+					  {
+						  string Level = Diff + "Level" + to_string((j + 1)) + ".";
+						  AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+						  m_levelofdetail->AllLevelDetailsInit(Level);
+						  theLevelDetailsHolder.push_back(m_levelofdetail);
+					  }
 					  break;
 			}
 			case 1:
 			{
-					  Diff = Start + "Normal.";
+					  Diff = Start + "Easy.";
 					  break;
 			}
 			case 2:
+			{
+					  Diff = Start + "Normal.";
+					  break;
+			}
+			case 3:
 			{
 					  Diff = Start + "Hard.";
 					  break;
 			}
 			}
-			for (int j = 0; j < m_maxlevel; ++j)
+			if (i > 0)
 			{
-				string Level = Diff + "Level" + to_string((j + 1)) + ".";
-				AllLevelDetails* m_levelofdetail = new AllLevelDetails();
-				m_levelofdetail->AllLevelDetailsInit(Level);
-				theLevelDetailsHolder.push_back(m_levelofdetail);
+				for (int j = 0; j < m_maxlevel; ++j)
+				{
+					string Level = Diff + "Level" + to_string((j + 1)) + ".";
+					AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+					m_levelofdetail->AllLevelDetailsInit(Level);
+					theLevelDetailsHolder.push_back(m_levelofdetail);
+				}
 			}
 		}
 		CreateButton("NextLevel");
@@ -359,7 +375,7 @@ void SceneManagerLevel2DforScreen::Init()
 	}
 	if (m_screenvalue == DifficultySelectscreen)
 	{
-		//CreateButton("DifficultyTutorial");
+		CreateButton("DifficultyTutorial");
 		CreateButton("DifficultyEasy");
 		CreateButton("DifficultyNormal");
 		CreateButton("DifficultyHard");
@@ -473,38 +489,46 @@ void SceneManagerLevel2DforScreen::CreateButton(string name)
 }
 bool SceneManagerLevel2DforScreen::ReturnPlayerDifficultySelection(int difficultyselection)
 {
-	if (m_shop->theItemHolder[difficultyselection - 1]->GetBought() == true)
+	if (difficultyselection == 1)
 	{
-		switch (difficultyselection)
-		{
-		case 1:
-		{
-				  if (m_player->GetEasyLevelUnlocked())
-					  return true;
-				  else
-					  return false;
-				  break;
-		}
-		case 2:
-		{
-				  if (m_player->GetNormalLevelUnlocked())
-					  return true;
-				  else
-					  return false;
-				  break;
-		}
-		case 3:
-		{
-				  if (m_player->GetHardLevelUnlocked())
-					  return true;
-				  else
-					  return false;
-				  break;
-		}
-		}
+		return true;
 	}
 	else
-		return false;
+	{
+		if (m_shop->theItemHolder[difficultyselection - 2]->GetBought() == true)
+		{
+			switch (difficultyselection)
+			{
+			case 2:
+			{
+					  if (m_player->GetEasyLevelUnlocked())
+						  return true;
+					  else
+						  return false;
+					  break;
+			}
+			case 3:
+			{
+					  if (m_player->GetNormalLevelUnlocked())
+						  return true;
+					  else
+						  return false;
+					  break;
+			}
+			case 4:
+			{
+					  if (m_player->GetHardLevelUnlocked())
+						  return true;
+					  else
+						  return false;
+					  break;
+			}
+			}
+		}
+		else
+			return false;
+	}
+	return false;
 }
 bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 {
@@ -522,41 +546,59 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 		{
 		case 1:
 		{
-				  if ((this->m_player->GetLevelToStartAt()) < (m_maxlevel+1))
+				  if ((this->m_player->GetLevelToStartAt()) < m_maxleveltutorial)
 				  {
 					  return true;
 				  }
-				  if ((this->m_player->GetNormalLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt()+1]->GetBought() == true)
+				  if ((this->m_player->GetEasyLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == true)
 				  {
 					  return true;
 				  }
-				  else if ((this->m_player->GetNormalLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
+				  else if ((this->m_player->GetEasyLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == false))
 				  {
-					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 0]->GetCleared() &&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 1]->GetCleared()&&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 2]->GetCleared()&&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 3]->GetCleared())
-					  this->m_player->SetNormalLevelUnlocked(true);
+					  if (this->theLevelDetailsHolder[0]->GetCleared())
+						  this->m_player->SetNormalLevelUnlocked(true);
 					  return false;
 				  }
 				  break;
 		}
 		case 2:
 		{
-				  if ((this->m_player->GetLevelToStartAt()) < (m_maxlevel + 1))
+				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
 				  {
 					  return true;
 				  }
-				  if ((this->m_player->GetHardLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == true)
+				  if ((this->m_player->GetNormalLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt()-1]->GetBought() == true)
 				  {
 					  return true;
 				  }
-				  else if ((this->m_player->GetHardLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() + 1]->GetBought() == false))
+				  else if ((this->m_player->GetNormalLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == false))
 				  {
-					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 0]->GetCleared() &&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 1]->GetCleared() &&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 2]->GetCleared() &&
-						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 1) * 4) + 3]->GetCleared())
+					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 1]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 2]->GetCleared()&&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 3]->GetCleared()&&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 4]->GetCleared())
+					  this->m_player->SetNormalLevelUnlocked(true);
+					  return false;
+				  }
+				  break;
+		}
+		case 3:
+		{
+				  if ((this->m_player->GetLevelToStartAt()) < m_maxlevel)
+				  {
+					  return true;
+				  }
+				  if ((this->m_player->GetHardLevelUnlocked()) == true && this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == true)
+				  {
+					  return true;
+				  }
+				  else if ((this->m_player->GetHardLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == false))
+				  {
+					  if (this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 1]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 2]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 3]->GetCleared() &&
+						  this->theLevelDetailsHolder[((this->m_player->GetLevelToDifficultyStartAt() - 2) * 4) + 4]->GetCleared())
 					  this->m_player->SetHardLevelUnlocked(true);
 					  return false;
 				  }
@@ -567,15 +609,21 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 }
 void SceneManagerLevel2DforScreen::NextLevel()
 {
-	if ((this->m_player->GetLevelToStartAt()) == m_maxlevel)
+	if (this->m_player->GetLevelToDifficultyStartAt() == 1)
 	{
 		this->m_player->SetLevelToDifficultyStartAt((this->m_player->GetLevelToDifficultyStartAt() + 1));
 		this->m_player->SetLevelToStartAt(1);
 	}
 	else
-		this->m_player->SetLevelToStartAt((this->m_player->GetLevelToStartAt() + 1));
-
-	
+	{
+		if ((this->m_player->GetLevelToStartAt()) == m_maxlevel)
+		{
+			this->m_player->SetLevelToDifficultyStartAt((this->m_player->GetLevelToDifficultyStartAt() + 1));
+			this->m_player->SetLevelToStartAt(1);
+		}
+		else
+			this->m_player->SetLevelToStartAt((this->m_player->GetLevelToStartAt() + 1));
+	}
 }
 
 void SceneManagerLevel2DforScreen::ResetPlayer()
@@ -591,7 +639,10 @@ void SceneManagerLevel2DforScreen::SetLevelDifficulty(int LevelDifficulty)
 }
 void SceneManagerLevel2DforScreen::SetLevelNumber(int LevelNumber)
 {
-	this->m_player->SetLevelToStartAt(LevelNumber);
+	if (this->m_player->GetLevelToDifficultyStartAt() == 1)
+		this->m_player->SetLevelToStartAt(1);
+	else
+		this->m_player->SetLevelToStartAt(LevelNumber);
 }
 
 void SceneManagerLevel2DforScreen::SetContinuedLevel()
@@ -1290,11 +1341,16 @@ void SceneManagerLevel2DforScreen::RenderLevelSelect()
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_LEVELSHOPSELECT], false, true);
 	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL1], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL2], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL3], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL4], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);
-	if (m_select >= 0)
+	if (m_player->GetLevelToDifficultyStartAt() != 1)
+	{
+		Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL2], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL3], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
+		Render2DMesh(meshList[GEO_LEVELSELECT_LEVEL4], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);
+	}
+	if (m_select >= 0 && m_player->GetLevelToDifficultyStartAt() != 1)
 		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
+	if (m_select >= 0)
+		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[0]->getPosition().x - theButtonHolder[0]->getOffset().x, theButtonHolder[0]->getPosition().y - theButtonHolder[0]->getOffset().y);
 	modelStack.PopMatrix();
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
@@ -1349,14 +1405,15 @@ void SceneManagerLevel2DforScreen::RenderDifficulty()
 {
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_DIFFICULTYSELECT], false, true);
-	Render2DMesh(meshList[GEO_DIFFICULTY_EASY], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_DIFFICULTY_NORMAL], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
-	Render2DMesh(meshList[GEO_DIFFICULTY_HARD], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_HIGHSCORE_TUTORIAL], false, true, 1, theButtonHolder[0]->getTempPosition().x, theButtonHolder[0]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_DIFFICULTY_EASY], false, true, 1, theButtonHolder[1]->getTempPosition().x, theButtonHolder[1]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_DIFFICULTY_NORMAL], false, true, 1, theButtonHolder[2]->getTempPosition().x, theButtonHolder[2]->getTempPosition().y);
+	Render2DMesh(meshList[GEO_DIFFICULTY_HARD], false, true, 1, theButtonHolder[3]->getTempPosition().x, theButtonHolder[3]->getTempPosition().y);
 	if (m_select >= 0)
 		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[m_select - 1]->getPosition().x - theButtonHolder[m_select - 1]->getOffset().x, theButtonHolder[m_select - 1]->getPosition().y - theButtonHolder[m_select - 1]->getOffset().y);
 	switch (m_select)
 	{
-	case 1:
+	case 2:
 	{
 			  if (!m_player->GetEasyLevelUnlocked())
 				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);
@@ -1364,7 +1421,7 @@ void SceneManagerLevel2DforScreen::RenderDifficulty()
 				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Bought yet!", Color(1, 0, 0), 30, 200, 110, true);
 			  break;
 	}
-	case 2:
+	case 3:
 	{
 			  if (!m_player->GetNormalLevelUnlocked())
 				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);
@@ -1372,7 +1429,7 @@ void SceneManagerLevel2DforScreen::RenderDifficulty()
 				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Bought yet!", Color(1, 0, 0), 30, 200, 110, true);
 			  break;
 	}
-	case 3:
+	case 4:
 	{
 			  if (!m_player->GetHardLevelUnlocked())
 				  RenderTextOnScreen(meshList[GEO_TEXT], "It is not Unlocked yet!", Color(1, 0, 0), 30, 200, 110, true);

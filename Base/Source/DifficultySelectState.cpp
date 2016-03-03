@@ -68,7 +68,7 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		timer += m_dElapsedTime;
 		if (Application::IsKeyPressed(VK_DOWN) && timer > 0.1f)
 		{
-			if (Select < 3)
+			if (Select < 4)
 			{
 				//theScene->Sound.engine->stopAllSounds();
 				theScene->Sound.SelectSound();
@@ -139,6 +139,12 @@ void CDifficultySelectState::Update(CGameStateManager* theGSM, const double m_dE
 		case 3:
 		{
 					  if (theScene->ReturnPlayerDifficultySelection(Select))
+					  theGSM->ChangeState(CLevelSelectState::Instance());
+				  break;
+		}
+		case 4:
+		{
+				  if (theScene->ReturnPlayerDifficultySelection(Select))
 					  theGSM->ChangeState(CLevelSelectState::Instance());
 				  break;
 		}
