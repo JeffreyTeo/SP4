@@ -209,6 +209,8 @@ void CSceneManager2D::Init()
 	meshList[GEO_BOMBSLEFT]->textureID = LoadTGA("Image//BombsLeft.tga");
 	meshList[GEO_BRIDGESLEFT] = MeshBuilder::Generate2DMesh("GEO_BRIDGESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
 	meshList[GEO_BRIDGESLEFT]->textureID = LoadTGA("Image//BridgesLeft.tga");
+	meshList[GEO_HEALTHLEFT] = MeshBuilder::Generate2DMesh("GEO_HEALTHLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_HEALTHLEFT]->textureID = LoadTGA("Image//HealthLeft.tga");
 
 	meshList[GEO_MOVELOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
 	meshList[GEO_MOVELOSESIGN]->textureID = LoadTGA("Image//MovesLoseSign.tga");
@@ -379,12 +381,12 @@ void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
 void CSceneManager2D::ReadHighscoreText()
 {
 	// Uncomment tihs for tutorial
-	/*
+	
 	if (m_player->GetLevelToDifficultyStartAt() == 1)
 	{
 	theScore.ReadTextFile("Scores//TutorialHighscore.txt");
-	}*/
-	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.ReadTextFile("Scores//EasyHighscore1.txt");
@@ -395,7 +397,7 @@ void CSceneManager2D::ReadHighscoreText()
 		if (m_player->GetLevelToStartAt() == 4)
 			theScore.ReadTextFile("Scores//EasyHighscore4.txt");
 	}
-	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.ReadTextFile("Scores//NormalHighscore1.txt");
@@ -406,7 +408,7 @@ void CSceneManager2D::ReadHighscoreText()
 		if (m_player->GetLevelToStartAt() == 4)
 			theScore.ReadTextFile("Scores//NormalHighscore4.txt");
 	}
-	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	if (m_player->GetLevelToDifficultyStartAt() == 4)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.ReadTextFile("Scores//HardHighscore1.txt");
@@ -422,11 +424,11 @@ void CSceneManager2D::ReadHighscoreText()
 void CSceneManager2D::WriteHighscoreText()
 {
 	//Uncomment this for Tutorial
-	/*if (m_player->GetLevelToDifficultyStartAt() == 1)
-	{
-	theScore.WriteTextFile("Scores//TutorialHighscore.txt");
-	}*/
 	if (m_player->GetLevelToDifficultyStartAt() == 1)
+	{
+		theScore.WriteTextFile("Scores//TutorialHighscore.txt");
+	}
+	if (m_player->GetLevelToDifficultyStartAt() == 2)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.WriteTextFile("Scores//EasyHighscore1.txt");
@@ -437,7 +439,7 @@ void CSceneManager2D::WriteHighscoreText()
 		if (m_player->GetLevelToStartAt() == 4)
 			theScore.WriteTextFile("Scores//EasyHighscore4.txt");
 	}
-	if (m_player->GetLevelToDifficultyStartAt() == 2)
+	if (m_player->GetLevelToDifficultyStartAt() == 3)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.WriteTextFile("Scores//NormalHighscore1.txt");
@@ -448,7 +450,7 @@ void CSceneManager2D::WriteHighscoreText()
 		if (m_player->GetLevelToStartAt() == 4)
 			theScore.WriteTextFile("Scores//NormalHighscore4.txt");
 	}
-	if (m_player->GetLevelToDifficultyStartAt() == 3)
+	if (m_player->GetLevelToDifficultyStartAt() == 4)
 	{
 		if (m_player->GetLevelToStartAt() == 1)
 			theScore.WriteTextFile("Scores//HardHighscore1.txt");
@@ -1177,6 +1179,13 @@ void CSceneManager2D::RenderUI()
 	std::ostringstream Bridges;
 	Bridges << "x " << m_player->GetAmtOfBridge();
 	RenderTextOnScreen(meshList[GEO_TEXT], Bridges.str(), Color(0, 0, 0), 40, 650, 120, true);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_HEALTHLEFT], false, false, 1, 400, 500);
+	std::ostringstream Health;
+	Health << "x " << player_Health;
+	RenderTextOnScreen(meshList[GEO_TEXT], Health.str(), Color(0, 0, 0), 40, 500, 520, true);
 	modelStack.PopMatrix();
 
 	if (ShowStart)

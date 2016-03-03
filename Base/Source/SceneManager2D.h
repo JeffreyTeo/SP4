@@ -107,6 +107,7 @@ class CSceneManager2D : public Scene
 		GEO_MOVESLEFT,
 		GEO_BOMBSLEFT,
 		GEO_BRIDGESLEFT,
+		GEO_HEALTHLEFT,
 
 		// Show Movement
 		GEO_FEET,

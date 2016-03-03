@@ -24,7 +24,7 @@ Level = {
 				NumberOfGridY = 10,
 				PlayerPositionX = 5,
 				PlayerPositionY = 5,
-				AmountOfMoves = 30,
+				AmountOfMoves = 35,
 				NameOfLevelFile = "Levels//Tutorial.csv",
 				Difficulty = "Easy"
         }

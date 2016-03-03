@@ -1,11 +1,11 @@
 --Player Save File--
 LevelAmt = 3
 Currency = 3
-GoldCurrency = -12851
+GoldCurrency = 70
 BombAmt = 0
 BridgeAmt = 1
-LevelToStartAt = 1
-LevelDifficultyToStartAt = 1
+LevelToStartAt = 0
+LevelDifficultyToStartAt = 0
 LevelStopAt = 0
 LevelDifficultyStopAt = 0
 Player = {
