@@ -1,6 +1,6 @@
 --Player Save File--
 LevelAmt = 3
-Currency = 1
+Currency = 3
 LevelToStartAt = 0
 LevelDifficultyToStartAt = 0
 LevelStopAt = 0

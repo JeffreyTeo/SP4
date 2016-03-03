@@ -454,6 +454,7 @@ void CSceneManager2D::ReadHighscoreText()
 			theScore.ReadTextFile("Scores//HardHighscore4.txt");
 	}
 }
+
 void CSceneManager2D::WriteHighscoreText()
 {
 	//Uncomment this for Tutorial
@@ -496,7 +497,6 @@ void CSceneManager2D::WriteHighscoreText()
 	}
 }
 
-
 void CSceneManager2D::AddHighscore()
 {
 	const int MAX_SCORES = 5;
@@ -527,6 +527,18 @@ void CSceneManager2D::AddHighscore()
 	}
 
 	WriteHighscoreText();
+}
+
+void CSceneManager2D::SetScoreToGold(int ScoreToGold)
+{
+	this->ScoreToGold = ScoreToGold; // let the variable be the inputed score
+	this->ScoreToGold = this->ScoreToGold * NoOfMoves; // multiply that inputed score with the no of moves
+	this->ScoreToGold = this->ScoreToGold + (KeysCollected * 10); // add the no of key collected and multiply each key with 10
+}
+
+int CSceneManager2D::GetScoreToGold()
+{
+	return this->ScoreToGold;
 }
 
 int CSceneManager2D::GetWinCondition()
@@ -662,7 +674,40 @@ void CSceneManager2D::Update(double dt)
 
 	if (m_WinCondition == 1)
 	{
-		PlayerScore.addScore(100);
+		if (m_player->GetLevelToDifficultyStartAt() == 1)
+		{
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(10);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(20);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(30);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(40);
+		}
+		if (m_player->GetLevelToDifficultyStartAt() == 2)
+		{
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(50);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(60);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(70);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(80);
+		}
+		if (m_player->GetLevelToDifficultyStartAt() == 3)
+		{
+			if (m_player->GetLevelToStartAt() == 1)
+				SetScoreToGold(90);
+			if (m_player->GetLevelToStartAt() == 2)
+				SetScoreToGold(100);
+			if (m_player->GetLevelToStartAt() == 3)
+				SetScoreToGold(110);
+			if (m_player->GetLevelToStartAt() == 4)
+				SetScoreToGold(120);
+		}
+		PlayerScore.addScore(GetScoreToGold());
 		AddHighscore();
 	}
 

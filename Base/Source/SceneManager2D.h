@@ -97,6 +97,7 @@ class CSceneManager2D : public Scene
 		GEO_SIGN3,
 		GEO_SIGN4,
 		GEO_SIGN5,
+		GEO_SIGN6,
 
 		GEO_KEYSCOLLECTED,
 		GEO_MOVESLEFT,
@@ -155,6 +156,10 @@ public:
 	void ReadHighscoreText();
 	void WriteHighscoreText();
 
+	// Score to Gold
+	void SetScoreToGold(int ScoreToGold); // This is used to set the finalized score for each level
+	int GetScoreToGold(); // This is used to get the score
+
 	CSoundManager Sound;
 
 	float tempsound;
@@ -211,6 +216,8 @@ private:
 	bool Sign3Exited;
 	bool Sign4Exited;
 	bool Sign5Exited;
+	// Score to Gold Conversion
+	int ScoreToGold;
 
 	//time Buffer for continuous key press
 
