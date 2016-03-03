@@ -29,6 +29,8 @@ CSceneManager2D::CSceneManager2D()
 , Sign3Exited(false)
 , Sign4Exited(false)
 , Sign5Exited(false)
+, player_Health(0)
+, damage_Buffer(5.f)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -377,6 +379,7 @@ void CSceneManager2D::Init()
 	cAI * AI = new cAI();
 	AI->init();
 	AI->setPos(8, 1);
+	AI->setDifficulty(m_player->GetLevelToDifficultyStartAt());
 	AI->setWaypoint(3, 8);
 	AI->setWaypoint(3, 3);
 	AI->setWaypoint(8, 3);
@@ -402,6 +405,9 @@ void CSceneManager2D::Init()
 	TestField->Init(Vector3(625, 300, 0), 50.f, 50.f, 6, 12);
 	TestField->GridDropInit();
 	TestField->PlayerGridSetUp(4, 10);
+
+	player_Health = 3;
+
 
 }
 
@@ -672,6 +678,20 @@ void CSceneManager2D::Update(double dt)
 		}
 	}
 
+	if (damage_Buffer <= 0.f)
+	{
+		for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+		{
+			if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
+			{
+				player_Health--;
+				cout << "player health" << player_Health << endl;
+			}
+		}
+	}
+	else
+		damage_Buffer -= 0.1f;
+
 	if (m_WinCondition == 1)
 	{
 		if (m_player->GetLevelToDifficultyStartAt() == 1)
@@ -710,6 +730,8 @@ void CSceneManager2D::Update(double dt)
 		PlayerScore.addScore(GetScoreToGold());
 		AddHighscore();
 	}
+
+
 
 	/*if (Application::IsKeyPressed('X'))
 	{

@@ -129,6 +129,10 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_HIGHSCORE_LEVEL3,
 		GEO_HIGHSCORE_LEVEL4,
 
+		//Items
+		GEO_BOMB,
+		GEO_BRIDGE,
+
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
@@ -192,6 +196,7 @@ public:
 	bool ReturnPlayerDifficultySelection(int difficultyselection);
 
 	void SetShopSelect(int shopSelect);
+	void SetShopSelectItem(int shopSelectItem);
 
 	// Highscore States
 	void setHSDifficulty(int theDifficulty);
@@ -216,6 +221,8 @@ public:
 	void GetHighscore();
 	HighscoreData theScore;
 	void ReadHighscoreTextFiles();
+
+
 
 	CSoundManager Sound;
 

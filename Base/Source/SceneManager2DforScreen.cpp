@@ -275,6 +275,11 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_PAUSE_QUITTOMENU] = MeshBuilder::Generate2DMesh("GEO_PAUSE_QUITTOMENU", Color(1, 1, 1), 0, 0, 263, 34);
 	meshList[GEO_PAUSE_QUITTOMENU]->textureID = LoadTGA("Image//ButtonMesh/QuitToMenubutton.tga");
 
+	meshList[GEO_BOMB] = MeshBuilder::Generate2DMesh("GEO_BOMB", Color(1, 1, 1), 0, 0, 34, 34);
+	meshList[GEO_BOMB]->textureID = LoadTGA("Image//Bomb.tga");
+	meshList[GEO_BRIDGE] = MeshBuilder::Generate2DMesh("GEO_BRIDGE", Color(1, 1, 1), 0, 0, 34, 34);
+	meshList[GEO_BRIDGE]->textureID = LoadTGA("Image//Bridge.tga");
+
 	if (m_screenvalue == Winscreen)
 	{
 		m_SpriteAnimationLoad = new LuaUsage();
@@ -621,6 +626,11 @@ void SceneManagerLevel2DforScreen::SetShopSelect(int shopSelect)
 	this->m_shop->Buy(shopSelect);
 }
 
+void SceneManagerLevel2DforScreen::SetShopSelectItem(int shopSelectItem)
+{
+	this->m_shop->BuyItem(shopSelectItem);
+}
+
 void SceneManagerLevel2DforScreen::SetParticleStyle(Particle *ParticleVector, int ParticleStyle)
 {
 
@@ -735,7 +745,6 @@ void SceneManagerLevel2DforScreen::Update(double dt)
 		m_alpha += 0.05f;
 	if (Application::IsKeyPressed('6'))
 		m_alpha -= 0.05f;
-
 
 	for (int i = 0; i < theButtonHolder.size(); ++i)
 	{
@@ -1098,14 +1107,6 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	{
 		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
-	/*Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 0, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 30, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 60, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 90, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 120, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 150, 185);
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 180, 185);*/
-	Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + 210, 185);
 	modelStack.PopMatrix();
 }
 
@@ -1215,11 +1216,7 @@ void SceneManagerLevel2DforScreen::RenderShop()
 		{
 			modelStack.PushMatrix();
 			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 420, 629 - m_select * 76);
-			if (!m_shop->GetplayerHardModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerGold() < m_shop->theItemHolder[m_select - 1]->GetPrice())
 			{
 				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
 			}
@@ -1230,11 +1227,7 @@ void SceneManagerLevel2DforScreen::RenderShop()
 		{
 			modelStack.PushMatrix();
 			Render2DMesh(meshList[GEO_SELECT], false, true, 1, 420, 629 - m_select * 76);
-			if (!m_shop->GetplayerHardModeUnlocked())
-			{
-				RenderTextOnScreen(meshList[GEO_TEXT], notUnlocked, Color(1, 0, 0), 30, 200, 110, true);
-			}
-			else if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerMoney() < m_shop->theItemHolder[m_select - 1]->GetPrice())
+			if (!m_shop->theItemHolder[m_select - 1]->GetBought() && m_shop->GetPlayerGold() < m_shop->theItemHolder[m_select - 1]->GetPrice())
 			{
 				RenderTextOnScreen(meshList[GEO_TEXT], Insufficient, Color(1, 0, 0), 30, 200, 110, true);
 			}
@@ -1245,6 +1238,9 @@ void SceneManagerLevel2DforScreen::RenderShop()
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "Levels", Color(0, 0, 1), 50, 150, 400, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "Items", Color(0, 0, 1), 50, 500, 400, true);
+	Render2DMesh(meshList[GEO_BOMB], false, false, 1, 550, 470);
+	Render2DMesh(meshList[GEO_BRIDGE], false, false, 1, 620, 470);
+
 	for (int i = 0; i < m_shop->theItemHolder.size(); i++)
 	{
 		if (i <= 2)
@@ -1260,22 +1256,30 @@ void SceneManagerLevel2DforScreen::RenderShop()
 				RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 150, (290 - i * 75), true);
 			modelStack.PopMatrix();
 		}
-		else
+		else if (i == 3)
 		{
 			modelStack.PushMatrix();
 			string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
 			RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 500, (555 - i * 75), true);
 			string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
 			RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 500, (535 - i * 75), true);
-			if (m_shop->theItemHolder[i]->GetBought())
-				RenderTextOnScreen(meshList[GEO_TEXT], "Bought", Color(0, 1, 0), 30, 500, (515 - i * 75), true);
-			else
-				RenderTextOnScreen(meshList[GEO_TEXT], "Not Bought", Color(1, 0, 0), 30, 500, (515 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], std::to_string(m_shop->GetPlayerBomb()), Color(0, 0, 0), 30, 580, 450, true);
 			modelStack.PopMatrix();
 		}
+		else if (i == 4)
+		{
+			modelStack.PushMatrix();
+			string Naming = "Name: " + m_shop->theItemHolder[i]->GetName();
+			RenderTextOnScreen(meshList[GEO_TEXT], Naming, Color(0, 0, 0), 30, 500, (555 - i * 75), true);
+			string pricing = "Cost: " + std::to_string(m_shop->theItemHolder[i]->GetPrice());
+			RenderTextOnScreen(meshList[GEO_TEXT], pricing, Color(0, 0, 0), 30, 500, (535 - i * 75), true);
+			RenderTextOnScreen(meshList[GEO_TEXT], std::to_string(m_shop->GetPlayerBridge()), Color(0, 0, 0), 30, 660, 450, true);
+			modelStack.PopMatrix();
+		}
+
 	}
 	string currentAmt = "Keys: " + std::to_string(m_shop->GetPlayerMoney());
-	string currentGold = "Gold: " + std::to_string(0);
+	string currentGold = "Gold: " + std::to_string(m_shop->GetPlayerGold());
 	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);

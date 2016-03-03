@@ -237,6 +237,9 @@ private:
 	LevelLoader *m_cLevel;
 	// vector of AI
 	vector<cAI*> AIList;
+	//player health
+	int player_Health;
+	float damage_Buffer;
 };
 
 #endif

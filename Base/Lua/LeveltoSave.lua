@@ -16,7 +16,7 @@ Level3 = {Cleared = false,CollectedKeys = 0,Highscore = 0},
 Level4 = {Cleared = false,CollectedKeys = 0,Highscore = 0}
 },
 Hard = {
-Level1 = {Cleared = false,CollectedKeys = 0,Highscore = 0},
+Level1 = {Cleared = true,CollectedKeys = 1,Highscore = 0},
 Level2 = {Cleared = false,CollectedKeys = 0,Highscore = 0},
 Level3 = {Cleared = false,CollectedKeys = 0,Highscore = 0},
 Level4 = {Cleared = false,CollectedKeys = 0,Highscore = 0}
