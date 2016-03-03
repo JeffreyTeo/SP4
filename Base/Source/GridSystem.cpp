@@ -4,7 +4,7 @@
 
 GridSystem::GridSystem()
 	:PlayerMoved(false)
-	, PrevMovedBlockIdx(0)
+	, PrevMovedBlockIdx(NULL)
 	, movingActive(false)
 	, MovingBlock(NULL)
 	, timer(5.f)
@@ -15,6 +15,7 @@ GridSystem::GridSystem()
 	, PushPull(false)
 	, PushPullTimer(0.f)
 	, CanPush(false)
+	, KeyGridDropPos(Vector3(0, 0, 0))
 {
 }
 
@@ -30,6 +31,11 @@ GridSystem::~GridSystem()
 		GridsVec.clear();
 	}
 
+	if (PrevMovedBlockIdx.size() > 0)
+	{
+		PrevMovedBlockIdx.clear();
+	}
+	
 
 	/*if (FallingBlocks.size() > 0)
 	{
@@ -98,7 +104,7 @@ void GridSystem::Init(Vector3 Pos, float LengthX, float LengthY, int NumOfGridsX
 	}
 }
 
-void GridSystem::UpdateGrid(Vector3 CursorPos)
+void GridSystem::UpdateGrid(Vector3 CursorPos, short &numOfPower1, short &numOfPower2)
 {
 	for (int a = 0; a < GridsVec.size(); a++)
 	{
@@ -108,8 +114,32 @@ void GridSystem::UpdateGrid(Vector3 CursorPos)
 		{
 			if (GridPos.y < CursorPos.y && CursorPos.y < GridPos.y + LengthOfGridsY)
 			{
-				GridsVec[a]->ChangeType();
-			//	std::cout << GridsVec[a]->GetPos() << std::endl;
+				switch (GridsVec[a]->GetType())
+				{
+					case Grid::GridType::ROCK:
+					{
+												 if (numOfPower1 > 0)
+												 {
+													 GridsVec[a]->SetType(11);
+													 numOfPower1--;
+												 }
+											 
+					}
+					break;
+					case Grid::GridType::TRAP:
+					{
+												 if (numOfPower2 > 0)
+												 {
+													 GridsVec[a]->SetType(12);
+													 numOfPower2--;
+												 }
+											
+					}
+					break;
+
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -179,7 +209,7 @@ bool GridSystem::PlayerGridUpdate(char key)
 		{
 			Vector3 GridPos = GridsVec[a]->GetPos();
 			
-			if ((GridsVec[a]->GetType() == Grid::GridType::FLOOR || GridsVec[a]->GetType() == Grid::GridType::KEY || GridsVec[a]->GetType() == Grid::GridType::MOVESIGN || GridsVec[a]->GetType() == Grid::GridType::EXIT || GridsVec[a]->GetType() == Grid::GridType::EXITSIGN || GridsVec[a]->GetType() == Grid::GridType::INTROSIGN || GridsVec[a]->GetType() == Grid::GridType::KEYSIGN || GridsVec[a]->GetType() == Grid::GridType::MONSTERSIGN) && GridsVec[a]->GetStatus() != 1)
+			if ((GridsVec[a]->GetType() == Grid::GridType::FLOOR || GridsVec[a]->GetType() == Grid::GridType::KEY || GridsVec[a]->GetType() == Grid::GridType::MOVESIGN || GridsVec[a]->GetType() == Grid::GridType::EXIT || GridsVec[a]->GetType() == Grid::GridType::EXITSIGN || GridsVec[a]->GetType() == Grid::GridType::INTROSIGN || GridsVec[a]->GetType() == Grid::GridType::KEYSIGN || GridsVec[a]->GetType() == Grid::GridType::MONSTERSIGN || GridsVec[a]->GetType() == Grid::GridType::BOMBED || GridsVec[a]->GetType() == Grid::GridType::BRIDGED) && GridsVec[a]->GetStatus() != 1)
 			{
 				if (PlayerPos == GridPos)
 				{
@@ -256,9 +286,14 @@ void GridSystem::AIGridUpdate()
 }
 
 
-void GridSystem::GridDropInit()
+void GridSystem::GridDropInit(int timesOfEntering)
 {
-
+	if (KeyGridDropPos == Vector3(0, 0, 0))
+	{
+		srand(time(NULL));
+		KeyGridDropPos = Vector3(rand() % 4 + 1, NumOfGridsY / 2 - timesOfEntering * 2 , 0);
+		std::cout << KeyGridDropPos << std::endl;
+	}
 	for (int a = 0; a < this->GridsVec.size(); a++)
 	{
 		int xPos = (a + 1) % this->NumOfGridsX;
@@ -268,12 +303,17 @@ void GridSystem::GridDropInit()
 			//variable to make sure only 1 block spawn at a time
 			if (!movingActive && MovingBlock == NULL)
 			{
-				PrevMovedBlockIdx++;
-				movingActive = true;
-				MovingBlock = GridsVec[PrevMovedBlockIdx];
-				MovingBlock->SetType(1);
-				//add into falling blocks vector
-				this->FallingBlocks.push_back(MovingBlock);
+				if (PrevMovedBlockIdx.size() < (KeyGridDropPos.y * (NumOfGridsX - 2)))
+				{
+					CreateNewIdx();
+					movingActive = true;
+					MovingBlock = GridsVec[PrevMovedBlockIdx[PrevMovedBlockIdx.size() - 1] + KeyGridDropPos.y * NumOfGridsX];
+					MovingBlock->SetType(1);
+					//add into falling blocks vector
+					this->FallingBlocks.push_back(MovingBlock);
+					timer = 5.f;
+				}
+				
 			}
 		}
 		else
@@ -289,12 +329,14 @@ void GridSystem::GridDropInit()
 			//the leftmost, rightmost and bottom rows are all automatically blocks
 			GridsVec[a]->SetType(1);
 		}
-	}
 
+		
+	}
+	GridsVec[(KeyGridDropPos.y - 1) * NumOfGridsX + KeyGridDropPos.x]->SetType(2);
 
 }
 
-void GridSystem::GridDropUpdate()
+void GridSystem::GridDropUpdate(int timesOfEntering)
 {
 	if (movingActive && MovingBlock != NULL)
 	{
@@ -314,6 +356,15 @@ void GridSystem::GridDropUpdate()
 							FallingBlocks[b]->SetType(0);
 							FallingBlocks[b] = GridsVec[a + NumOfGridsX];
 							FallingBlocks[b]->SetType(1);
+							if (FallingBlocks[b] == PlayerGrid)
+							{
+								//check if grid below player is empty
+								//if (GridsVec[(PlayerGridPos.y + 1) * NumOfGridsX + PlayerGridPos.x]->GetType() == Grid::GridType::FLOOR)
+								{
+									this->PlayerGrid = GridsVec[(PlayerGridPos.y + 1) * NumOfGridsX + PlayerGridPos.x];
+								}
+							}
+
 							skip = true;
 							timer = 5.f;
 							break;
@@ -323,15 +374,16 @@ void GridSystem::GridDropUpdate()
 							//only when the latest block can no longer move(no space below/stuck to another block) then add new block
 							if (FallingBlocks[FallingBlocks.size() - 1] == FallingBlocks[b])
 							{
-								if (PrevMovedBlockIdx >= NumOfGridsX - 2)
-									PrevMovedBlockIdx = 0;
+								
 								movingActive = false;
 								MovingBlock = NULL;
-								GridDropInit();
+								GridDropInit(timesOfEntering);
 							}
 
 						}
 					}
+					//check if falling block is same as player grid
+					
 
 				}
 				if (skip)
@@ -412,7 +464,7 @@ bool GridSystem::PlayerGridDropUpdate(char key)
 		{
 			Vector3 GridPos = GridsVec[a]->GetPos();
 			//check if next grid to be landed on is a floor
-			if ((GridsVec[a]->GetType() == Grid::GridType::FLOOR) && GridsVec[a]->GetStatus() != 1)
+			if ((GridsVec[a]->GetType() == Grid::GridType::FLOOR || GridsVec[a]->GetType() == Grid::GridType::KEY) && GridsVec[a]->GetStatus() != 1)
 			{
 				if (PlayerPos == GridPos)
 				{
@@ -540,6 +592,45 @@ void GridSystem::PlayerGridDropStateChange(char key)
 	PlayerGridDropPushPull(key, PlayerPushPull);
 }
 
+void GridSystem::ResetGridDrop(int playerX, int playerY, int timesOfEntering)
+{
+	PlayerGridSetUp(playerX, playerY);
+
+	if (KeyGridDropPos != Vector3(0, 0, 0))
+	{
+		KeyGridDropPos = Vector3(0, 0, 0);
+	}
+
+	FallingBlocks.clear();
+
+	for (int a = 0; a < this->GridsVec.size(); a++)
+	{
+		this->GridsVec[a]->SetType(0);
+	}
+
+
+	if (PrevMovedBlockIdx.size() > 0)
+	{
+		PrevMovedBlockIdx.clear();
+	}
+
+	movingActive = false;
+	MovingBlock = NULL;
+	timer = 5.f;
+	PlayerJumped = false;
+	PlayerJumpedTimer = 5.f;
+	PlayerBuffer = 0.f;
+	PlayerPushPull = false;
+	PushPull = false;
+	PushPullTimer = 0.f;
+	CanPush = false;
+
+
+
+	GridDropInit(timesOfEntering);
+
+}
+
 bool GridSystem::CheckCollisionType(Grid::GridType CheckType, int& NumOfCollides)
 {
 	bool collided = false;
@@ -557,6 +648,43 @@ bool GridSystem::CheckCollisionType(Grid::GridType CheckType, int& NumOfCollides
 		NumOfCollides++;
 	}
 	return collided;
+}
+
+void GridSystem::CreateNewIdx()
+{
+	bool createdIdx = false;
+	
+	while (!createdIdx)
+	{
+		bool PushIntoVector = true;
+		srand(time(NULL));
+		int tempIdx = rand() % 4 + 1;
+		for (int a = 0; a < 2; a++)
+		{
+			if (this->PrevMovedBlockIdx.size() == 0)
+			{
+				break;
+			}
+			else
+			{
+				int prevIdx = PrevMovedBlockIdx.size() - (a + 1);
+				if (prevIdx >= 0)
+				{
+					if (tempIdx == PrevMovedBlockIdx[prevIdx])
+					{
+						PushIntoVector = false;
+					}
+				}
+			}
+		}
+
+		if (PushIntoVector)
+		{
+			PrevMovedBlockIdx.push_back(tempIdx);
+			createdIdx = true;
+		}
+	}
+	
 }
 
 vector<Grid*> GridSystem::GetGridsVec()

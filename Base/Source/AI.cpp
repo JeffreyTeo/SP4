@@ -83,7 +83,7 @@ void cAI::update(Vector3 PlayerPos, bool &playermoved)
 		case STATE_ATTACK:
 
 			speedMultiplier = getDifficulty();
-			timer += (0.07 * speedMultiplier);
+			timer += (0.03 * speedMultiplier);
 
 			if (playermoved && timer >= limit)
 			{

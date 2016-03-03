@@ -88,6 +88,9 @@ class CSceneManager2D : public Scene
 		GEO_MONSTER,
 		GEO_WALL,
 		GEO_KEY,
+		//power ups
+		GEO_BOMBED,
+		GEO_BRIDGED,
 		GEO_EXIT,
 
 		GEO_MOVELOSESIGN,
@@ -248,7 +251,9 @@ private:
 
 	//grid system and grids
 	GridSystem* Playfield;
-	GridSystem* TestField;
+	GridSystem* Platformer;
+	GridSystem* CurrentLayout;
+	bool switchStage;
 
 	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
 	float direction;

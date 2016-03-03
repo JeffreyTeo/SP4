@@ -13,6 +13,10 @@ CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
 , Playfield(NULL)
+, Platformer(NULL)
+, CurrentLayout(NULL)
+, switchStage(false)
+, KeysCollected(0)
 , tempsound(0.5)
 , m_Load(NULL)
 , m_cLevel(NULL)
@@ -37,6 +41,10 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 : m_player(NULL)
 , m_save(NULL)
 , Playfield(NULL)
+, Platformer(NULL)
+, CurrentLayout(NULL)
+, switchStage(false)
+, KeysCollected(0)
 , tempsound(0.5)
 , m_Load(NULL)
 , m_cLevel(NULL)
@@ -52,6 +60,8 @@ CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_he
 , Sign3Exited(false)
 , Sign4Exited(false)
 , Sign5Exited(false)
+, player_Health(0)
+, damage_Buffer(5.f)
 {
 	this->m_windowWidth = m_window_width;
 	this->m_windowHeight = m_window_height;
@@ -77,10 +87,10 @@ CSceneManager2D::~CSceneManager2D()
 		Playfield = NULL;
 	}
 
-	if (TestField)
+	if (Platformer)
 	{
-		delete TestField;
-		TestField = NULL;
+		delete Platformer;
+		Platformer = NULL;
 	}
 
 	if (m_Load)
@@ -237,6 +247,12 @@ void CSceneManager2D::Init()
 	meshList[GEO_FEET]->textureID = LoadTGA("Image//Feet.tga");
 	meshList[GEO_EXIT] = MeshBuilder::Generate2DMesh("GEO_EXIT", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_EXIT]->textureID = LoadTGA("Image//Exit.tga");
+	
+	meshList[GEO_BOMBED] = MeshBuilder::Generate2DMesh("GEO_BOMBED", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_BOMBED]->textureID = LoadTGA("Image//Rock_Bombed.tga");
+	
+	meshList[GEO_BRIDGED] = MeshBuilder::Generate2DMesh("GEO_BRIDGED", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_BRIDGED]->textureID = LoadTGA("Image//Bridge.tga");
 
 	meshList[GEO_SIGN] = MeshBuilder::Generate2DMesh("GEO_SIGN", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_SIGN]->textureID = LoadTGA("Image//Sign.tga");
@@ -361,13 +377,15 @@ void CSceneManager2D::Init()
 
 	timeBuffer = 0.f;
 
-	TestField = new GridSystem();
-	TestField->Init(Vector3(625, 300, 0), 50.f, 50.f, 6, 12);
-	TestField->GridDropInit();
-	TestField->PlayerGridSetUp(4, 10);
+	Platformer = new GridSystem();
+	Platformer->Init(Vector3(m_LevelDetails->GetPositionXOfGrid(), m_LevelDetails->GetPositionYOfGrid(), 0), m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetLengthYOfAGrid(), 6, 10);
+	Platformer->GridDropInit(KeysCollected);
+	Platformer->PlayerGridSetUp(4, 8);
 
 	player_Health = 3;
 	m_losed = false;
+
+	CurrentLayout = Playfield;
 
 }
 
@@ -498,8 +516,10 @@ void CSceneManager2D::AddHighscore()
 void CSceneManager2D::SetScoreToGold(int ScoreToGold)
 {
 	this->ScoreToGold = ScoreToGold; // let the variable be the inputed score
-	this->ScoreToGold = this->ScoreToGold * NoOfMoves; // multiply that inputed score with the no of moves
+	this->ScoreToGold = this->ScoreToGold + NoOfMoves; // multiply that inputed score with the no of moves
 	this->ScoreToGold = this->ScoreToGold + (KeysCollected * 10); // add the no of key collected and multiply each key with 10
+	this->ScoreToGold = this->ScoreToGold + this->player_Health;
+
 }
 
 int CSceneManager2D::GetScoreToGold()
@@ -533,17 +553,10 @@ void CSceneManager2D::Update(double dt)
 		MoveChar = false;
 	}
 
-	if (player_Health <= 0 || NoOfMoves <= 0)
+	if (CurrentLayout == Playfield)
 	{
-		m_WinCondition = -1;
-		if (Application::IsKeyPressed(VK_RETURN))
-		{
-			m_losed = true;
-		}
-	}
-
-	if (m_WinCondition != 1)
-	{
+		/*****************************************************************/
+		//Playfield stuff
 		if (player_Health <= 0 || NoOfMoves <= 0)
 		{
 			m_WinCondition = -1;
@@ -552,231 +565,193 @@ void CSceneManager2D::Update(double dt)
 				m_losed = true;
 			}
 		}
-	}
 
-	if (m_WinCondition != -1)
-	{
-		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+		if (m_WinCondition != 1)
 		{
-
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+			if (player_Health <= 0 || NoOfMoves <= 0)
 			{
-				if (Playfield->GetGridsVec()[a]->keyCollected == true)
+				m_WinCondition = -1;
+				if (Application::IsKeyPressed(VK_RETURN))
 				{
-					TempKeyCollectedCalc++;
-				}
-			}
-			this->KeysCollected = TempKeyCollectedCalc;
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
-			{
-			if (Playfield->GetGridsVec()[a]->Win == true)
-			{
-			TempWin = 1;
-			}
-			}*/
-			this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
-			{
-			if (Playfield->GetGridsVec()[a]->Sign1Exited == true)
-			{
-			Sign1Touch = true;
-			}
-			}*/
-			if (Sign1Exited == false)
-				this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
-			{
-			if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
-			{
-			Sign2Touch = true;
-			}
-			}*/
-			if (Sign2Exited == false)
-				this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
-			{
-			if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
-			{
-			Sign3Touch = true;
-			}
-			}*/
-			if (Sign3Exited == false)
-				this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
-			{
-			if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
-			{
-			Sign4Touch = true;
-			}
-			}*/
-			if (Sign4Exited == false)
-				this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
-
-			/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
-			{
-			if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
-			{
-			Sign5Touch = true;
-			}
-			}*/
-			if (Sign5Exited == false)
-				this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
-		}
-		
-		if (Application::IsKeyPressed('X'))
-		{
-			MoveChar = true;
-			if (ShowStart == true)
-			{
-				Sign1Exited = true;
-				ShowStart = false;
-			}
-			if (ShowMove == true)
-			{
-				Sign2Exited = true;
-				ShowMove = false;
-			}
-			if (ShowKey == true)
-			{
-				Sign3Exited = true;
-				ShowKey = false;
-			}
-			if (ShowMonster == true)
-			{
-				Sign4Exited = true;
-				ShowMonster = false;
-			}
-			if (ShowExit == true)
-			{
-				Sign5Exited = true;
-				ShowExit = false;
-			}
-		}
-		if (damage_Buffer <= 0.f)
-		{
-			for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
-			{
-				if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
-				{
-					player_Health--;
-					damage_Buffer = 5.0f;
-					cout << "player health" << player_Health << endl;
+					m_losed = true;
 				}
 			}
 		}
-		else
-			damage_Buffer -= 0.1f;
-	}
 
-	if (m_WinCondition == 1)
-	{
-		if (m_player->GetLevelToDifficultyStartAt() == 1)
+		if (m_WinCondition != -1)
 		{
-			if (m_player->GetLevelToStartAt() == 1)
-				SetScoreToGold(10);
-			if (m_player->GetLevelToStartAt() == 2)
-				SetScoreToGold(20);
-			if (m_player->GetLevelToStartAt() == 3)
-				SetScoreToGold(30);
-			if (m_player->GetLevelToStartAt() == 4)
-				SetScoreToGold(40);
-		}
-		if (m_player->GetLevelToDifficultyStartAt() == 2)
-		{
-			if (m_player->GetLevelToStartAt() == 1)
-				SetScoreToGold(50);
-			if (m_player->GetLevelToStartAt() == 2)
-				SetScoreToGold(60);
-			if (m_player->GetLevelToStartAt() == 3)
-				SetScoreToGold(70);
-			if (m_player->GetLevelToStartAt() == 4)
-				SetScoreToGold(80);
-		}
-		if (m_player->GetLevelToDifficultyStartAt() == 3)
-		{
-			if (m_player->GetLevelToStartAt() == 1)
-				SetScoreToGold(90);
-			if (m_player->GetLevelToStartAt() == 2)
-				SetScoreToGold(100);
-			if (m_player->GetLevelToStartAt() == 3)
-				SetScoreToGold(110);
-			if (m_player->GetLevelToStartAt() == 4)
-				SetScoreToGold(120);
-		}
-		PlayerScore.addScore(GetScoreToGold());
-		AddHighscore();
-	}
-
-
-
-	/*if (Application::IsKeyPressed('X'))
-	{
-		MoveChar = true;
-		if (ShowStart = true)
-			ShowStart = false;
-		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
-		{
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+			for (int a = 0; a < CurrentLayout->GetGridsVec().size(); a++)
 			{
+
+				
+
+			
+				this->m_WinCondition = CurrentLayout->CheckCollisionType(Grid::GridType::EXIT, count);
+
+			
+				if (Sign1Exited == false)
+					this->ShowStart = CurrentLayout->CheckCollisionType(Grid::GridType::INTROSIGN, count);
+
+			
+				if (Sign2Exited == false)
+					this->ShowMove = CurrentLayout->CheckCollisionType(Grid::GridType::MOVESIGN, count);
+
+				
+				if (Sign3Exited == false)
+					this->ShowKey = CurrentLayout->CheckCollisionType(Grid::GridType::KEYSIGN, count);
+
+			
+				if (Sign4Exited == false)
+					this->ShowMonster = CurrentLayout->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
+
+				
+				if (Sign5Exited == false)
+					this->ShowExit = CurrentLayout->CheckCollisionType(Grid::GridType::EXITSIGN, count);
+			}
+
+			if (Application::IsKeyPressed('X'))
+			{
+				MoveChar = true;
 				if (ShowStart == true)
 				{
+					Sign1Exited = true;
 					ShowStart = false;
 				}
-			}
-
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
-			{
-				if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
+				if (ShowMove == true)
 				{
-					Playfield->GetGridsVec()[a]->Sign2Exited = false;
+					Sign2Exited = true;
+					ShowMove = false;
+				}
+				if (ShowKey == true)
+				{
+					Sign3Exited = true;
+					ShowKey = false;
+				}
+				if (ShowMonster == true)
+				{
+					Sign4Exited = true;
+					ShowMonster = false;
+				}
+				if (ShowExit == true)
+				{
+					Sign5Exited = true;
+					ShowExit = false;
 				}
 			}
-			this->ShowMove = Sign2Touch;
-
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+			if (damage_Buffer <= 0.f)
 			{
-				if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
+				for (int a = 0; a < CurrentLayout->GetAIGrids().size(); a++)
 				{
-					Playfield->GetGridsVec()[a]->Sign3Exited = false;
+					if (CurrentLayout->GetPlayerGrid() == CurrentLayout->GetAIGrids()[a])
+					{
+						player_Health--;
+						damage_Buffer = 5.0f;
+						cout << "player health" << player_Health << endl;
+					}
 				}
 			}
-			this->ShowKey = Sign3Touch;
-
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
-			{
-				if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
-				{
-					Playfield->GetGridsVec()[a]->Sign4Exited = false;
-				}
-			}
-			this->ShowMonster = Sign4Touch;
-
-			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
-			{
-				if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
-				{
-					Playfield->GetGridsVec()[a]->Sign5Exited = false;
-				}
-			}
-			this->ShowExit = Sign5Touch;
+			else
+				damage_Buffer -= 0.1f;
 		}
-	}*/
 
-	//playfield
-	if (NoOfMoves <= 0)
-	{
-		MoveChar = false;
-		NoOfMoves = 0;
+		if (m_WinCondition == 1)
+		{
+			if (m_player->GetLevelToDifficultyStartAt() == 1)
+			{
+				if (m_player->GetLevelToStartAt() == 1)
+					SetScoreToGold(10);
+				if (m_player->GetLevelToStartAt() == 2)
+					SetScoreToGold(20);
+				if (m_player->GetLevelToStartAt() == 3)
+					SetScoreToGold(30);
+				if (m_player->GetLevelToStartAt() == 4)
+					SetScoreToGold(40);
+			}
+			if (m_player->GetLevelToDifficultyStartAt() == 2)
+			{
+				if (m_player->GetLevelToStartAt() == 1)
+					SetScoreToGold(50);
+				if (m_player->GetLevelToStartAt() == 2)
+					SetScoreToGold(60);
+				if (m_player->GetLevelToStartAt() == 3)
+					SetScoreToGold(70);
+				if (m_player->GetLevelToStartAt() == 4)
+					SetScoreToGold(80);
+			}
+			if (m_player->GetLevelToDifficultyStartAt() == 3)
+			{
+				if (m_player->GetLevelToStartAt() == 1)
+					SetScoreToGold(90);
+				if (m_player->GetLevelToStartAt() == 2)
+					SetScoreToGold(100);
+				if (m_player->GetLevelToStartAt() == 3)
+					SetScoreToGold(110);
+				if (m_player->GetLevelToStartAt() == 4)
+					SetScoreToGold(120);
+			}
+			PlayerScore.addScore(GetScoreToGold());
+			AddHighscore();
+		}
+
+
+
+	
+
+		//playfield
+		if (NoOfMoves <= 0)
+		{
+			MoveChar = false;
+			NoOfMoves = 0;
+		}
+
+		if (MoveChar == true)
+		{
+			if (timeBuffer > 5.f)
+			{
+				char key = 'z';
+				if (Application::IsKeyPressed('W'))
+				{
+					key = 'w';
+				}
+				else if (Application::IsKeyPressed('S'))
+				{
+					key = 's';
+				}
+				else if (Application::IsKeyPressed('A'))
+				{
+					key = 'a';
+				}
+				else if (Application::IsKeyPressed('D'))
+				{
+					key = 'd';
+				}
+				if (CurrentLayout->PlayerGridUpdate(key))
+				{
+					timeBuffer = 0.f;
+					NoOfMoves--;
+					switchStage = false;
+				}
+			}
+			timeBuffer += 1.f;
+		}
+		/*****************************************************************/
+		CurrentLayout->AIGridUpdate();
+		cout << "keycollected::     " << CurrentLayout->CheckCollisionType(Grid::GridType::KEY, count) << endl;
+		cout << "switchStage::     " << switchStage << endl;
+
+		if (CurrentLayout->CheckCollisionType(Grid::GridType::KEY, count) && !switchStage)
+		{
+
+
+			CurrentLayout = Platformer;
+			CurrentLayout->ResetGridDrop(4, 8, KeysCollected);
+			switchStage = true;
+		}
 	}
-
-	if (MoveChar == true)
+	else
 	{
-		if (timeBuffer > 5.f)
+		/*****************************************************************/
+		//platformer stuff
 		{
 			char key = 'z';
 			if (Application::IsKeyPressed('W'))
@@ -795,54 +770,38 @@ void CSceneManager2D::Update(double dt)
 			{
 				key = 'd';
 			}
-			if (Playfield->PlayerGridUpdate(key))
+			else if (Application::IsKeyPressed('P'))
 			{
-				timeBuffer = 0.f;
-				NoOfMoves--;
+				key = 'p';
+			}
+
+			CurrentLayout->PlayerGridDropUpdate(key);
+			CurrentLayout->PlayerGridDropStateChange(key);
+
+			//cout << Platformer->GetPlayerGrid()->GetDirection() << endl;
+			CurrentLayout->GridDropUpdate(KeysCollected);
+
+			if (CurrentLayout->CheckCollisionType(Grid::GridType::KEY, count) || CurrentLayout->CheckCollisionType(Grid::GridType::WALL, count))
+			{
+				if (CurrentLayout->CheckCollisionType(Grid::GridType::KEY, count))
+					this->KeysCollected++;
+				CurrentLayout = Playfield;
+				
 			}
 		}
-		timeBuffer += 1.f;
+		///*****************************************************************/
 	}
 
 
-	/*****************************************************************/
-	//test field stuff
-	{
-		char key = 'z';
-		if (Application::IsKeyPressed('W'))
-		{
-			key = 'w';
-		}
-		else if (Application::IsKeyPressed('S'))
-		{
-			key = 's';
-		}
-		else if (Application::IsKeyPressed('A'))
-		{
-			key = 'a';
-		}
-		else if (Application::IsKeyPressed('D'))
-		{
-			key = 'd';
-		}
-		else if (Application::IsKeyPressed('P'))
-		{
-			key = 'p';
-		}
 
-		TestField->PlayerGridDropUpdate(key);
-		TestField->PlayerGridDropStateChange(key);
 
-		//cout << TestField->GetPlayerGrid()->GetDirection() << endl;
-		TestField->GridDropUpdate();
-	}
-	///*****************************************************************/
+
 
 
 	camera.Update(dt);
 	//m_spriteAnimation->Update(dt);
 	
-	Playfield->AIGridUpdate();
+	//Playfield->AIGridUpdate();
 	/*
 
 	// Update the hero
@@ -905,11 +864,18 @@ void CSceneManager2D::UpdateMouseStatus(const unsigned char key)
 {
 	if (key == WA_LEFT_CLICKED)
 	{
-		//get cursor position
-		double x, y;
-		Application::GetMousePos(x, y);
-		Playfield->UpdateGrid(Vector3(x, y, 0));
-		cout << x << ", " << y << endl;
+		if (CurrentLayout == Playfield)
+		{
+			short NumOfBombs = m_player->GetAmtOfBomb();
+			short NumOfBridges = m_player->GetAmtOfBridge();
+			//get cursor position
+			double x, y;
+			Application::GetMousePos(x, y);
+			CurrentLayout->UpdateGrid(Vector3(x, y, 0), NumOfBombs, NumOfBridges);
+			m_player->SetAmtOfBomb(NumOfBombs);
+			m_player->SetAmtOfBridge(NumOfBridges);
+		}
+		
 	}
 }
 
@@ -1027,19 +993,21 @@ void CSceneManager2D::RenderBackground()
 
 void CSceneManager2D::RenderGridSystem()
 {
+	
+if (CurrentLayout == Playfield)
+{
 	//render grid layout
-	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	for (int a = 0; a < CurrentLayout->GetGridsVec().size(); a++)
 	{
 		modelStack.PushMatrix();
 		//get position of a grid in the vector 
-		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
-		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
-			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
-			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);	
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		Vector3 GridPos = CurrentLayout->GetGridsVec()[a]->GetPos();
+
+		if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
+			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
 		{
-			if (Playfield->GetGridsVec()[a]->keyCollected == false)
+			if (CurrentLayout->GetGridsVec()[a]->keyCollected == false)
 			{
 				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
 			}
@@ -1048,44 +1016,49 @@ void CSceneManager2D::RenderGridSystem()
 				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
 			}
 		}
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
-			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);	
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
+			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
 			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
 			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
 			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
 			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
 			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
 			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
-		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
 			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
-		
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::BOMBED)
+			Render2DMesh(meshList[GEO_BOMBED], false, false, 1, GridPos.x, GridPos.y);
+		else if (CurrentLayout->GetGridsVec()[a]->GetType() == Grid::GridType::BRIDGED)
+			Render2DMesh(meshList[GEO_BRIDGED], false, false, 1, GridPos.x, GridPos.y);
+		else
+			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
 		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
 		modelStack.PopMatrix();
 	}
 	//render player trail
-	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	for (int a = 0; a < CurrentLayout->GetGridsVec().size(); a++)
 	{
 		modelStack.PushMatrix();
 		//get position of a grid in the vector 
-		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
-		if (Playfield->GetGridsVec()[a]->GetStatus() == 1 && (Playfield->GetGridsVec()[a]->GetType() == 0 || Playfield->GetGridsVec()[a]->GetType() == 2))
+		Vector3 GridPos = CurrentLayout->GetGridsVec()[a]->GetPos();
+		if (CurrentLayout->GetGridsVec()[a]->GetStatus() == 1 && (CurrentLayout->GetGridsVec()[a]->GetType() == 0 || CurrentLayout->GetGridsVec()[a]->GetType() == 2))
 		{
-			float FeetDirection = Playfield->GetGridsVec()[a]->GetDirection();
+			float FeetDirection = CurrentLayout->GetGridsVec()[a]->GetDirection();
 			if (FeetDirection == 0.f)
-			offset = Vector3(0, 0, 0);
+				offset = Vector3(0, 0, 0);
 			else if (FeetDirection == 180.f)
-			offset = Vector3(50, 50, 0);
+				offset = Vector3(50, 50, 0);
 			else if (FeetDirection == 90.f)
-			offset = Vector3(50, 0, 0);
+				offset = Vector3(50, 0, 0);
 			else if (FeetDirection == -90.f)
-			offset = Vector3(0, 50, 0);
-			
+				offset = Vector3(0, 50, 0);
+
 			Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, FeetDirection);
 			//Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, direction);
 
@@ -1095,56 +1068,55 @@ void CSceneManager2D::RenderGridSystem()
 		modelStack.PopMatrix();
 	}
 
-	//render player
-	Vector3 PlayerGridPos = Playfield->GetPlayerGrid()->GetPos();
-	Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
+
 	//render AI
-	for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+	for (int a = 0; a < CurrentLayout->GetAIGrids().size(); a++)
 	{
-		Vector3 AIGridPos = Playfield->GetAIGrids()[a]->GetPos();
+		Vector3 AIGridPos = CurrentLayout->GetAIGrids()[a]->GetPos();
 		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, false, 1, AIGridPos.x, AIGridPos.y);
 	}
-		
+}
+else
+{
+	//test field
+	//render grid layout
+	for (int a = 0; a < Platformer->GetGridsVec().size(); a++)
+	{
+		modelStack.PushMatrix();
+		//get position of a grid in the vector 
+		Vector3 GridPos = Platformer->GetGridsVec()[a]->GetPos();
+		if (Platformer->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
+			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);
+		else if (Platformer->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		{
+			if (Platformer->GetGridsVec()[a]->keyCollected == false)
+			{
+				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
+			}
+			else
+			{
+				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+			}
+		}
+		else if (Platformer->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
+			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);
+		else if (Platformer->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
+			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
+		else if (Platformer->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
+		else
+			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+		modelStack.PopMatrix();
+	}
+}
 
 
-	//{
-	//	//test field
-	//	//render grid layout
-	//	for (int a = 0; a < TestField->GetGridsVec().size(); a++)
-	//	{
-	//		modelStack.PushMatrix();
-	//		//get position of a grid in the vector 
-	//		Vector3 GridPos = TestField->GetGridsVec()[a]->GetPos();
-	//		if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
-	//			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
-	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
-	//			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);
-	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
-	//		{
-	//			if (TestField->GetGridsVec()[a]->keyCollected == false)
-	//			{
-	//				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
-	//			}
-	//			else
-	//			{
-	//				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
-	//			}
-	//		}
-	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
-	//			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);
-	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
-	//			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
-	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
-	//			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
-	//		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
-	//		modelStack.PopMatrix();
-	//	}
-	//	//render player
-	//	PlayerGridPos = TestField->GetPlayerGrid()->GetPos();
-	//	Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
-	//}
-	//
 
+
+//render player
+Vector3 PlayerGridPos = CurrentLayout->GetPlayerGrid()->GetPos();
+Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
 
 }
 

@@ -14,8 +14,8 @@ public:
 
 	//initialise various needed variables
 	void Init(Vector3 Pos, float LengthX, float LengthY, int NumOfGridsX, int NumOfGridsY);
-	//update the grid system 
-	void UpdateGrid(Vector3);
+	//default update the grid system 
+	void UpdateGrid(Vector3, short&, short&);
 	//set map layout
 	void SetMap(vector<vector<int>>);
 	//set player grid and Position
@@ -28,12 +28,16 @@ public:
 	void AIGridUpdate();
 	
 	// for tetris like blocks falling
-	void GridDropInit();
-	void GridDropUpdate();
+	void GridDropInit(int);
+	void GridDropUpdate(int);
 	bool PlayerGridDropUpdate(char key);
 
 	void PlayerGridDropPushPull(char key, bool grab);
 	void PlayerGridDropStateChange(char key);
+
+	void ResetGridDrop(int, int, int);
+
+	void CreateNewIdx();
 
 	//for checking collision between player to specific grid 
 	bool CheckCollisionType(Grid::GridType, int&);
@@ -61,7 +65,7 @@ private:
 	Vector3 PosOfGrid;
 	
 	//for dropping blocks
-	int PrevMovedBlockIdx;
+	vector<int> PrevMovedBlockIdx;
 	bool movingActive;
 	Grid* MovingBlock;
 	vector<Grid*> FallingBlocks;
@@ -73,6 +77,6 @@ private:
 	bool CanPush;
 	bool PushPull;
 	float PushPullTimer;
-
+	Vector3 KeyGridDropPos;
 };
 

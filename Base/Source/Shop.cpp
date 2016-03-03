@@ -33,9 +33,6 @@ void Shop::PlayerInit(Player* playerinfo)
 	m_playerGold = playerinfo->GetAmtOfGold();
 	m_BombMaxStack = playerinfo->GetAmtOfBomb();
 	m_BridgeMaxStack = playerinfo->GetAmtOfBridge();
-	m_playerEasyModeUnlocked = playerinfo->GetEasyLevelUnlocked();
-	m_playerNormalModeUnlocked = playerinfo->GetNormalLevelUnlocked();
-	m_playerHardModeUnlocked = playerinfo->GetHardLevelUnlocked();
 }
 void Shop::ItemInit()
 {
