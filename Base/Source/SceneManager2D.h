@@ -102,8 +102,12 @@ class CSceneManager2D : public Scene
 		GEO_SIGN5,
 		GEO_SIGN6,
 
+		// UI
 		GEO_KEYSCOLLECTED,
 		GEO_MOVESLEFT,
+		GEO_BOMBSLEFT,
+		GEO_BRIDGESLEFT,
+
 		// Show Movement
 		GEO_FEET,
 
@@ -151,6 +155,8 @@ public:
 	// UI
 	int KeysCollected;
 	int NoOfMoves;
+	int NoOfBombs;
+	int NoOfBridges;
 	bool MoveChar;
 
 	// Highscore
@@ -232,6 +238,7 @@ private:
 	bool Sign3Exited;
 	bool Sign4Exited;
 	bool Sign5Exited;
+
 	// Score to Gold Conversion
 	int ScoreToGold;
 

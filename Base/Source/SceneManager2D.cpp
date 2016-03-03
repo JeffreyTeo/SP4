@@ -205,6 +205,10 @@ void CSceneManager2D::Init()
 	meshList[GEO_KEYSCOLLECTED]->textureID = LoadTGA("Image//KeysCollected.tga");
 	meshList[GEO_MOVESLEFT] = MeshBuilder::Generate2DMesh("GEO_MOVESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
 	meshList[GEO_MOVESLEFT]->textureID = LoadTGA("Image//MovesLeft.tga");
+	meshList[GEO_BOMBSLEFT] = MeshBuilder::Generate2DMesh("GEO_BOMBSLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_BOMBSLEFT]->textureID = LoadTGA("Image//BombsLeft.tga");
+	meshList[GEO_BRIDGESLEFT] = MeshBuilder::Generate2DMesh("GEO_BRIDGESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_BRIDGESLEFT]->textureID = LoadTGA("Image//BridgesLeft.tga");
 
 	meshList[GEO_MOVELOSESIGN] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 400, 200);
 	meshList[GEO_MOVELOSESIGN]->textureID = LoadTGA("Image//MovesLoseSign.tga");
@@ -234,7 +238,6 @@ void CSceneManager2D::Init()
 
 	meshList[GEO_SIGN] = MeshBuilder::Generate2DMesh("GEO_SIGN", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_SIGN]->textureID = LoadTGA("Image//Sign.tga");
-
 	meshList[GEO_SIGN1] = MeshBuilder::Generate2DMesh("GEO_SIGN1", Color(1, 1, 1), 0, 0, 260, 230);
 	meshList[GEO_SIGN1]->textureID = LoadTGA("Image//Sign1.tga");
 	meshList[GEO_SIGN2] = MeshBuilder::Generate2DMesh("GEO_SIGN2", Color(1, 1, 1), 0, 0, 260, 230);
@@ -245,6 +248,9 @@ void CSceneManager2D::Init()
 	meshList[GEO_SIGN4]->textureID = LoadTGA("Image//Sign4.tga");
 	meshList[GEO_SIGN5] = MeshBuilder::Generate2DMesh("GEO_SIGN5", Color(1, 1, 1), 0, 0, 260, 230);
 	meshList[GEO_SIGN5]->textureID = LoadTGA("Image//Sign5.tga");
+	meshList[GEO_SIGN6] = MeshBuilder::Generate2DMesh("GEO_SIGN6", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN6]->textureID = LoadTGA("Image//Sign6.tga");
+
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
@@ -534,7 +540,18 @@ void CSceneManager2D::Update(double dt)
 		}
 	}
 
-	
+	if (m_WinCondition != 1)
+	{
+		if (player_Health <= 0 || NoOfMoves <= 0)
+		{
+			m_WinCondition = -1;
+			if (Application::IsKeyPressed(VK_RETURN))
+			{
+				m_losed = true;
+			}
+		}
+	}
+
 	if (m_WinCondition != -1)
 	{
 		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
@@ -608,6 +625,7 @@ void CSceneManager2D::Update(double dt)
 			if (Sign5Exited == false)
 				this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
 		}
+		
 		if (Application::IsKeyPressed('X'))
 		{
 			MoveChar = true;
@@ -644,6 +662,7 @@ void CSceneManager2D::Update(double dt)
 				if (Playfield->GetPlayerGrid() == Playfield->GetAIGrids()[a])
 				{
 					player_Health--;
+					damage_Buffer = 5.0f;
 					cout << "player health" << player_Health << endl;
 				}
 			}
@@ -651,11 +670,6 @@ void CSceneManager2D::Update(double dt)
 		else
 			damage_Buffer -= 0.1f;
 	}
-	
-
-	
-
-	
 
 	if (m_WinCondition == 1)
 	{
@@ -1150,6 +1164,21 @@ void CSceneManager2D::RenderUI()
 	RenderTextOnScreen(meshList[GEO_TEXT], Keys.str(), Color(0, 0, 0), 40, 300, 520, true);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_BOMBSLEFT], false, false, 1, 550, 200);
+	std::ostringstream Bombs;
+	Bombs << "x " << m_player->GetAmtOfBomb();
+	RenderTextOnScreen(meshList[GEO_TEXT], Bombs.str(), Color(0, 0, 0), 40, 650, 220, true);
+	modelStack.PopMatrix();
+
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_BRIDGESLEFT], false, false, 1, 550, 100);
+	std::ostringstream Bridges;
+	Bridges << "x " << m_player->GetAmtOfBridge();
+	RenderTextOnScreen(meshList[GEO_TEXT], Bridges.str(), Color(0, 0, 0), 40, 650, 120, true);
+	modelStack.PopMatrix();
+
 	if (ShowStart)
 	{
 		modelStack.PushMatrix();
@@ -1249,6 +1278,8 @@ void CSceneManager2D::Exit()
 			
 		if (theLevelDetailsHolder[l]->GetCollectedKeys() == 3)
 			theLevelDetailsHolder[l]->SetCollectedKeys(3);	
+
+		m_player->SetAmtOfGold(m_player->GetAmtOfGold() + GetScoreToGold());
 	}
 	m_save->SaveLevelStuff(theLevelDetailsHolder,m_maxleveltutorial, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);

@@ -5,7 +5,7 @@ AmountOfDiff = 4
 AmountOfTutorialDiff = 1
 Level = {
 Tutorial = {
-Level1 = {Cleared = false,CollectedKeys = 0}
+Level1 = {Cleared = true,CollectedKeys = 3}
 },
 Easy = {
 Level1 = {Cleared = false,CollectedKeys = 0},
