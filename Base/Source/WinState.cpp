@@ -101,6 +101,7 @@ void CWinState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 				  }
 				  else
 				  {
+					  theScene->CheckEligibleForNextLevel();
 					  theScene->ResetPlayer();
 					  theGSM->ChangeState(CMenuState::Instance());
 				  }
@@ -108,6 +109,7 @@ void CWinState::Update(CGameStateManager* theGSM, const double m_dElapsedTime)
 		}
 		case 2:
 		{
+				  theScene->CheckEligibleForNextLevel();
 				  theScene->ResetPlayer();
 				  theGSM->ChangeState(CMenuState::Instance());
 				  break;

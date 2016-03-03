@@ -17,6 +17,8 @@ public:
 		KEYSIGN,
 		MONSTERSIGN,
 		EXITSIGN,
+		BOMBED,
+		BRIDGED,
 		TOTAL_TYPE,
 	};
 

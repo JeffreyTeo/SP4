@@ -4,7 +4,7 @@
 Grid::Grid()
 :Type(FLOOR)
 , Status(PASSABLE)
-, keyCollected(true)
+, keyCollected(false)
 , Win(true)
 , Sign1Touched(true)
 , Sign2Touched(true)
