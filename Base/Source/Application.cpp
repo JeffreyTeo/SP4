@@ -1,4 +1,3 @@
-
 #include "Application.h"
 
 //Include GLEW
@@ -29,6 +28,7 @@ double Application::mouse_last_x = 0.0, Application::mouse_last_y = 0.0,
 	   Application::mouse_current_x = 0.0, Application::mouse_current_y = 0.0,
 	   Application::mouse_diff_x = 0.0, Application::mouse_diff_y = 0.0;
 double Application::camera_yaw = 0.0, Application::camera_pitch = 0.0;
+int WindowHeight, WindowWidth;
 
 /********************************************************************************
  Define an error callback
@@ -65,10 +65,22 @@ bool Application::IsKeyPressed(unsigned short key)
 }
 
 /********************************************************************************
+Get mouse position
+********************************************************************************/
+void Application::GetMousePos(double& x, double& y)
+{
+	glfwGetCursorPos(m_window, &x, &y);
+	y = (WindowHeight - y);
+	/*x = x / WindowWidth;
+	 / WindowHeight;*/
+}
+
+/********************************************************************************
  Get mouse updates
  ********************************************************************************/
 bool Application::GetMouseUpdate()
 {
+	
     glfwGetCursorPos(m_window, &mouse_current_x, &mouse_current_y);
 
 	// Calculate the difference in positions
@@ -80,7 +92,7 @@ bool Application::GetMouseUpdate()
 	camera_pitch = mouse_diff_y * 0.0174555555555556f;// 3.142f / 180.0f );
 
 	// Do a wraparound if the mouse cursor has gone out of the deadzone
-	if ((mouse_current_x < m_window_deadzone) || (mouse_current_x > m_window_width-m_window_deadzone))
+	/*if ((mouse_current_x < m_window_deadzone) || (mouse_current_x > m_window_width-m_window_deadzone))
 	{
 		mouse_current_x = m_window_width >> 1;
 		glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
@@ -89,7 +101,7 @@ bool Application::GetMouseUpdate()
 	{
 		mouse_current_y = m_window_height >> 1;
 		glfwSetCursorPos(m_window, mouse_current_x, mouse_current_y);
-	}
+	}*/
 
 	// Store the current position as the last position
 	mouse_last_x = mouse_current_x;
@@ -98,7 +110,9 @@ bool Application::GetMouseUpdate()
 	// Get the mouse button status
 	Button_Left   = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_LEFT);
 	Button_Middle = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_MIDDLE);
-	Button_Right  = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);;
+	Button_Right  = glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT);
+
+
 
 	// Update the GSM
 	theGSM->HandleEvents( mouse_current_x, mouse_current_x, Button_Left, Button_Middle, Button_Right);
@@ -113,8 +127,13 @@ bool Application::GetMouseUpdate()
 /********************************************************************************
  Get keyboard updates
  ********************************************************************************/
-bool Application::GetKeyboardUpdate()
+bool Application::GetKeyboardUpdate()//Controls can be changed
 {
+	if (IsKeyPressed(VK_ESCAPE))
+	{
+		theGSM->Quit();
+	}
+
 	if (IsKeyPressed('A'))
 	{
 		theGSM->HandleEvents('a');
@@ -148,9 +167,9 @@ bool Application::GetKeyboardUpdate()
 		theGSM->HandleEvents('s', false);
 	}
 	// Jump
-	if (IsKeyPressed(32))
+	if (IsKeyPressed(' '))
 	{
-		theGSM->HandleEvents(32);
+		theGSM->HandleEvents(' ');
 	}
 	// Rotate camera
 	if (IsKeyPressed(VK_LEFT))
@@ -169,6 +188,7 @@ bool Application::GetKeyboardUpdate()
 	{
 		theGSM->HandleEvents(VK_RIGHT, false);
 	}
+	
 	if (IsKeyPressed(VK_UP))
 	{
 		theGSM->HandleEvents(VK_UP);
@@ -218,6 +238,46 @@ Application::~Application()
 /********************************************************************************
  Initialise this program
  ********************************************************************************/
+void Application::CheckInit()
+{
+	LuaUsage* Checker = new LuaUsage();
+	Save* LuaSave = new Save();
+	if (Checker->LuaUsageCheckit("Application"))
+	{
+		LuaSave->SaveEveryThing(0);
+	}
+	if (Checker->LuaUsageCheckit("Button"))
+	{
+		LuaSave->SaveEveryThing(1);
+	}
+	if (Checker->LuaUsageCheckit("Item"))
+	{
+		LuaSave->SaveEveryThing(2);
+	}
+	if (Checker->LuaUsageCheckit("Level"))
+	{
+		LuaSave->SaveEveryThing(3);
+	}
+	if (Checker->LuaUsageCheckit("LeveltoSave"))
+	{
+		LuaSave->SaveEveryThing(4);
+	}
+	if (Checker->LuaUsageCheckit("Player"))
+	{
+		LuaSave->SaveEveryThing(5);
+	}
+	if (Checker->LuaUsageCheckit("Sound"))
+	{
+		LuaSave->SaveEveryThing(6);
+	}
+	if (Checker->LuaUsageCheckit("Sprite"))
+	{
+		LuaSave->SaveEveryThing(7);
+	}
+	delete LuaSave;
+	delete Checker;
+}
+
 void Application::Init()
 {
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -236,13 +296,19 @@ void Application::Init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Request a specific OpenGL version
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); //Does not allow scaleable window
+	
+	CheckInit();
 
 	theAppLua = new LuaUsage();
-	theAppLua->LuaUsageInit("Application.Lua");
-	m_window_height = theAppLua->GetIntegerValue("SCREENHEIGHT");
-	m_window_width = theAppLua->GetIntegerValue("SCREENWIDTH");
+	theAppLua->LuaUsageInit("Application");
+	m_window_height = theAppLua->get<float>("WindowSize.ScreenSize.ScreenHeight");
+	m_window_width = theAppLua->get<float>("WindowSize.ScreenSize.ScreenWidth");
 	theAppLua->LuaUsageClose();
 
+
+	WindowHeight = m_window_height;
+	WindowWidth = m_window_width;
 	//Create a window and create its OpenGL context
 	m_window = glfwCreateWindow(m_window_width, m_window_height, "Y2S2_Framework", NULL, NULL);
 
@@ -273,7 +339,7 @@ void Application::Init()
 	}
 
 	// Hide the cursor
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	//glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	// Set these 2 variables to zero
 	m_dElapsedTime = 0.0;
@@ -283,7 +349,7 @@ void Application::Init()
 	// Initialise the GSM
 	theGSM = new CGameStateManager();
 	theGSM->Init("DM2240 with Game State Management", m_window_width, m_window_height);
-	theGSM->ChangeState( CPlayState::Instance() );
+	theGSM->ChangeState(CMenuState::Instance());
 }
 
 /********************************************************************************
@@ -292,7 +358,7 @@ void Application::Init()
 void Application::Run()
 {
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
-	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
+	while (theGSM->Running() && !glfwWindowShouldClose(m_window))
 	{
 		// Get the elapsed time
 		m_dElapsedTime = m_timer.getElapsedTime();
@@ -341,3 +407,4 @@ void Application::Exit()
 
 	//std::cout << _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 }
+

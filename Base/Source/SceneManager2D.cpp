@@ -13,6 +13,22 @@ CSceneManager2D::CSceneManager2D()
 : m_player(NULL)
 , m_save(NULL)
 , m_spriteAnimation(NULL)
+, Playfield(NULL)
+, tempsound(0.5)
+, m_Load(NULL)
+, m_cLevel(NULL)
+, theLevelDetailsHolder(NULL)
+, m_LevelDetails(NULL)
+, MoveChar(true)
+, ShowStart(false)
+, ShowMove(false)
+, ShowMonster(false)
+, ShowExit(false)
+, Sign1Exited(false)
+, Sign2Exited(false)
+, Sign3Exited(false)
+, Sign4Exited(false)
+, Sign5Exited(false)
 /*
 : m_cMinimap(NULL)
 , m_cMap(NULL)
@@ -30,6 +46,31 @@ CSceneManager2D::CSceneManager2D()
 {
 }
 
+CSceneManager2D::CSceneManager2D(const int m_window_width, const int m_window_height)
+: m_player(NULL)
+, m_save(NULL)
+, m_spriteAnimation(NULL)
+, Playfield(NULL)
+, tempsound(0.5)
+, m_Load(NULL)
+, m_cLevel(NULL)
+, theLevelDetailsHolder(NULL)
+, m_LevelDetails(NULL)
+, MoveChar(true)
+, ShowStart(false)
+, ShowMove(false)
+, ShowMonster(false)
+, ShowExit(false)
+, Sign1Exited(false)
+, Sign2Exited(false)
+, Sign3Exited(false)
+, Sign4Exited(false)
+, Sign5Exited(false)
+{
+	this->m_windowWidth = m_window_width;
+	this->m_windowHeight = m_window_height;
+}
+
 CSceneManager2D::~CSceneManager2D()
 {
 	if (m_player)
@@ -44,7 +85,46 @@ CSceneManager2D::~CSceneManager2D()
 		m_save = NULL;
 	}
 
+	if (Playfield)
+	{
+		delete Playfield;
+		Playfield = NULL;
+	}
 
+	if (m_Load)
+	{
+		delete m_Load;
+		m_Load = NULL;
+	}
+
+	if (m_cLevel)
+	{
+		delete m_cLevel;
+		m_cLevel = NULL;
+	}
+	if (m_LevelDetails)
+	{
+		delete m_LevelDetails;
+		m_LevelDetails = NULL;
+	}
+
+	if (AIList.size() > 0)
+	{
+		for (int a = 0; a < AIList.size(); a++)
+		{
+			delete AIList[a];
+		}
+		AIList.clear();
+	}
+	for (vector<AllLevelDetails*>::iterator it = theLevelDetailsHolder.begin(); it != theLevelDetailsHolder.end(); ++it)
+	{
+		AllLevelDetails* leveldetails = (AllLevelDetails*)*it;
+		if (leveldetails != NULL)
+		{
+			delete leveldetails;
+			leveldetails = NULL;
+		}
+	}
 	/*
 	if (m_spriteAnimation)
 	{
@@ -78,14 +158,14 @@ CSceneManager2D::~CSceneManager2D()
 	*/
 }
 
-void CSceneManager2D::Init()
+void CSceneManager2D::PreInit()
 {
-	// Blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	// Black background
+	glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Switch on culling
 	glEnable(GL_CULL_FACE);
-	
+
 	// Render mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -98,8 +178,8 @@ void CSceneManager2D::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	// Load the shaders
-	m_programID = LoadShaders( "Shader//Texture.vertexshader", "Shader//Text.fragmentshader" );
-	
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Fog.fragmentshader");
+
 	// Get a handle for our uniform
 	m_parameters[U_MVP] = glGetUniformLocation(m_programID, "MVP");
 	//m_parameters[U_MODEL] = glGetUniformLocation(m_programID, "M");
@@ -112,11 +192,17 @@ void CSceneManager2D::Init()
 	// Get a handle for our "textColor" uniform
 	m_parameters[U_TEXT_ENABLED] = glGetUniformLocation(m_programID, "textEnabled");
 	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID, "textColor");
-	
+	m_parameters[U_TEXT_ALPHA] = glGetUniformLocation(m_programID, "truetextColor");
+	m_parameters[U_TEXT_ALPHA_ENABLED] = glGetUniformLocation(m_programID, "truetextEnabled");
 	// Use our shader
 	glUseProgram(m_programID);
 
 	glUniform1i(m_parameters[U_TEXT_ENABLED], 0);
+}
+
+void CSceneManager2D::Init()
+{
+	PreInit();
 
 	// Initialise the camera
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
@@ -132,7 +218,7 @@ void CSceneManager2D::Init()
 
 	// Load the ground mesh and texture
 	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//sky_background.tga");
+	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
 	meshList[GEO_TILEGROUND] = MeshBuilder::Generate2DMesh("GEO_TILEGROUND", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILEGROUND]->textureID = LoadTGA("Image//tile1_ground.tga");
 	meshList[GEO_TILEHERO] = MeshBuilder::Generate2DMesh("GEO_TILEHERO", Color(1, 1, 1), 0, 0, 25, 25);
@@ -154,71 +240,189 @@ void CSceneManager2D::Init()
 	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
 	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
 	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
-	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
+	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
-	meshList[GEO_SPRITE_ANIMATION] = MeshBuilder::GenerateSpriteAnimation("cat", 1, 6);
-	meshList[GEO_SPRITE_ANIMATION]->textureID = LoadTGA("Image//cat.tga");
-	m_spriteAnimation = dynamic_cast<SpriteAnimation*>(meshList[GEO_SPRITE_ANIMATION]);
-	if (m_spriteAnimation)
-	{
-		m_spriteAnimation->m_anim = new Animation();
-		m_spriteAnimation->m_anim->Set(0, 5, 0, 0.1f);
-	}
-	/*
-	// Initialise and load the tile map
-	m_cMap = new CMap();
-	m_cMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cMap->LoadMap( "Image//MapDesign.csv" );
+	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
+	meshList[GEO_HIGHSCORE] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_HIGHSCORE]->textureID = LoadTGA("Image//Highscore.tga");
+	meshList[GEO_VOL_MUTE] = MeshBuilder::Generate2DMesh("GEO_VOL_MUTE", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_VOL_MUTE]->textureID = LoadTGA("Image//OptionsVolumeSoundOff.tga");
+	meshList[GEO_VOL] = MeshBuilder::Generate2DMesh("GEO_VOL", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_VOL]->textureID = LoadTGA("Image//OptionsVolumeSoundOn.tga");
+	meshList[GEO_SOUND_MUTE] = MeshBuilder::Generate2DMesh("GEO_SOUND_MUTE", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_SOUND_MUTE]->textureID = LoadTGA("Image//OptionsSoundOff.tga");
+	meshList[GEO_SOUND] = MeshBuilder::Generate2DMesh("GEO_SOUND", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_SOUND]->textureID = LoadTGA("Image//OptionsSoundOn.tga");
+	meshList[GEO_INSTRUCTION] = MeshBuilder::Generate2DMesh("GEO_INSTRUCTIONS", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_INSTRUCTION]->textureID = LoadTGA("Image//Instructions.tga");
 
-	// Initialise and load the REAR tile map
-	m_cRearMap = new CMap();
-	m_cRearMap->Init( 600, 800, 24, 32, 600, 1600 );
-	m_cRearMap->LoadMap( "Image//MapDesign_Rear.csv" );
+	meshList[GEO_SELECT] = MeshBuilder::Generate2DMesh("GEO_SELECT", Color(1, 1, 1), 0, 0, 75, 55);
+	meshList[GEO_SELECT]->textureID = LoadTGA("Image//Select.tga");
 
-	// Initialise the hero's position
-	theHero = new CPlayerInfo();
-	theHero->SetPos_x(50);
-	theHero->SetPos_y(100);
+	meshList[GEO_KEYSCOLLECTED] = MeshBuilder::Generate2DMesh("GEO_KEYSCOLLECTED", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_KEYSCOLLECTED]->textureID = LoadTGA("Image//KeysCollected.tga");
+	meshList[GEO_MOVESLEFT] = MeshBuilder::Generate2DMesh("GEO_MOVESLEFT", Color(1, 1, 1), 0, 0, 200, 100);
+	meshList[GEO_MOVESLEFT]->textureID = LoadTGA("Image//MovesLeft.tga");
 
-	// Load the texture for minimap
-	m_cMinimap = new CMinimap();
-	m_cMinimap->SetBackground(MeshBuilder::GenerateMinimap("MINIMAP", Color(1, 1, 1), 1.f));
-	m_cMinimap->GetBackground()->textureID = LoadTGA("Image//grass_darkgreen.tga");
-	m_cMinimap->SetBorder( MeshBuilder::GenerateMinimapBorder("MINIMAPBORDER", Color(1, 1, 0), 1.f) );
-	m_cMinimap->SetAvatar( MeshBuilder::GenerateMinimapAvatar("MINIMAPAVATAR", Color(1, 1, 0), 1.f) );
+	meshList[GEO_CHARACTER] = MeshBuilder::Generate2DMesh("GEO_CHARACTER", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_CHARACTER]->textureID = LoadTGA("Image//Temp.tga");
+	meshList[GEO_FLOORING] = MeshBuilder::Generate2DMesh("GEO_FLOORING", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_FLOORING]->textureID = LoadTGA("Image//Floor.tga");
+	meshList[GEO_ROCK] = MeshBuilder::Generate2DMesh("GEO_ROCK", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_ROCK]->textureID = LoadTGA("Image//Rock.tga");
+	meshList[GEO_TRAP] = MeshBuilder::Generate2DMesh("GEO_TRAP", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_TRAP]->textureID = LoadTGA("Image//Trap.tga");
+	meshList[GEO_SNAKE] = MeshBuilder::Generate2DMesh("GEO_SNAKE", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_SNAKE]->textureID = LoadTGA("Image//Snake.tga");
+	meshList[GEO_MONSTER] = MeshBuilder::Generate2DMesh("GEO_MONSTER", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_MONSTER]->textureID = LoadTGA("Image//Monster.tga");
+	meshList[GEO_WALL] = MeshBuilder::Generate2DMesh("GEO_WALL", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_WALL]->textureID = LoadTGA("Image//Wall.tga");
+	meshList[GEO_KEY] = MeshBuilder::Generate2DMesh("GEO_KEY", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_KEY]->textureID = LoadTGA("Image//Key.tga");
+	meshList[GEO_FEET] = MeshBuilder::Generate2DMesh("GEO_FEET", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_FEET]->textureID = LoadTGA("Image//Feet.tga");
+	meshList[GEO_EXIT] = MeshBuilder::Generate2DMesh("GEO_EXIT", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_EXIT]->textureID = LoadTGA("Image//Exit.tga");
 
-	// Set the strategy for the enemy
-	theEnemy = new CEnemy();
-	theEnemy->ChangeStrategy( NULL, false);
-	theEnemy->SetPos_x(575);
-	theEnemy->SetPos_y(100);
+	meshList[GEO_SIGN] = MeshBuilder::Generate2DMesh("GEO_SIGN", Color(1, 1, 1), 0, 0, 50, 50);
+	meshList[GEO_SIGN]->textureID = LoadTGA("Image//Sign.tga");
 
-	theArrayOfGoodies = new CGoodies*[10];
-	for (int i=0; i<10; i++)
-	{
-		theArrayOfGoodies[i] = theGoodiesFactory.Create( TREASURECHEST );
-		theArrayOfGoodies[i]->SetPos( 150 + i*25, 150 );
-		theArrayOfGoodies[i]->SetMesh(MeshBuilder::Generate2DMesh("GEO_TILE_TREASURECHEST", Color(1, 1, 1), 0, 0, 25, 25));
-		theArrayOfGoodies[i]->SetTextureID(LoadTGA("Image//tile4_treasurechest.tga"));
-	}
-	*/
+	meshList[GEO_SIGN1] = MeshBuilder::Generate2DMesh("GEO_SIGN1", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN1]->textureID = LoadTGA("Image//Sign1.tga");
+	meshList[GEO_SIGN2] = MeshBuilder::Generate2DMesh("GEO_SIGN2", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN2]->textureID = LoadTGA("Image//Sign2.tga");
+	meshList[GEO_SIGN3] = MeshBuilder::Generate2DMesh("GEO_SIGN3", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN3]->textureID = LoadTGA("Image//Sign3.tga");
+	meshList[GEO_SIGN4] = MeshBuilder::Generate2DMesh("GEO_SIGN4", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN4]->textureID = LoadTGA("Image//Sign4.tga");
+	meshList[GEO_SIGN5] = MeshBuilder::Generate2DMesh("GEO_SIGN5", Color(1, 1, 1), 0, 0, 260, 230);
+	meshList[GEO_SIGN5]->textureID = LoadTGA("Image//Sign5.tga");
+
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 1000 units
 	Mtx44 perspective;
 	perspective.SetToPerspective(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	//perspective.SetToOrtho(-80, 80, -60, 60, -1000, 1000);
 	projectionStack.LoadMatrix(perspective);
-	
-	rotateAngle = 0;
+	m_Quitfrompause = false;
+	m_WinCondition = 0;
 	m_save = new Save();
 	m_player = new Player();
-	m_player->PlayerInit("Player.lua");
+	m_player->PlayerInit("Player");
 	
+	KeysCollected = 0;
+	m_LevelDetails = new LevelDetails();
+	m_LevelDetails->LevelDetailsInit(m_player->GetLevelToDifficultyStartAt(), m_player->GetLevelToStartAt(), "Level");
+	NoOfMoves = m_LevelDetails->GetAmountOfMoves();
+	rotateAngle = 0;
+
+	m_Load = new LuaUsage();
+	m_Load->LuaUsageInit("LeveltoSave");
+	m_maxlevel = m_Load->get<int>("AmountOfLevel");
+	m_maxdiff = m_Load->get<int>("AmountOfDiff");
+	m_Load->LuaUsageClose();
+	string Start = "Level.";
+	for (int i = 0; i < m_maxdiff; ++i)
+	{
+		string Diff = "";
+		switch (i)
+		{
+		case 0:
+		{
+				  Diff = Start + "Easy.";
+				  break;
+		}
+		case 1:
+		{
+				  Diff = Start + "Normal.";
+				  break;
+		}
+		case 2:
+		{
+				  Diff = Start + "Hard.";
+				  break;
+		}
+		}
+		for (int j = 0; j < m_maxlevel; ++j)
+		{
+			string Level = Diff + "Level" + to_string((j + 1)) + ".";
+			AllLevelDetails* m_levelofdetail = new AllLevelDetails();
+			m_levelofdetail->AllLevelDetailsInit(Level);
+			theLevelDetailsHolder.push_back(m_levelofdetail);
+		}
+	}
+
+	//level loader
+	m_cLevel = new LevelLoader();
+	m_cLevel->Init((m_LevelDetails->GetNumberOfGridY() + 1) * m_LevelDetails->GetLengthYOfAGrid(), m_LevelDetails->GetNumberOfGridX() * m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetNumberOfGridY() + 1, m_LevelDetails->GetNumberOfGridX());
+	m_cLevel->LevelLoaded(m_LevelDetails->GetNameOfLevelFile());
+
+	//initailise grid system
+	Playfield = new GridSystem();
+	// in this order: position of the whole grid system, size of grid x, size of grid y, number of grid x, number of grid y 
+	Playfield->Init(Vector3(m_LevelDetails->GetPositionXOfGrid(), m_LevelDetails->GetPositionYOfGrid(), 0), m_LevelDetails->GetLengthXOfAGrid(), m_LevelDetails->GetLengthYOfAGrid(), m_LevelDetails->GetNumberOfGridY(), m_LevelDetails->GetNumberOfGridX());
+
+	Playfield->PlayerGridSetUp(m_LevelDetails->GetPlayerPositionX(), m_LevelDetails->GetPlayerPositionY());
+
+	Playfield->SetMap(m_cLevel->screenMap);
+
+	cAI * AI = new cAI();
+	AI->init();
+	AI->setPos(8, 1);
+	AI->setWaypoint(3, 8);
+	AI->setWaypoint(3, 3);
+	AI->setWaypoint(8, 3);
+	AI->setWaypoint(8, 8);
+	AIList.push_back(AI);
+
+	Playfield->AIGridSetUp(AIList);
+	/*for (int a = 0; a < 11; a++)
+	{
+		for (int b = 0; b < 10; b++)
+		{
+			cout << m_cLevel->screenMap[a][b];
+		}
+		cout << endl;
+	}*/
+	//direction and offset
+	direction = 0.f;
+	offset = Vector3(0, 0, 0);
+
+	timeBuffer = 0.f;
+
+	TestField = new GridSystem();
+	TestField->Init(Vector3(625, 300, 0), 50.f, 50.f, 6, 12);
+	TestField->GridDropInit();
+	TestField->PlayerGridSetUp(4, 10);
+
+}
+
+void CSceneManager2D::SetQuitfrompause(bool m_Quitfrompause)
+{
+	KeysCollected = 0;
+	this->m_Quitfrompause = m_Quitfrompause;
+	this->m_player->SetLevelStopAt(m_LevelDetails->GetLevelinDifficultyReference(),m_LevelDetails->GetDifficultyReference());
+}
+
+void CSceneManager2D::AddHighscore()
+{
+	const int MAX_SCORES = 5;
+	string values[MAX_SCORES];
+	for (int i = 0; i < MAX_SCORES; i++)
+	{
+		theScore[i].ReadTextFile("highscore.txt");
+	}
+}
+
+int CSceneManager2D::GetWinCondition()
+{
+	return m_WinCondition;
 }
 
 void CSceneManager2D::Update(double dt)
 {
-	//cout << m_player->GetAmtOfClearedLevelEasy() << " " << m_player->GetAmtOfClearedLevelNormal() << " " << m_player->GetAmtOfClearedLevelHard();
 	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 	if(Application::IsKeyPressed('2'))
@@ -227,11 +431,251 @@ void CSceneManager2D::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
+	//if (Application::IsKeyPressed('5'))
+		//m_WinCondition = 1;
+
 	rotateAngle -= (float)Application::camera_yaw;// += (float)(10 * dt);
 
+	//cout << Sound.volume << endl;
+	int TempKeyCollectedCalc = 0;
+	int count = 0;
+
+	if (ShowStart == true || ShowKey == true || ShowMove == true || ShowMonster == true || ShowExit == true)
+	{
+		MoveChar = false;
+	}
+
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		
+		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		{
+			if (Playfield->GetGridsVec()[a]->keyCollected == true)
+			{
+				TempKeyCollectedCalc++;
+			}
+		}
+		this->KeysCollected = TempKeyCollectedCalc;
+
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+		{
+			if (Playfield->GetGridsVec()[a]->Win == true)
+			{
+				TempWin = 1;
+			}
+		}*/
+		this->m_WinCondition = Playfield->CheckCollisionType(Grid::GridType::EXIT, count);
+
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+		{
+			if (Playfield->GetGridsVec()[a]->Sign1Exited == true)
+			{
+				Sign1Touch = true;
+				}
+				}*/
+		if (Sign1Exited == false)
+			this->ShowStart = Playfield->CheckCollisionType(Grid::GridType::INTROSIGN, count);
+		
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+		{
+			if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
+			{
+				Sign2Touch = true;
+			}
+		}*/
+		if (Sign2Exited == false)
+			this->ShowMove = Playfield->CheckCollisionType(Grid::GridType::MOVESIGN, count);
+
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+		{
+			if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
+			{
+				Sign3Touch = true;
+			}
+		}*/
+		if (Sign3Exited == false)
+			this->ShowKey = Playfield->CheckCollisionType(Grid::GridType::KEYSIGN, count);
+
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+		{
+			if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
+			{
+				Sign4Touch = true;
+			}
+		}*/
+		if (Sign4Exited == false)
+			this->ShowMonster = Playfield->CheckCollisionType(Grid::GridType::MONSTERSIGN, count);
+
+		/*if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+		{
+			if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
+			{
+				Sign5Touch = true;
+			}
+		}*/
+		if (Sign5Exited == false)
+			this->ShowExit = Playfield->CheckCollisionType(Grid::GridType::EXITSIGN, count);
+	}
+
+	if (Application::IsKeyPressed('X'))
+	{
+		MoveChar = true;
+		if (ShowStart == true)
+		{
+			Sign1Exited = true;
+			ShowStart = false;
+		}
+		if (ShowMove == true)
+		{
+			Sign2Exited = true;
+			ShowMove = false;
+		}
+		if (ShowKey == true)
+		{
+			Sign3Exited = true;
+			ShowKey = false;
+		}
+		if (ShowMonster == true)
+		{
+			Sign4Exited = true;
+			ShowMonster = false;
+		}
+		if (ShowExit == true)
+		{
+			Sign5Exited = true;
+			ShowExit = false;
+		}
+	}
+
+	/*if (Application::IsKeyPressed('X'))
+	{
+		MoveChar = true;
+		if (ShowStart = true)
+			ShowStart = false;
+		for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+		{
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+			{
+				if (ShowStart == true)
+				{
+					ShowStart = false;
+				}
+			}
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+			{
+				if (Playfield->GetGridsVec()[a]->Sign2Exited == true)
+				{
+					Playfield->GetGridsVec()[a]->Sign2Exited = false;
+				}
+			}
+			this->ShowMove = Sign2Touch;
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+			{
+				if (Playfield->GetGridsVec()[a]->Sign3Exited == true)
+				{
+					Playfield->GetGridsVec()[a]->Sign3Exited = false;
+				}
+			}
+			this->ShowKey = Sign3Touch;
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+			{
+				if (Playfield->GetGridsVec()[a]->Sign4Exited == true)
+				{
+					Playfield->GetGridsVec()[a]->Sign4Exited = false;
+				}
+			}
+			this->ShowMonster = Sign4Touch;
+
+			if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+			{
+				if (Playfield->GetGridsVec()[a]->Sign5Exited == true)
+				{
+					Playfield->GetGridsVec()[a]->Sign5Exited = false;
+				}
+			}
+			this->ShowExit = Sign5Touch;
+		}
+	}*/
+
+	//playfield
+	if (NoOfMoves <= 0)
+	{
+		MoveChar = false;
+		NoOfMoves = 0;
+	}
+
+	if (MoveChar == true)
+	{
+		if (timeBuffer > 5.f)
+		{
+			char key = 'z';
+			if (Application::IsKeyPressed('W'))
+			{
+				key = 'w';
+			}
+			else if (Application::IsKeyPressed('S'))
+			{
+				key = 's';
+			}
+			else if (Application::IsKeyPressed('A'))
+			{
+				key = 'a';
+			}
+			else if (Application::IsKeyPressed('D'))
+			{
+				key = 'd';
+			}
+			if (Playfield->PlayerGridUpdate(key))
+			{
+				timeBuffer = 0.f;
+				NoOfMoves--;
+			}
+		}
+		timeBuffer += 1.f;
+	}
+
+
+	/*****************************************************************/
+	//test field stuff
+	{
+		char key = 'z';
+		if (Application::IsKeyPressed('W'))
+		{
+			key = 'w';
+		}
+		else if (Application::IsKeyPressed('S'))
+		{
+			key = 's';
+		}
+		else if (Application::IsKeyPressed('A'))
+		{
+			key = 'a';
+		}
+		else if (Application::IsKeyPressed('D'))
+		{
+			key = 'd';
+		}
+		else if (Application::IsKeyPressed('P'))
+		{
+			key = 'p';
+		}
+
+		TestField->PlayerGridDropUpdate(key);
+		TestField->PlayerGridDropStateChange(key);
+
+		//cout << TestField->GetPlayerGrid()->GetDirection() << endl;
+		TestField->GridDropUpdate();
+	}
+	///*****************************************************************/
+
+
 	camera.Update(dt);
-	m_spriteAnimation->Update(dt);
+	//m_spriteAnimation->Update(dt);
+	
+	Playfield->AIGridUpdate();
 	/*
 
 	// Update the hero
@@ -290,18 +734,22 @@ void CSceneManager2D::UpdateCameraStatus(const unsigned char key, const bool sta
 /********************************************************************************
  Update Weapon status
  ********************************************************************************/
-void CSceneManager2D::UpdateWeaponStatus(const unsigned char key)
+void CSceneManager2D::UpdateMouseStatus(const unsigned char key)
 {
-	if (key == WA_FIRE)
+	if (key == WA_LEFT_CLICKED)
 	{
-		// Add a bullet object which starts at the camera position and moves in the camera's direction
+		//get cursor position
+		double x, y;
+		Application::GetMousePos(x, y);
+		Playfield->UpdateGrid(Vector3(x, y, 0));
+		cout << x << ", " << y << endl;
 	}
 }
 
 /********************************************************************************
  Render text onto the screen
  ********************************************************************************/
-void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y)
+void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha)
 {
 	if(!mesh || mesh->textureID <= 0)
 		return;
@@ -316,8 +764,18 @@ void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color col
 				modelStack.LoadIdentity();
 				modelStack.Translate(x, y, 0);
 				modelStack.Scale(size, size, size);
-				glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
-				glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+				if (enablealpha == true)
+				{
+					glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
+					glUniform4fv(m_parameters[U_TEXT_ALPHA], 1, &color.r);
+				}
+				else
+				{
+					glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+					glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
+				}
+				//glUniform1i(m_parameters[U_TEXT_ENABLED], 1);
+				//glUniform3fv(m_parameters[U_TEXT_COLOR], 1, &color.r);
 				//	glUniform1i(m_parameters[U_LIGHTENABLED], 0);
 				glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
 				glActiveTexture(GL_TEXTURE0);
@@ -342,7 +800,7 @@ void CSceneManager2D::RenderTextOnScreen(Mesh* mesh, std::string text, Color col
 /********************************************************************************
  Render 2D Mesh
  ********************************************************************************/
-void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, int size, int x, int y, bool rotate, bool flip)
+void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, bool enablealpha, int size, int x, int y, bool rotate, float rotateAngle,bool flip)
 {
 	Mtx44 ortho;
 	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
@@ -364,6 +822,14 @@ void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, int size, int x
 				if(mesh->textureID > 0)
 				{
 					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+					if (enablealpha == false)
+					{
+						glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 0);
+					}
+					else
+					{
+						glUniform1i(m_parameters[U_TEXT_ALPHA_ENABLED], 1);
+					}
 					glActiveTexture(GL_TEXTURE0);
 					glBindTexture(GL_TEXTURE_2D, mesh->textureID);
 					glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
@@ -389,7 +855,181 @@ void CSceneManager2D::Render2DMesh(Mesh *mesh, bool enableLight, int size, int x
 void CSceneManager2D::RenderBackground()
 {
 	// Render the crosshair
-	Render2DMesh(meshList[GEO_BACKGROUND], false, 1);
+	Render2DMesh(meshList[GEO_BACKGROUND], false, false, 1);
+}
+
+void CSceneManager2D::RenderGridSystem()
+{
+	//render grid layout
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		modelStack.PushMatrix();
+		//get position of a grid in the vector 
+		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
+		if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
+			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
+			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);	
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+		{
+			if (Playfield->GetGridsVec()[a]->keyCollected == false)
+			{
+				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
+			}
+			else
+			{
+				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+			}
+		}
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
+			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);	
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
+			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::INTROSIGN)
+			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MOVESIGN)
+			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::KEYSIGN)
+			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::MONSTERSIGN)
+			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
+		else if (Playfield->GetGridsVec()[a]->GetType() == Grid::GridType::EXITSIGN)
+			Render2DMesh(meshList[GEO_SIGN], false, false, 1, GridPos.x, GridPos.y);
+		
+		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+		modelStack.PopMatrix();
+	}
+	//render player trail
+	for (int a = 0; a < Playfield->GetGridsVec().size(); a++)
+	{
+		modelStack.PushMatrix();
+		//get position of a grid in the vector 
+		Vector3 GridPos = Playfield->GetGridsVec()[a]->GetPos();
+		if (Playfield->GetGridsVec()[a]->GetStatus() == 1 && (Playfield->GetGridsVec()[a]->GetType() == 0 || Playfield->GetGridsVec()[a]->GetType() == 2))
+		{
+			float FeetDirection = Playfield->GetGridsVec()[a]->GetDirection();
+			if (FeetDirection == 0.f)
+			offset = Vector3(0, 0, 0);
+			else if (FeetDirection == 180.f)
+			offset = Vector3(50, 50, 0);
+			else if (FeetDirection == 90.f)
+			offset = Vector3(50, 0, 0);
+			else if (FeetDirection == -90.f)
+			offset = Vector3(0, 50, 0);
+			
+			Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, FeetDirection);
+			//Render2DMesh(meshList[GEO_FEET], false, false, 1, GridPos.x + offset.x, GridPos.y + offset.y, true, direction);
+
+		}
+
+		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+		modelStack.PopMatrix();
+	}
+
+	//render player
+	Vector3 PlayerGridPos = Playfield->GetPlayerGrid()->GetPos();
+	Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
+	//render AI
+	for (int a = 0; a < Playfield->GetAIGrids().size(); a++)
+	{
+		Vector3 AIGridPos = Playfield->GetAIGrids()[a]->GetPos();
+		Render2DMesh(meshList[GEO_TILEENEMY_FRAME0], false, false, 1, AIGridPos.x, AIGridPos.y);
+	}
+		
+
+
+	//{
+	//	//test field
+	//	//render grid layout
+	//	for (int a = 0; a < TestField->GetGridsVec().size(); a++)
+	//	{
+	//		modelStack.PushMatrix();
+	//		//get position of a grid in the vector 
+	//		Vector3 GridPos = TestField->GetGridsVec()[a]->GetPos();
+	//		if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::FLOOR)
+	//			Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::WALL)
+	//			Render2DMesh(meshList[GEO_WALL], false, false, 1, GridPos.x, GridPos.y);
+	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::KEY)
+	//		{
+	//			if (TestField->GetGridsVec()[a]->keyCollected == false)
+	//			{
+	//				Render2DMesh(meshList[GEO_KEY], false, false, 1, GridPos.x, GridPos.y);
+	//			}
+	//			else
+	//			{
+	//				Render2DMesh(meshList[GEO_FLOORING], false, false, 1, GridPos.x, GridPos.y);
+	//			}
+	//		}
+	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::TRAP)
+	//			Render2DMesh(meshList[GEO_TRAP], false, false, 1, GridPos.x, GridPos.y);
+	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::ROCK)
+	//			Render2DMesh(meshList[GEO_ROCK], false, false, 1, GridPos.x, GridPos.y);
+	//		else if (TestField->GetGridsVec()[a]->GetType() == Grid::GridType::EXIT)
+	//			Render2DMesh(meshList[GEO_EXIT], false, false, 1, GridPos.x, GridPos.y);
+	//		//cout << "rendered at" << Playfield->GetGridsVec()[a]->GetPos().x << ", " << Playfield->GetGridsVec()[a]->GetPos().y << endl;
+	//		modelStack.PopMatrix();
+	//	}
+	//	//render player
+	//	PlayerGridPos = TestField->GetPlayerGrid()->GetPos();
+	//	Render2DMesh(meshList[GEO_CHARACTER], false, false, 1, PlayerGridPos.x, PlayerGridPos.y);
+	//}
+	//
+
+
+}
+
+void CSceneManager2D::RenderUI()
+{
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_MOVESLEFT], false, false, 1, 0, 500);
+
+	std::ostringstream MovesLeft;
+	MovesLeft << "x " << NoOfMoves;
+	RenderTextOnScreen(meshList[GEO_TEXT], MovesLeft.str(), Color(0, 0, 0), 40, 100, 520, true);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	Render2DMesh(meshList[GEO_KEYSCOLLECTED], false, false, 1, 200, 500);
+
+	std::ostringstream Keys;
+	Keys << "x " << KeysCollected;
+	RenderTextOnScreen(meshList[GEO_TEXT], Keys.str(), Color(0, 0, 0), 40, 300, 520, true);
+	modelStack.PopMatrix();
+
+	if (ShowStart)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SIGN1], false, false, 1, 520, 350);
+		modelStack.PopMatrix();
+	}
+	if (ShowMove)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SIGN2], false, false, 1, 520, 350);
+		modelStack.PopMatrix();
+	}
+	if (ShowKey)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SIGN3], false, false, 1, 520, 350);
+		modelStack.PopMatrix();
+	}
+	if (ShowMonster)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SIGN4], false, false, 1, 520, 350);
+		modelStack.PopMatrix();
+	}
+	if (ShowExit)
+	{
+		modelStack.PushMatrix();
+		Render2DMesh(meshList[GEO_SIGN5], false, false, 1, 520, 350);
+		modelStack.PopMatrix();
+	}
+
 }
 
 /********************************************************************************
@@ -413,19 +1053,25 @@ void CSceneManager2D::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
+	/*
 	modelStack.PushMatrix();
 	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
-	modelStack.PopMatrix();
-	/*
+	modelStack.PopMatrix();*/
+	
 	// Render the background image
 	RenderBackground();
-	// Render the rear tile map
+	/*// Render the rear tile map
 	RenderRearTileMap();
 	// Render the tile map
 	RenderTileMap();
 	// Render the goodies
 	RenderGoodies();
 	*/
+
+	RenderUI();
+
+	//render the grid system and the corresponding image for the each grid
+	RenderGridSystem();
 
 	//On screen text
 	/*
@@ -438,11 +1084,11 @@ void CSceneManager2D::Render()
 	sss << "mapOffset_x: "<<theHero->GetMapOffset_x();
 	RenderTextOnScreen(meshList[GEO_TEXT], sss.str(), Color(0, 1, 0), 30, 0, 30);
 	*/
-
+	
 	std::ostringstream ss;
 	ss.precision(5);
 	ss << "test text: " << " 9999999 ";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0, 0.5f), 30, 0, 6, true);
 }
 
 /********************************************************************************
@@ -450,7 +1096,26 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
+	if (!m_Quitfrompause)
+	{
+		int i = m_player->GetLevelToDifficultyStartAt()- 1;
+		int j = i * m_maxlevel;
+		int k = m_player->GetLevelToStartAt();
+		theLevelDetailsHolder[((j + k)-1)]->SetCleared(true);
+		if (theLevelDetailsHolder[((j + k)-1)]->GetCollectedKeys() < KeysCollected)
+		{
+			m_player->SetAmtOfCurrency(m_player->GetAmtOfCurrency() + (KeysCollected - theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys()));
+			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(KeysCollected);
+		}
+			
+		if (theLevelDetailsHolder[((j + k) - 1)]->GetCollectedKeys() == 3)
+			theLevelDetailsHolder[((j + k) - 1)]->SetCollectedKeys(3);	
+	}
+	m_save->SaveLevelStuff(theLevelDetailsHolder, m_maxlevel, m_maxdiff);
 	m_save->SavePlayer(m_player);
+
+
+	
 	if (m_spriteAnimation)
 	{
 		delete m_spriteAnimation->m_anim;
@@ -459,7 +1124,8 @@ void CSceneManager2D::Exit()
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
-		if(meshList[i])
+
+		if (meshList[i] && i != GEO_SPRITE_ANIMATION)
 			delete meshList[i];
 	}
 	glDeleteProgram(m_programID);

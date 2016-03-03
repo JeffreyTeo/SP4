@@ -15,11 +15,24 @@
 #include "Player.h"
 #include "Save.h"
 #include "SpriteAnimation.h"
+#include "SoundManager.h"
+#include "LevelDetails.h"
+#include "AllLevelDetails.h"
+
+#include "Highscore.h"
+#include "HighscoreData.h"
+#include "LuaUsage.h"
 
 // Goodies and Goodies Factory
 #include "GoodiesFactory.h"
 #include "Goodies.h"
 #include "TreasureChest.h"
+
+//grid system and grid class
+#include "GridSystem.h"
+
+// level loader
+#include "LevelLoader.h"
 
 class CSceneManager2D : public Scene
 {
@@ -29,10 +42,14 @@ class CSceneManager2D : public Scene
 		U_MODELVIEW,
 		U_MODELVIEW_INVERSE_TRANSPOSE,
 		U_LIGHTENABLED,
+		U_COLOR_TEXTURE0,
+		U_COLOR_TEXTURE_ENABLED0,
 		U_COLOR_TEXTURE_ENABLED,
 		U_COLOR_TEXTURE,
 		U_TEXT_ENABLED,
 		U_TEXT_COLOR,
+		U_TEXT_ALPHA_ENABLED,
+		U_TEXT_ALPHA,
 		U_TOTAL,
 	};
 	enum GEOMETRY_TYPE
@@ -53,30 +70,95 @@ class CSceneManager2D : public Scene
 		GEO_TILE_TREASURECHEST,
 		GEO_SPRITE_ANIMATION,
 		GEO_OBJECT,
+
+		GEO_MENU,
+		GEO_SELECT,
+		GEO_INSTRUCTION,
+		GEO_HIGHSCORE,
+		GEO_VOL_MUTE,
+		GEO_VOL,
+		GEO_SOUND_MUTE,
+		GEO_SOUND,
+
+		GEO_FLOORING,
+		GEO_CHARACTER,
+		GEO_ROCK,
+		GEO_TRAP,
+		GEO_SNAKE,
+		GEO_MONSTER,
+		GEO_WALL,
+		GEO_KEY,
+		GEO_EXIT,
+
+		// Tutorial
+		GEO_SIGN,
+		GEO_SIGN1,
+		GEO_SIGN2,
+		GEO_SIGN3,
+		GEO_SIGN4,
+		GEO_SIGN5,
+
+		GEO_KEYSCOLLECTED,
+		GEO_MOVESLEFT,
+		// Show Movement
+		GEO_FEET,
+
 		GEO_TEXT,
 		NUM_GEOMETRY,
 	};
-
+	enum PARTICLE_STYLE
+	{
+		DROPDOWN = 0,
+		CONFETTI,
+		NUM_PARTICLE_STYLE
+	};
 public:
 	CSceneManager2D();
+	CSceneManager2D(const int m_window_width, const int m_window_height);
 	~CSceneManager2D();
 
 	virtual void Init();
 	virtual void Update(double dt);
 	// Update Camera status
 	virtual void UpdateCameraStatus(const unsigned char key, const bool status = true);
-	// Update Weapon status
-	virtual void UpdateWeaponStatus(const unsigned char key);
+	// Update mouse status
+	virtual void UpdateMouseStatus(const unsigned char key);
 	virtual void Render();
 	virtual void Exit();
 
-	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
+
+	int GetWinCondition();
+	void SetQuitfrompause(bool m_Quitfrompause);
+
+	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y, bool enablealpha = false);
 	void RenderBackground();
-	void Render2DMesh(Mesh *mesh, const bool enableLight, const int size=1, const int x=0, const int y=0, const bool rotate=false, const bool flip=false);
+	void RenderUI();
+	void Render2DMesh(Mesh *mesh, const bool enableLight, bool enablealpha = false, const int size = 1, const int x = 0, const int y = 0, const bool rotate = false, float rotateAngle = 0.f, const bool flip = false);
+	void PreInit();
+	void RenderGridSystem();
+
+	// Option States
+	bool SoundSelect;
+	bool VolumeSelect;
+	bool muted;
+	
+	// UI
+	int KeysCollected;
+	int NoOfMoves;
+	bool MoveChar;
+
+	
+
+	void AddHighscore();
+	HighscoreData theScore[5];
+	CSoundManager Sound;
+
+	float tempsound;
 
 	enum WEAPON_ACTION
 	{
 		WA_NIL = 0,
+		WA_LEFT_CLICKED,
 		WA_FIRE,
 		WA_RELOAD,
 		WA_CHANGEWEAPON,
@@ -84,10 +166,18 @@ public:
 	};
 
 private:
+	bool m_Quitfrompause;
+
+	int m_WinCondition;
+	vector<AllLevelDetails*> theLevelDetailsHolder;
+	
+	int m_maxlevel;
+	int m_maxdiff;
+	LuaUsage* m_Load;
 	Player* m_player;
 	Save* m_save;
 	SpriteAnimation *m_spriteAnimation;
-
+	LevelDetails* m_LevelDetails;
 
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
@@ -102,36 +192,40 @@ private:
 	MS viewStack;
 	MS projectionStack;
 
-
+	bool confettiRightside;
 	float fps;
-	/*
-	// Handle to the minimap
-	CMinimap* m_cMinimap;
 
-	// Handle to the tilemaps
-	CMap* m_cMap;
-	void RenderTileMap();
-	// Hero's information
-	CPlayerInfo* theHero;
+	// Tutorial
+	bool ShowStart;		// Sign.1
+	bool ShowMove;		// Sign.2
+	bool ShowKey;		// Sign.3
+	bool ShowMonster;	// Sign.4
+	bool ShowExit;		// Sign.5
+	// Checks if player has pressed 'X'
+	bool Sign1Exited;
+	bool Sign2Exited;
+	bool Sign3Exited;
+	bool Sign4Exited;
+	bool Sign5Exited;
 
-	// Codes for Scrolling
-	int tileOffset_x, tileOffset_y;
+	//time Buffer for continuous key press
 
-	// Codes for Parallax Scrolling
-	CMap* m_cRearMap;
-	void RenderRearTileMap();
-	int rearWallOffset_x, rearWallOffset_y;
-	int rearWallTileOffset_x, rearWallTileOffset_y;
-	int rearWallFineOffset_x, rearWallFineOffset_y;
+	float timeBuffer;
 
-	// Enemies
-	CEnemy* theEnemy;
+	//grid system and grids
+	GridSystem* Playfield;
+	GridSystem* TestField;
+	//determine direction : 0 = up,180 = down, -90 = left, 90 = right and offset
+	float direction;
+	Vector3 offset;
+	//window height and width
+	int m_windowHeight;
+	int m_windowWidth;
 
-	// Goodies and Goodies Factory
-	CGoodiesFactory theGoodiesFactory;
-	CGoodies** theArrayOfGoodies;
-	void RenderGoodies(void);
-	*/
+	//loaded level;
+	LevelLoader *m_cLevel;
+	// vector of AI
+	vector<cAI*> AIList;
 };
 
 #endif
