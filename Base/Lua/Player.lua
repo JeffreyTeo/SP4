@@ -1,8 +1,8 @@
 --Player Save File--
 LevelAmt = 3
 Currency = 3
-LevelToStartAt = 0
-LevelDifficultyToStartAt = 0
+LevelToStartAt = 1
+LevelDifficultyToStartAt = 1
 LevelStopAt = 0
 LevelDifficultyStopAt = 0
 Player = {
