@@ -106,6 +106,8 @@ class SceneManagerLevel2DforScreen : public Scene
 		GEO_PAUSE_RESUME,
 		GEO_PAUSE_QUITTOMENU,
 
+		GEO_BACKTOEXIT,
+
 		GEO_WIN_NEXTLEVEL,
 
 		GEO_LEVELSELECT_LEVEL1,

@@ -117,37 +117,6 @@ CSceneManager2D::~CSceneManager2D()
 			leveldetails = NULL;
 		}
 	}
-	/*
-	if (m_spriteAnimation)
-	{
-		delete m_spriteAnimation;
-		m_spriteAnimation = NULL;
-	}*/
-	/*
-	for (int i=0; i<10; i++)
-	{
-	delete theArrayOfGoodies[i];
-	}
-	delete theArrayOfGoodies;
-
-	if (theEnemy)
-	{
-	delete theEnemy;
-	theEnemy = NULL;
-	}
-
-	if (m_cMap)
-	{
-	delete m_cMap;
-	m_cMap = NULL;
-	}
-
-	if (m_cMinimap)
-	{
-	delete m_cMinimap;
-	m_cMinimap = NULL;
-	}
-	*/
 }
 
 void CSceneManager2D::PreInit()
@@ -208,32 +177,11 @@ void CSceneManager2D::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//calibri.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
-	// Load the ground mesh and texture
-	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//background.tga");
-	meshList[GEO_TILEGROUND] = MeshBuilder::Generate2DMesh("GEO_TILEGROUND", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEGROUND]->textureID = LoadTGA("Image//tile1_ground.tga");
-	meshList[GEO_TILEHERO] = MeshBuilder::Generate2DMesh("GEO_TILEHERO", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO]->textureID = LoadTGA("Image//tile2_hero.tga");
-	meshList[GEO_TILETREE] = MeshBuilder::Generate2DMesh("GEO_TILETREE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILETREE]->textureID = LoadTGA("Image//tile3_tree.tga");
-	meshList[GEO_TILESTRUCTURE] = MeshBuilder::Generate2DMesh("GEO_TILESTRUCTURE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILESTRUCTURE]->textureID = LoadTGA("Image//tile3_structure.tga");
-	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//tile2_hero_frame_0.tga");
-	meshList[GEO_TILEHERO_FRAME1] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME1", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME1]->textureID = LoadTGA("Image//tile2_hero_frame_1.tga");
-	meshList[GEO_TILEHERO_FRAME2] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME2", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME2]->textureID = LoadTGA("Image//tile2_hero_frame_2.tga");
-	meshList[GEO_TILEHERO_FRAME3] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME3", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME3]->textureID = LoadTGA("Image//tile2_hero_frame_3.tga");
-
-	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
-	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
 	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 50, 50);
 	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
+
+	meshList[GEO_BACKGROUND]= MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
+	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//Background.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
@@ -1256,37 +1204,14 @@ void CSceneManager2D::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	/*
-	modelStack.PushMatrix();
-	Render2DMesh(meshList[GEO_SPRITE_ANIMATION], false,50,400,300);
-	modelStack.PopMatrix();*/
-	
 	// Render the background image
 	RenderBackground();
-	/*// Render the rear tile map
-	RenderRearTileMap();
-	// Render the tile map
-	RenderTileMap();
-	// Render the goodies
-	RenderGoodies();
-	*/
 
 	RenderUI();
 
 	//render the grid system and the corresponding image for the each grid
 	RenderGridSystem();
 
-	//On screen text
-	/*
-	std::ostringstream ss;
-	ss.precision(5);
-	ss << "theEnemy: " << theEnemy->GetPos_x() << ", " << theEnemy->GetPos_y();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 30, 0, 6);
-	std::ostringstream sss;
-	sss.precision(5);
-	sss << "mapOffset_x: "<<theHero->GetMapOffset_x();
-	RenderTextOnScreen(meshList[GEO_TEXT], sss.str(), Color(0, 1, 0), 30, 0, 30);
-	*/
 	if (m_losed != true && m_WinCondition == -1 && NoOfMoves <= 0)
 	Render2DMesh(meshList[GEO_MOVELOSESIGN], false, false, 1, m_windowWidth*0.5, m_windowHeight*0.5);
 
@@ -1295,7 +1220,7 @@ void CSceneManager2D::Render()
 	
 	std::ostringstream ss;
 	ss.precision(5);
-	ss << "test text: " << " 9999999 ";
+	ss << fps << endl;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0, 0.5f), 30, 0, 6, true);
 }
 
@@ -1304,7 +1229,7 @@ void CSceneManager2D::Render()
  ********************************************************************************/
 void CSceneManager2D::Exit()
 {
-	if (!m_Quitfrompause)
+	if (!m_Quitfrompause && m_WinCondition != -1)
 	{
 		int i = m_player->GetLevelToDifficultyStartAt() - 2;
 		int j = i * m_maxlevel;

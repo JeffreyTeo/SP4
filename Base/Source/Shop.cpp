@@ -30,10 +30,9 @@ Shop::~Shop()
 void Shop::PlayerInit(Player* playerinfo)
 {
 	m_playerMoney = playerinfo->GetAmtOfCurrency();
-	//m_playerGold = playerinfo->GetAmtOfGold();
-	m_playerGold = 100000;
-	m_BombMaxStack = 0;
-	m_BridgeMaxStack = 0;
+	m_playerGold = playerinfo->GetAmtOfGold();
+	m_BombMaxStack = playerinfo->GetAmtOfBomb();
+	m_BridgeMaxStack = playerinfo->GetAmtOfBridge();
 	m_playerEasyModeUnlocked = playerinfo->GetEasyLevelUnlocked();
 	m_playerNormalModeUnlocked = playerinfo->GetNormalLevelUnlocked();
 	m_playerHardModeUnlocked = playerinfo->GetHardLevelUnlocked();
@@ -62,7 +61,9 @@ void Shop::ItemInit()
 void Shop::Set(Player* playerinfo)
 {
 	playerinfo->SetAmtOfCurrency(m_playerMoney);
-	//playerinfo->SetAmtOfGold(m_playerGold);
+	playerinfo->SetAmtOfGold(m_playerGold);
+	playerinfo->SetAmtOfBomb(m_BombMaxStack);
+	playerinfo->SetAmtOfBridge(m_BridgeMaxStack);
 	playerinfo->SetEasyLevelUnlocked(m_playerEasyModeUnlocked);
 	playerinfo->SetNormalLevelUnlocked(m_playerNormalModeUnlocked);
 	playerinfo->SetHardLevelUnlocked(m_playerHardModeUnlocked);

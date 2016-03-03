@@ -153,32 +153,6 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Test3.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
-	// Load the ground mesh and texture
-	meshList[GEO_BACKGROUND] = MeshBuilder::Generate2DMesh("GEO_BACKGROUND", Color(1, 1, 1), 0, 0, 800, 600);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//sky_background.tga");
-	meshList[GEO_TILEGROUND] = MeshBuilder::Generate2DMesh("GEO_TILEGROUND", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEGROUND]->textureID = LoadTGA("Image//tile1_ground.tga");
-	meshList[GEO_TILEHERO] = MeshBuilder::Generate2DMesh("GEO_TILEHERO", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO]->textureID = LoadTGA("Image//tile2_hero.tga");
-	meshList[GEO_TILETREE] = MeshBuilder::Generate2DMesh("GEO_TILETREE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILETREE]->textureID = LoadTGA("Image//tile3_tree.tga");
-	meshList[GEO_TILESTRUCTURE] = MeshBuilder::Generate2DMesh("GEO_TILESTRUCTURE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILESTRUCTURE]->textureID = LoadTGA("Image//tile3_structure.tga");
-	meshList[GEO_TILEHERO_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME0]->textureID = LoadTGA("Image//tile2_hero_frame_0.tga");
-	meshList[GEO_TILEHERO_FRAME1] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME1", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME1]->textureID = LoadTGA("Image//tile2_hero_frame_1.tga");
-	meshList[GEO_TILEHERO_FRAME2] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME2", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME2]->textureID = LoadTGA("Image//tile2_hero_frame_2.tga");
-	meshList[GEO_TILEHERO_FRAME3] = MeshBuilder::Generate2DMesh("GEO_TILEHERO_FRAME3", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEHERO_FRAME3]->textureID = LoadTGA("Image//tile2_hero_frame_3.tga");
-
-	meshList[GEO_TILE_KILLZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_KILLZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_KILLZONE]->textureID = LoadTGA("Image//tile10_killzone.tga");
-	meshList[GEO_TILE_SAFEZONE] = MeshBuilder::Generate2DMesh("GEO_TILE_SAFEZONE", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILE_SAFEZONE]->textureID = LoadTGA("Image//tile11_safezone.tga");
-	meshList[GEO_TILEENEMY_FRAME0] = MeshBuilder::Generate2DMesh("GEO_TILEENEMY_FRAME0", Color(1, 1, 1), 0, 0, 25, 25);
-	meshList[GEO_TILEENEMY_FRAME0]->textureID = LoadTGA("Image//tile20_enemy.tga");
 
 	meshList[GEO_MENU] = MeshBuilder::Generate2DMesh("GEO_MENU", Color(1, 1, 1, 0.0f), 0, 0, 800, 600);
 	meshList[GEO_MENU]->textureID = LoadTGA("Image//MainMenu.tga");
@@ -252,8 +226,8 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_DIFFICULTY_HARD] = MeshBuilder::Generate2DMesh("GEO_DIFFICULTY_HARD", Color(1, 1, 1), 0, 0, 98, 34);
 	meshList[GEO_DIFFICULTY_HARD]->textureID = LoadTGA("Image//ButtonMesh/Hardbutton.tga");
 
-	meshList[GEO_HIGHSCORE_TUTORIAL] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_TUTORIAL", Color(1, 1, 1), 0, 0, 95, 34);
-	meshList[GEO_HIGHSCORE_TUTORIAL]->textureID = LoadTGA("Image//ButtonMesh/Easybutton.tga");
+	meshList[GEO_HIGHSCORE_TUTORIAL] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_TUTORIAL", Color(1, 1, 1), 0, 0, 184, 34);
+	meshList[GEO_HIGHSCORE_TUTORIAL]->textureID = LoadTGA("Image//ButtonMesh/Tutorial.tga");
 	meshList[GEO_HIGHSCORE_EASY] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_EASY", Color(1, 1, 1), 0, 0, 95, 34);
 	meshList[GEO_HIGHSCORE_EASY]->textureID = LoadTGA("Image//ButtonMesh/Easybutton.tga");
 	meshList[GEO_HIGHSCORE_NORMAL] = MeshBuilder::Generate2DMesh("GEO_HIGHSCORE_NORMAL", Color(1, 1, 1), 0, 0, 147, 34);
@@ -279,6 +253,9 @@ void SceneManagerLevel2DforScreen::Init()
 	meshList[GEO_BOMB]->textureID = LoadTGA("Image//Bomb.tga");
 	meshList[GEO_BRIDGE] = MeshBuilder::Generate2DMesh("GEO_BRIDGE", Color(1, 1, 1), 0, 0, 34, 34);
 	meshList[GEO_BRIDGE]->textureID = LoadTGA("Image//Bridge.tga");
+
+	meshList[GEO_BACKTOEXIT] = MeshBuilder::Generate2DMesh("GEO_BACKTOEXIT", Color(1, 1, 1), 0, 0, 376, 34);
+	meshList[GEO_BACKTOEXIT]->textureID = LoadTGA("Image//ButtonMesh/PressBackToExit.tga");
 
 	if (m_screenvalue == Winscreen)
 	{
@@ -557,7 +534,7 @@ bool SceneManagerLevel2DforScreen::CheckEligibleForNextLevel()
 				  else if ((this->m_player->GetEasyLevelUnlocked() == false) || (this->m_shop->theItemHolder[this->m_player->GetLevelToDifficultyStartAt() - 1]->GetBought() == false))
 				  {
 					  if (this->theLevelDetailsHolder[0]->GetCleared())
-						  this->m_player->SetNormalLevelUnlocked(true);
+						  this->m_player->SetEasyLevelUnlocked(true);
 					  return false;
 				  }
 				  break;
@@ -1114,6 +1091,7 @@ void SceneManagerLevel2DforScreen::RenderHighscore()
 		}
 	}
 	modelStack.PopMatrix();
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	
 }
@@ -1154,6 +1132,8 @@ void SceneManagerLevel2DforScreen::RenderOption()
 	{
 		Render2DMesh(meshList[GEO_VOL_BAR], false, true, 1, 440 + i * 30, 215);
 	}
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
+	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 	modelStack.PopMatrix();
 }
 
@@ -1196,6 +1176,7 @@ void SceneManagerLevel2DforScreen::RenderLevelShopSelect()
 		}
 			
 	}
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 
@@ -1210,7 +1191,7 @@ void SceneManagerLevel2DforScreen::RenderShop()
 	modelStack.PopMatrix();
 
 	string notUnlocked = "Level is still locked";
-	string Insufficient = "Insufficient Funds to purchase level";
+	string Insufficient = "Insufficient Funds to purchase";
 
 	switch (m_select)
 	{
@@ -1329,6 +1310,7 @@ void SceneManagerLevel2DforScreen::RenderShop()
 	string currentGold = "Gold: " + std::to_string(m_shop->GetPlayerGold());
 	RenderTextOnScreen(meshList[GEO_TEXT], currentAmt, Color(0, 0, 1), 30, 100, 510, true);
 	RenderTextOnScreen(meshList[GEO_TEXT], currentGold, Color(0, 0, 1), 30, 100, 480, true);
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 
@@ -1352,7 +1334,7 @@ void SceneManagerLevel2DforScreen::RenderLevelSelect()
 	if (m_select >= 0)
 		Render2DMesh(meshList[GEO_SELECT], false, true, 1, theButtonHolder[0]->getPosition().x - theButtonHolder[0]->getOffset().x, theButtonHolder[0]->getPosition().y - theButtonHolder[0]->getOffset().y);
 	modelStack.PopMatrix();
-
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 
@@ -1439,6 +1421,7 @@ void SceneManagerLevel2DforScreen::RenderDifficulty()
 	}
 	}
 	modelStack.PopMatrix();
+	Render2DMesh(meshList[GEO_BACKTOEXIT], false, true, 1, 100, 50);
 	RenderTextOnScreen(meshList[GEO_TEXT], "", Color(1, 1, 1, m_alpha), 30, 0, 6, true);
 }
 
